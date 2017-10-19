@@ -231,3 +231,15 @@ test({
     ],
 });
 
+// un-registered namespace handling
+test({
+    xml: '<root xmlns="http://foo" xmlns:bar="http://bar" id="aa" bar:title="bb"><bar:child /></root>',
+    ns: 'atom',
+    to: [
+        ['startNode', 'ns0:root', {id: 'aa', 'bar:title': 'bb'}],
+        ['startNode', 'bar:child'],
+        ['endNode', 'bar:child'],
+        ['endNode', 'ns0:root'],
+    ],
+});
+

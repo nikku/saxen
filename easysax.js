@@ -149,6 +149,7 @@ function EasySAXParser() {
     var nsmatrix = {xmlns: xmlns};
     var useNS;
     var xmlns;
+    var anonymousNsCount = 0;
 
 
     this.on = function(name, cb) {
@@ -339,25 +340,24 @@ function EasySAXParser() {
                 if (newalias !== null) {
                     alias = useNS[unEntities(value)];
 
-                    if (alias) {
-                        if (nsmatrix[newalias] !== alias) {
-                            if (!hasNewMatrix) {
-                                nsmatrix = cloneMatrixNS(nsmatrix);
-                                hasNewMatrix = true;
-                            };
+                    if (!alias) {
+                      if (newalias === 'xmlns') {
+                        alias = 'ns' + (anonymousNsCount++);
+                      } else {
+                        alias = newalias;
+                      }
 
-                            nsmatrix[newalias] = alias;
-                        };
-                    } else {
-                        if (nsmatrix[newalias]) {
-                            if (!hasNewMatrix) {
-                                nsmatrix = cloneMatrixNS(nsmatrix);
-                                hasNewMatrix = true;
-                            };
+                      useNS[unEntities(value)] = alias;
+                    }
 
-                            nsmatrix[newalias] = false;
+                    if (nsmatrix[newalias] !== alias) {
+                        if (!hasNewMatrix) {
+                            nsmatrix = cloneMatrixNS(nsmatrix);
+                            hasNewMatrix = true;
                         };
-                    };
+
+                        nsmatrix[newalias] = alias;
+                    }
 
                     res[name] = value;
                     continue;
