@@ -328,3 +328,82 @@ test({
         }],
     ],
 });
+
+// nested namespace handling
+test({
+    xml: (
+        '<foo xmlns="http://this" xmlns:bar="http://bar">' +
+            '<t xmlns="http://that" id="aa" bar:title="bb" />' +
+        '</foo>'
+    ),
+    ns: 'atom',
+    to: [
+        ['startNode', 'ns0:foo', true, false],
+        ['startNode', 'ns1:t', { id: 'aa', 'bar:title': 'bb' }, true],
+        ['endNode', 'ns1:t', true],
+        ['endNode', 'ns0:foo', false],
+    ],
+});
+
+// nested <unprefixed /> namespace handling
+test({
+    xml: (
+        '<foo xmlns="http://this" xmlns:bar="http://bar">' +
+            '<t xmlns="http://that" id="a" bar:title="BAR">' +
+                '<n id="b1" bar:title="BAR" />' +
+                '<n id="b2" />' +
+            '</t>' +
+        '</foo>'
+    ),
+    ns: 'atom',
+    to: [
+        ['startNode', 'ns0:foo'],
+        ['startNode', 'ns1:t', { id: 'a', 'bar:title': 'BAR' }],
+        ['startNode', 'ns1:n', { id: 'b1', 'bar:title': 'BAR' }],
+        ['endNode', 'ns1:n'],
+        ['startNode', 'ns1:n', { id: 'b2' }],
+        ['endNode', 'ns1:n'],
+        ['endNode', 'ns1:t'],
+        ['endNode', 'ns0:foo'],
+    ],
+});
+
+// nested <unprefixed></unprefixed> namespace handling
+test({
+    xml: (
+        '<foo xmlns="http://this" xmlns:bar="http://bar">' +
+            '<t xmlns="http://that" id="a" bar:title="BAR">' +
+                '<n id="b" bar:title="BAR"></n>' +
+            '</t>' +
+        '</foo>'
+    ),
+    ns: 'atom',
+    to: [
+        ['startNode', 'ns0:foo'],
+        ['startNode', 'ns1:t', { id: 'a', 'bar:title': 'BAR' }],
+        ['startNode', 'ns1:n', { id: 'b', 'bar:title': 'BAR' }],
+        ['endNode', 'ns1:n'],
+        ['endNode', 'ns1:t'],
+        ['endNode', 'ns0:foo'],
+    ],
+});
+
+// nested namespace re-declaration
+test({
+    xml: (
+        '<foo xmlns="http://this" xmlns:bar="http://bar">' +
+            '<t xmlns="http://that" xmlns:b="http://bar">' +
+                '<b:other title="OTHER" bar:attr="BAR" />' +
+            '</t>' +
+        '</foo>'
+    ),
+    ns: 'atom',
+    to: [
+        ['startNode', 'ns0:foo'],
+        ['startNode', 'ns1:t'],
+        ['startNode', 'bar:other', { title: 'OTHER', 'attr': 'BAR' }],
+        ['endNode', 'bar:other'],
+        ['endNode', 'ns1:t'],
+        ['endNode', 'ns0:foo'],
+    ],
+});

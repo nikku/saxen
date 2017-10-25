@@ -687,7 +687,11 @@ function EasySAXParser() {
                 _nsmatrix = nsmatrix;
 
                 if (tagstart) {
-                    stacknsmatrix.push(nsmatrix);
+                    // remember old namespace
+                    // unless we're self-closing
+                    if (!tagend) {
+                        stacknsmatrix.push(_nsmatrix);
+                    }
 
                     if (attr_res !== true) {
                         if (hasSurmiseNS = x.indexOf('xmlns', q) !== -1) { // есть подозрение на xmlns
@@ -749,11 +753,12 @@ function EasySAXParser() {
                     return;
                 };
 
+                // restore old namespace
                 if (isNamespace) {
-                    if (tagstart) {
-                        nsmatrix = _nsmatrix;
-                    } else {
+                    if (!tagstart) {
                         nsmatrix = stacknsmatrix.pop();
+                    } else {
+                        nsmatrix = _nsmatrix;
                     };
                 };
             };
