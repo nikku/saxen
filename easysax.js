@@ -201,21 +201,23 @@ function EasySAXParser() {
             return this;
         };
 
-        var x = {}, ok, v, i;
+        var x = {}, rootDeclared, v, i;
 
         for(i in ns) {
             v = ns[i];
             if (typeof v === 'string') {
-                if (root === v) ok = true;
+                if (root === v) rootDeclared = true;
                 x[i] = v;
             };
         };
 
-        if (ok) {
-            default_xmlns = root;
-            isNamespace = true;
-            useNS = x;
-        };
+        if (!rootDeclared) {
+            throw new Error('no namespace uri defined for <' + root + '>');
+        }
+
+        default_xmlns = root;
+        isNamespace = true;
+        useNS = x;
 
         return this;
     };

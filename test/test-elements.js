@@ -473,3 +473,24 @@ describe('error handling', function() {
     });
 
 });
+
+
+describe('ns configuration', function() {
+
+    it('should throw on missing default ns uri', function() {
+
+        // given
+        var parser = new EasySax();
+
+        // when
+        function configure() {
+            parser.ns('bar', {
+                'http://foo': 'foo'
+            });
+        }
+
+        // then
+        assert.throws(configure, /no namespace uri defined for <bar>/);
+    });
+
+});
