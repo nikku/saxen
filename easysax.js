@@ -136,6 +136,8 @@ function EasySAXParser() {
         return null;
     };
 
+    function noopGetContext() {  return { line: 0, column: 0 }; };
+
     function nullFunc() {};
 
     var onTextNode = nullFunc, onStartNode = nullFunc, onEndNode = nullFunc, onCDATA = nullFunc, onError = nullFunc, onComment, onQuestion, onAttention;
@@ -145,12 +147,22 @@ function EasySAXParser() {
     var hasSurmiseNS = false;
     var isNamespace = false;
     var returnError = null;
+    var getContext = noopGetContext;
     var parseStop = false; // прервать парсер
     var nsmatrix = {xmlns: xmlns};
     var useNS;
     var xmlns;
     var anonymousNsCount = 0;
 
+    function handleError(err) {
+        if (!(err instanceof Error)) {
+            err = new Error(err);
+        }
+
+        returnError = err;
+
+        onError(err, getContext);
+    }
 
     this.on = function(name, cb) {
         if (typeof cb !== 'function') {
@@ -200,6 +212,7 @@ function EasySAXParser() {
         };
 
         returnError = null;
+        getContext = noopGetContext;
 
         if (isNamespace) {
             nsmatrix = {xmlns: default_xmlns};
@@ -423,8 +436,57 @@ function EasySAXParser() {
         , stop // используется при разборе "namespace" . если встретился неизвестное пространство то события не генерируются
         ;
 
-        function getStringNode() {
-            return xml.substring(i, j + 1)
+        /**
+         * Extract the parse context { line, column, part }
+         * from the current parser position.
+         *
+         * @return {Object} parse context
+         */
+        getContext = function() {
+            var splitsRe = /(\r\n|\r|\n)/g;
+
+            var line = 0;
+            var column = 0;
+            var startOfLine = 0;
+            var endOfLine = j;
+            var match;
+            var data;
+
+            while (i >= startOfLine) {
+
+                match = splitsRe.exec(xml);
+
+                if (!match) {
+                    break;
+                }
+
+                // end of line = (break idx + break chars)
+                endOfLine = match[0].length + match.index;
+
+                if (endOfLine > i) {
+                    break;
+                }
+
+                // advance to next line
+                line += 1;
+
+                startOfLine = endOfLine;
+            }
+
+            // EOF errors
+            if (i == -1) {
+                column = endOfLine;
+                data = '';
+            } else {
+                column = i - startOfLine;
+                data = (j == -1 ? xml.substring(i) : xml.substring(i, j + 1));
+            }
+
+            return {
+                data: data,
+                line: line,
+                column: column
+            }
         };
 
         while(j !== -1) {
@@ -438,7 +500,7 @@ function EasySAXParser() {
 
             if (i === -1) { // конец разбора
                 if (nodestack.length) {
-                    onError(returnError = 'end file');
+                    handleError('unexpected end of file');
                     return;
                 };
 
@@ -459,7 +521,7 @@ function EasySAXParser() {
                 if (w === 91 && xml.substr(i + 3, 6) === 'CDATA[') { // 91 == "["
                     j = xml.indexOf(']]>', i);
                     if (j === -1) {
-                        onError(returnError = 'cdata');
+                        handleError('unclosed cdata');
                         return;
                     };
 
@@ -478,7 +540,7 @@ function EasySAXParser() {
                 if (w === 45 && xml.charCodeAt(i + 3) === 45) { // 45 == "-"
                     j = xml.indexOf('-->', i);
                     if (j === -1) {
-                        onError(returnError = 'expected -->');
+                        handleError('unclosed comment');
                         return;
                     };
 
@@ -496,7 +558,7 @@ function EasySAXParser() {
 
                 j = xml.indexOf('>', i + 1);
                 if (j === -1) {
-                    onError(returnError = 'expected ">"');
+                    handleError('unclosed tag');
                     return;
                 };
 
@@ -514,7 +576,7 @@ function EasySAXParser() {
             if (w === 63) { // "?"
                 j = xml.indexOf('?>', i);
                 if (j === -1) { // error
-                    onError(returnError = '...?>');
+                    handleError('unclosed question');
                     return;
                 };
 
@@ -532,7 +594,7 @@ function EasySAXParser() {
             j = xml.indexOf('>', i + 1);
 
             if (j == -1) { // error
-                onError(returnError = '...>');
+                handleError('unclosed tag');
                 return;
             };
 
@@ -548,7 +610,7 @@ function EasySAXParser() {
                 q = i + 2 + x.length;
 
                 if (xml.substring(i + 2, q) !== x) {
-                    onError(returnError = 'close tagname');
+                    handleError('closing tag mismatch');
                     return;
                 };
 
@@ -560,7 +622,7 @@ function EasySAXParser() {
                         continue;
                     };
 
-                    onError(returnError = 'close tag');
+                    handleError('close tag');
                     return;
                 };
 
@@ -579,7 +641,7 @@ function EasySAXParser() {
                 };
 
                 if (!(w > 96  && w < 123 || w > 64 && w < 91 || w === 95 || w === 58)) { // char 95"_" 58":"
-                    onError(returnError = 'first char nodeName');
+                    handleError('illegal first char nodeName');
                     return;
                 };
 
@@ -596,7 +658,7 @@ function EasySAXParser() {
                         break;
                     };
 
-                    onError(returnError = 'invalid nodeName');
+                    handleError('invalid nodeName');
                     return;
                 };
 
@@ -604,7 +666,6 @@ function EasySAXParser() {
                     nodestack.push(elem);
                 };
             };
-
 
             if (isNamespace) {
                 if (stop) {
@@ -674,7 +735,7 @@ function EasySAXParser() {
                 attr_posstart = q;
                 attr_string = x;
 
-                onStartNode(elem, getAttrs, unEntities, tagend, getStringNode);
+                onStartNode(elem, getAttrs, unEntities, tagend, getContext);
                 if (parseStop) {
                     return;
                 };
@@ -683,7 +744,7 @@ function EasySAXParser() {
             };
 
             if (tagend) {
-                onEndNode(elem, unEntities, tagstart, getStringNode);
+                onEndNode(elem, unEntities, tagstart, getContext);
                 if (parseStop) {
                     return;
                 };

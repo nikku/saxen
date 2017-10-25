@@ -34,7 +34,7 @@ test({
     to: [
         ['startNode', 'a', true, false],
         ['startNode', 'b', true, false],
-        ['error'],
+        ['error', 'closing tag mismatch', { data: '</c>', line: 0, column: 6 } ],
     ],
 });
 
@@ -58,10 +58,11 @@ test({
 });
 
 test({
-    xml: '<root>',
+    xml: '<root><foo>',
     to: [
         ['startNode', 'root'],
-        ['error'],
+        ['startNode', 'foo'],
+        ['error', 'unexpected end of file', { data: '', line: 0, column: 11 } ],
     ],
 });
 
@@ -70,7 +71,23 @@ test({
     to: [
         ['startNode', 'root', true, true],
         ['endNode', 'root', true],
-        ['error'],
+        ['error', 'unclosed tag', { data: '<f', line: 0, column: 7 } ],
+    ],
+});
+
+test({
+    xml: '<root></rof',
+    to: [
+        ['startNode', 'root', true, false],
+        ['error', 'unclosed tag', { data: '</rof', line: 0, column: 6 } ]
+    ],
+});
+
+test({
+    xml: '<root></rof</root>',
+    to: [
+        ['startNode', 'root', true, false],
+        ['error', 'closing tag mismatch', { data: '</rof</root>', line: 0, column: 6 } ]
     ],
 });
 
@@ -144,8 +161,6 @@ test({
         ['endNode', 'r'],
     ],
 });
-
-
 
 test({
     xml: '<feed xmlns="http://www.w3.org/2005/Atom" xmlns:media="http://search.yahoo.com/mrss/" id="aa" media:title="bb"/>',
@@ -243,3 +258,73 @@ test({
     ],
 });
 
+// context with whitespace
+test({
+    xml: (
+        '<feed xmlns="http://www.w3.org/2005/Atom" \r\n' +
+        '      xmlns:="http://search.yahoo.com/mrss/" id="aa" :title="bb">\r' +
+        '  <:text/>\n' +
+        '</feed>'
+    ),
+    ns: 'atom',
+    to: [
+        ['startNode', 'atom:feed', {id: 'aa', 'media:title': 'bb'}, false, {
+            line: 0,
+            column: 0,
+            data: '<feed xmlns="http://www.w3.org/2005/Atom" \r\n      xmlns:="http://search.yahoo.com/mrss/" id="aa" :title="bb">'
+        }],
+        ['textNode', '\r  '],
+        ['startNode', 'media:text', true, true, { line: 2, column: 2, data: '<:text/>' }],
+        ['endNode', 'media:text', true, { line: 2, column: 2, data: '<:text/>' }],
+        ['textNode', '\n'],
+        ['endNode', 'atom:feed', false, {
+            line: 3,
+            column: 0,
+            data: '</feed>'
+        }],
+    ],
+});
+
+// context without whitespace
+test({
+    xml: (
+        '<feed xmlns="http://www.w3.org/2005/Atom" xmlns:="http://search.yahoo.com/mrss/" id="aa" :title="bb">' +
+            '<:text/>' +
+        '</feed>'
+    ),
+    ns: 'atom',
+    to: [
+        ['startNode', 'atom:feed', {id: 'aa', 'media:title': 'bb'}, false, {
+            line: 0,
+            column: 0,
+            data: '<feed xmlns="http://www.w3.org/2005/Atom" xmlns:="http://search.yahoo.com/mrss/" id="aa" :title="bb">'
+        }],
+        ['startNode', 'media:text', true, true, { line: 0, column: 101, data: '<:text/>' }],
+        ['endNode', 'media:text', true, { line: 0, column: 101, data: '<:text/>' }],
+        ['endNode', 'atom:feed', false, {
+            line: 0,
+            column: 109,
+            data: '</feed>'
+        }],
+    ],
+});
+
+// context with annonymous namespace
+test({
+    xml: (
+        '<foo xmlns="http://this" xmlns:that="http://that" id="aa" that:title="bb" />'
+    ),
+    ns: 'atom',
+    to: [
+        ['startNode', 'ns0:foo', { id: 'aa', 'that:title': 'bb' }, true, {
+            line: 0,
+            column: 0,
+            data: '<foo xmlns="http://this" xmlns:that="http://that" id="aa" that:title="bb" />'
+        }],
+        ['endNode', 'ns0:foo', true, {
+            line: 0,
+            column: 0,
+            data: '<foo xmlns="http://this" xmlns:that="http://that" id="aa" that:title="bb" />'
+        }],
+    ],
+});
