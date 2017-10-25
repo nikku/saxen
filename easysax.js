@@ -154,6 +154,16 @@ function EasySAXParser() {
     var xmlns;
     var anonymousNsCount = 0;
 
+    function failSafe(cb) {
+        return function() {
+            try {
+                cb.apply(this, arguments);
+            } catch (err) {
+                handleError(err);
+            }
+        }
+    }
+
     function handleError(err) {
         if (!(err instanceof Error)) {
             err = new Error(err);
@@ -167,6 +177,10 @@ function EasySAXParser() {
     this.on = function(name, cb) {
         if (typeof cb !== 'function') {
             if (cb !== null) return;
+        };
+
+        if (typeof cb === 'function' && name !== 'error') {
+            cb = failSafe(cb);
         };
 
         switch(name) {
