@@ -1,5 +1,8 @@
 var easysax = require('../easysax.js');
 var assert = require('assert');
+var util = require('util');
+
+var inspect = util.inspect;
 
 /*
 describe('test-01', function() {
@@ -20,7 +23,7 @@ test({
 
 module.exports = function(op) {
     it(op.xml.substr(0, 275), function() {
-        assert.equal(false, test(op || false));
+        test(op || {});
     });
 };
 
@@ -39,82 +42,93 @@ function test(options) {
         });
     };
 
-    function test(name) {
-        var values = list.shift();
-        var args = arguments;
+    var results = [];
 
-        if (error) {
-            return;
-        };
+    function record() {
+        results.push(arguments);
+    };
 
-        if (!values) {
-            error = name + ': не полный тест';
-            return;
-        };
+    function verifyRecord(actual, actualIdx, expected) {
 
-        for(var index = 0, l = values.length; index < l; index++) {
-            var value = values[index];
+        function prefix(columnIdx) {
+            return 'record ' + actualIdx + (typeof columnIdx !== undefined ? ',' + columnIdx : '') + ' ';
+        }
 
-            if (name === 'startNode' && index === 2) {
-                var attrs = args[index];
-                if (!value || value === true) {
-                    if (attrs !== value) {
-                        error = name + ':' + index + '  attr: ' + value + ' !== ' + attrs;
-                        break;
-                    };
-                };
+        if (!expected) {
+            assert(expected, prefix() + util.inspect(actual));
+        }
 
-                for (var j in value) {
-                    if (value[j] !== attrs[j]) {
-                        error = name + ':' + index + '  ' + j + ': ' + value[j] + ' !== ' + attrs[j];
-                        break;
-                    };
-                };
+        var name = actual[0];
 
-                if (error) {
-                    break;
+        for (var idx = 0, l = expected.length; idx < l; idx++) {
+            var expectedValue = expected[idx];
+            var actualValue = actual[idx];
+
+            // be able to skip attrs check
+            if (name === 'startNode' && idx === 2) {
+                if (!expectedValue || expectedValue === true) {
+                    assert.equal(!!actualValue, expectedValue, prefix(idx) + ' attrs equal ' + expectedValue);
                 };
 
                 continue;
             };
 
-            if (args[index] !== value) {
-                error = name + ':' + index + '  ' + args[index] + ' !== ' + value;
-                break;
+
+            // compare actual Error{message} with expected error message
+            if (name === 'error' && idx === 1) {
+                assert.ok(actualValue instanceof Error, prefix(idx) + inspect(actualValue) + ' is Error');
+                assert.equal(actualValue.message, expectedValue);
+
+                continue;
             };
+
+            assert.deepEqual(
+                actualValue,
+                expectedValue,
+                prefix(idx) + inspect(actualValue) + ' deepEqual ' + inspect(expectedValue)
+            );
+        };
+    }
+
+    function verify() {
+        if (error) {
+            return;
         };
 
-        return error;
+        for (var idx = 0; idx < results.length; idx++) {
+            verifyRecord(results[idx], idx, list[idx]);
+        }
+
+        assert.equal(results.length, list.length, 'expected ' + list.length + ' records, got ' + results.length);
     };
 
-
-    parser.on('error', function(msg) {
-        test('error');
+    parser.on('error', function(msg, getContext) {
+        record('error', msg, getContext());
     });
 
-    parser.on('startNode', function(elem, attr, uq, tagend, getStrNode) {
-        test('startNode', elem, attr(), tagend, getStrNode);
+    parser.on('startNode', function(elem, attr, uq, tagend, getContext) {
+        record('startNode', elem, attr(), tagend, getContext());
     });
 
-    parser.on('endNode', function(elem, uq, tagstart, str) {
-        test('endNode', elem, tagstart, str);
+    parser.on('endNode', function(elem, uq, tagstart, getContext) {
+        record('endNode', elem, tagstart, getContext());
     });
 
     parser.on('textNode', function(s, uq) {
-        test('textNode', s);
+        record('textNode', s);
     });
 
     parser.on('cdata', function(data) {
-        test('cdata', data);
+        record('cdata', data);
     });
 
     parser.on('comment', function(text) {
-        test('comment', text);
+        record('comment', text);
     });
 
-
     parser.parse(options.xml);
-    return error;
+
+    return verify();
 };
 
 
