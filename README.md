@@ -1,5 +1,8 @@
 EASYSAX - pure javascript sax-style parser for xml
 ==================================================
+
+[![Build Status](https://travis-ci.org/nikku/easysax.svg?branch=master)](https://travis-ci.org/nikku/easysax)
+
 Простой и быстрый SAX парсер XML файлов.
 Реализован по принципу парсить только то что нужно и как можно быстрее.
 Парсер не потоковый, и не расчитан на гиганские файлы. Весь XML должен быть в памяти.
@@ -97,11 +100,11 @@ parser.on('error', function(msg) {
 
 parser.on('startNode', function(elem, attr, uq, str, tagend) {
 	// elem -- (string) название элемента. при указании пространства имен, то автоматически подставляется префикс
-	// attr() -- (function) парсит атрибуты и возврашает обьект. 
+	// attr() -- (function) парсит атрибуты и возврашает обьект.
 	// uq() -- (function) встроенный xml декодер.  пример: uq(&lt;a&gt;)
 	// str -- (string) нераспарсенная строка элемента. пример: <item title="text" id="x345">
 	// tagend -- (boolean) флаг что элемент пустой
-	
+
 });
 
 parser.on('endNode', function(elem, uq, str, tagstart) {
