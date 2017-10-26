@@ -40,13 +40,13 @@ function test(options) {
             'http://www.w3.org/2005/Atom': 'atom',
             'http://purl.org/rss/1.0/': 'rss',
         });
-    };
+    }
 
     var results = [];
 
     function record() {
         results.push(arguments);
-    };
+    }
 
     function verifyRecord(actual, actualIdx, expected) {
 
@@ -68,10 +68,10 @@ function test(options) {
             if (name === 'startNode' && idx === 2) {
                 if (!expectedValue || expectedValue === true) {
                     assert.equal(!!actualValue, expectedValue, prefix(idx) + ' attrs equal ' + expectedValue);
-                };
+                }
 
                 continue;
-            };
+            }
 
 
             // compare actual Error{message} with expected error message
@@ -80,27 +80,27 @@ function test(options) {
                 assert.equal(actualValue.message, expectedValue);
 
                 continue;
-            };
+            }
 
             assert.deepEqual(
                 actualValue,
                 expectedValue,
                 prefix(idx) + inspect(actualValue) + ' deepEqual ' + inspect(expectedValue)
             );
-        };
+        }
     }
 
     function verify() {
         if (error) {
             return;
-        };
+        }
 
         for (var idx = 0; idx < results.length; idx++) {
             verifyRecord(results[idx], idx, list[idx]);
         }
 
         assert.equal(results.length, list.length, 'expected ' + list.length + ' records, got ' + results.length);
-    };
+    }
 
     parser.on('error', function(msg, getContext) {
         record('error', msg, getContext());
@@ -129,6 +129,6 @@ function test(options) {
     parser.parse(options.xml);
 
     return verify();
-};
+}
 
 

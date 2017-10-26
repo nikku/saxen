@@ -13,7 +13,7 @@ describe('handler errors', function() {
         parser.ns('foo', {
             'http://foo': 'foo'
         });
-    })
+    });
 
     it('should pass to #onError', function() {
 
@@ -43,8 +43,6 @@ describe('handler errors', function() {
     it('should handle in #onError', function() {
 
         // given
-        var called = false;
-
         parser.on('error', function(err, getContext) {
             throw err;
         });
