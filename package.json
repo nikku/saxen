@@ -2,7 +2,7 @@
 	"name": "easysax",
 	"description": "pure javascript xml parser",
 	"scripts": {
-		"test": "mocha"
+		"test": "mocha test/test.js"
 	},
 	"keywords": [
 		"xml",
