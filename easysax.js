@@ -144,7 +144,7 @@ function EasySAXParser() {
     var is_onComment, is_onQuestion, is_onAttention;
 
     var default_xmlns;
-    var hasSurmiseNS = false;
+    var maybeNS = false;
     var isNamespace = false;
     var returnError = null;
     var getContext = noopGetContext;
@@ -274,7 +274,7 @@ function EasySAXParser() {
         var u
         , xmlnsAlias
         , nsAttrName
-        , attrList = isNamespace && hasSurmiseNS ? [] : null
+        , attrList = isNamespace && maybeNS ? [] : null
         , i = attr_posstart
         , s = attr_string
         , l = s.length
@@ -359,7 +359,7 @@ function EasySAXParser() {
                 continue;
             };
 
-            if (hasSurmiseNS) {
+            if (maybeNS) {
                 // есть подозрение что в атрибутах присутствует xmlns
                 newalias = (name !== 'xmlns'
                     ? name.charCodeAt(0) === 120 && name.substr(0, 6) === 'xmlns:' ? name.substr(6) : null
@@ -413,7 +413,7 @@ function EasySAXParser() {
             return attr_res = true;  // атрибутов нет, ошибок тоже нет
         };
 
-        if (hasSurmiseNS)  {
+        if (maybeNS)  {
             xmlnsAlias = nsmatrix['xmlns'];
 
             for (i = 0, l = attrList.length; i < l; i++) {
@@ -710,13 +710,13 @@ function EasySAXParser() {
                     }
 
                     if (attr_res !== true) {
-                        if (hasSurmiseNS = x.indexOf('xmlns', q) !== -1) { // есть подозрение на xmlns
+                        if (maybeNS = x.indexOf('xmlns', q) !== -1) { // есть подозрение на xmlns
                             attr_posstart = q;
                             attr_string = x;
 
                             getAttrs();
 
-                            hasSurmiseNS = false;
+                            maybeNS = false;
                         };
                     };
                 };
