@@ -28,6 +28,16 @@ module.exports = function(op) {
 };
 
 
+// allow .only and .skip on test helper
+[ 'only', 'skip' ].forEach(function(key) {
+    module.exports[key] = function(op) {
+        it[key](op.xml.substr(0, 275), function() {
+            test(op || {});
+        });
+    };
+});
+
+
 function test(options) {
     var parser = options.parser;
     var error = false;
