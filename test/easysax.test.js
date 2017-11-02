@@ -34,12 +34,15 @@ function test(options) {
 
     if (!parser) {
         parser = new easysax();
-        parser.ns(options.ns || false, {
-            'http://search.yahoo.com/mrss/': 'media',
-            'http://www.w3.org/1999/xhtml': 'xhtml',
-            'http://www.w3.org/2005/Atom': 'atom',
-            'http://purl.org/rss/1.0/': 'rss',
-        });
+
+        if (options.ns) {
+            parser.ns(options.ns, {
+                'http://search.yahoo.com/mrss/': 'media',
+                'http://www.w3.org/1999/xhtml': 'xhtml',
+                'http://www.w3.org/2005/Atom': 'atom',
+                'http://purl.org/rss/1.0/': 'rss',
+            });
+        }
     }
 
     var results = [];

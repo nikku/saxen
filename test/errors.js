@@ -78,4 +78,19 @@ describe('ns configuration', function() {
         assert.throws(configure, /no namespace uri defined for <bar>/);
     });
 
+
+    it('should throw on invalid #ns args', function() {
+
+        // given
+        var parser = new EasySax();
+
+        // when
+        function configure() {
+            parser.ns('bar');
+        }
+
+        // then
+        assert.throws(configure, /required args <defaultPrefix, nsMap>/);
+    });
+
 });

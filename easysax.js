@@ -61,14 +61,14 @@ new function() {
 module.exports = EasySAXParser;
 
 var stringFromCharCode = String.fromCharCode;
-var xharsQuot = {constructor: false
+var xharsQuot = {
+    constructor: false
     , propertyIsEnumerable: false
     , toLocaleString: false
     , hasOwnProperty: false
     , isPrototypeOf: false
     , toString: false
     , valueOf: false
-
     , quot: '"'
     , QUOT: '"'
     , amp: '&'
@@ -91,6 +91,9 @@ var xharsQuot = {constructor: false
     , para: '\u00B6'
 };
 
+function error(msg) {
+    return new Error(msg);
+}
 
 function replaceEntities(s, d, x, z) {
     if (z) {
@@ -166,7 +169,7 @@ function EasySAXParser() {
 
     function handleError(err) {
         if (!(err instanceof Error)) {
-            err = new Error(err);
+            err = error(err);
         }
 
         returnError = err;
@@ -196,28 +199,38 @@ function EasySAXParser() {
         }
     };
 
-    this.ns = function(root, ns) {
-        if (!root || typeof root !== 'string' || !ns) {
-            return this;
+    /**
+     * Set the namespace mapping.
+     *
+     * @param  {String} defaultPrefix
+     * @param  {Object} nsMap
+     *
+     * @return {EasySax}
+     */
+    this.ns = function(defaultPrefix, nsMap) {
+        if (typeof defaultPrefix !== 'string' || !nsMap) {
+            throw error('required args <defaultPrefix, nsMap>');
         }
 
-        var x = {}, rootDeclared, v, i;
+        var _useNS = {}, defaultDeclared, v, i;
 
-        for (i in ns) {
-            v = ns[i];
-            if (typeof v === 'string') {
-                if (root === v) rootDeclared = true;
-                x[i] = v;
+        for (i in nsMap) {
+            v = nsMap[i];
+
+            if (defaultPrefix === v) {
+                defaultDeclared = true;
             }
+
+            _useNS[i] = v;
         }
 
-        if (!rootDeclared) {
-            throw new Error('no namespace uri defined for <' + root + '>');
+        if (!defaultDeclared) {
+            throw error('no namespace uri defined for <' + defaultPrefix + '>');
         }
 
-        default_xmlns = root;
+        default_xmlns = defaultPrefix;
         isNamespace = true;
-        useNS = x;
+        useNS = _useNS;
 
         return this;
     };
