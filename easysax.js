@@ -378,6 +378,7 @@ function EasySAXParser() {
                     : 'xmlns'
                 );
 
+                // handle xmlns(:alias) assignment
                 if (newalias !== null) {
                     alias = useNS[unEntities(value)];
 
@@ -414,8 +415,9 @@ function EasySAXParser() {
                 continue;
             }
 
+            // normalize namespaced attribute names
             if ((nsAttrName = nsmatrix[name.substring(0, w)])) {
-                nsAttrName = nsmatrix['xmlns'] === nsAttrName ? name.substr(w + 1) : nsAttrName + name.substr(w);
+                nsAttrName = nsmatrix['xmlns'] === nsAttrName ? name.substr(w + 1) : nsAttrName;
                 res[nsAttrName + name.substr(w)] = value;
             }
         }

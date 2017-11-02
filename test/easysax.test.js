@@ -1,4 +1,4 @@
-var easysax = require('../easysax.js');
+var EasySax = require('../easysax.js');
 var assert = require('assert');
 var util = require('util');
 
@@ -27,13 +27,14 @@ module.exports = function(op) {
     });
 };
 
+
 function test(options) {
     var parser = options.parser;
     var error = false;
     var list = options.to;
 
     if (!parser) {
-        parser = new easysax();
+        parser = new EasySax();
 
         if (options.ns) {
             parser.ns(options.ns, {
@@ -67,10 +68,20 @@ function test(options) {
             var expectedValue = expected[idx];
             var actualValue = actual[idx];
 
-            // be able to skip attrs check
             if (name === 'startNode' && idx === 2) {
+                // be able to skip attrs check
                 if (!expectedValue || expectedValue === true) {
                     assert.equal(!!actualValue, expectedValue, prefix(idx) + ' attrs equal ' + expectedValue);
+
+                } else {
+
+                    // validate individual, expected attrs
+                    for (var key in expectedValue) {
+                        assert.equal(
+                            actualValue[key],
+                            expectedValue[key],
+                            prefix(idx) + ' attrs[' + key + '] equal ' + expectedValue[key]);
+                    }
                 }
 
                 continue;

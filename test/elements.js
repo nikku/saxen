@@ -356,7 +356,7 @@ test({
     to: [
         ['startNode', 'ns0:foo'],
         ['startNode', 'ns1:t'],
-        ['startNode', 'ns1:n', { 'bar:title': 'BAR' }],
+        ['startNode', 'ns1:n'],
         ['endNode', 'ns1:n'],
         ['startNode', 'ns1:n'],
         ['endNode', 'ns1:n'],
@@ -398,9 +398,38 @@ test({
     to: [
         ['startNode', 'ns0:foo'],
         ['startNode', 'ns1:t'],
-        ['startNode', 'bar:other', { 'attr': 'BAR' }],
+        ['startNode', 'bar:other', { 'bar:attr': 'BAR' }],
         ['endNode', 'bar:other'],
         ['endNode', 'ns1:t'],
         ['endNode', 'ns0:foo'],
     ],
 });
+
+// test namespace attribute exposure
+test({
+    xml: (
+        '<foo xmlns="http://xxx"></foo>'
+    ),
+    ns: 'atom',
+    to: [
+        ['startNode', 'ns0:foo', { xmlns: 'http://xxx' } ],
+        ['endNode', 'ns0:foo', false],
+    ],
+});
+
+// test namespace attribute rewrite
+test({
+    xml: (
+        '<foo xmlns="http://xxx" xmlns:a="http://www.w3.org/2005/Atom" a:xx="foo"></foo>'
+    ),
+    ns: 'atom',
+    to: [
+        ['startNode', 'ns0:foo', {
+            'xmlns:a': 'http://www.w3.org/2005/Atom',
+            'xmlns': 'http://xxx',
+            'atom:xx': 'foo'
+        } ],
+        ['endNode', 'ns0:foo', false],
+    ],
+});
+
