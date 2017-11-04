@@ -131,6 +131,13 @@ function cloneMatrixNS(nsmatrix) {
     return nn;
 }
 
+function noopGetContext() {  return {line: 0, column: 0}; }
+
+function nullFunc() {}
+
+function throwFunc(err) {
+    throw err;
+}
 
 function EasySAXParser() {
     'use strict';
@@ -139,12 +146,18 @@ function EasySAXParser() {
         return null;
     }
 
-    function noopGetContext() {  return {line: 0, column: 0}; }
+    var onTextNode = nullFunc,
+        onStartNode = nullFunc,
+        onEndNode = nullFunc,
+        onCDATA = nullFunc,
+        onError = throwFunc,
+        onComment,
+        onQuestion,
+        onAttention;
 
-    function nullFunc() {}
-
-    var onTextNode = nullFunc, onStartNode = nullFunc, onEndNode = nullFunc, onCDATA = nullFunc, onError = nullFunc, onComment, onQuestion, onAttention;
-    var is_onComment, is_onQuestion, is_onAttention;
+    var is_onComment,
+        is_onQuestion,
+        is_onAttention;
 
     var default_xmlns;
     var maybeNS = false;
@@ -157,12 +170,12 @@ function EasySAXParser() {
     var xmlns;
     var anonymousNsCount = 0;
 
-    function failSafe(cb) {
+    function failSafe(cb, onError) {
         return function() {
             try {
                 cb.apply(this, arguments);
             } catch (err) {
-                handleError(err);
+                onError(err);
             }
         };
     }
@@ -183,14 +196,14 @@ function EasySAXParser() {
         }
 
         if (typeof cb === 'function' && name !== 'error') {
-            cb = failSafe(cb);
+            cb = failSafe(cb, handleError);
         }
 
         switch (name) {
             case 'startNode': onStartNode = cb || nullFunc; break;
             case 'textNode': onTextNode = cb || nullFunc; break;
             case 'endNode': onEndNode = cb || nullFunc; break;
-            case 'error': onError = cb || nullFunc; break;
+            case 'error': onError = cb || throwFunc; break;
             case 'cdata': onCDATA = cb || nullFunc; break;
 
             case 'attention': onAttention = cb; is_onAttention = !!cb; break; // <!XXXXX zzzz="eeee">
@@ -271,14 +284,14 @@ function EasySAXParser() {
     var attr_posstart = 0; //
     var attr_res; // закешированный результат разбора атрибутов , null - разбор не проводился, object - хеш атрибутов, true - нет атрибутов, false - невалидный xml
 
-    /*
-        парсит атрибуты по требованию. Важно! - функция не генерирует исключения.
-
-        если была ошибка разбора возврашается false
-        если атрибутов нет и разбор удачен то возврашается true
-        если есть атрибуты то возврашается обьект(хеш)
-    */
-
+    /**
+     * Parse attributes on demand and returns the parsed attributes.
+     *
+     * Return semantics: (1) `false` on attribute parse error,
+     * (2) true on no attributes, (3) object hash on extracted attrs.
+     *
+     * @return {Boolean|Object}
+     */
     function getAttrs() {
         if (attr_res !== null) {
             return attr_res;
@@ -373,9 +386,12 @@ function EasySAXParser() {
 
             if (maybeNS) {
                 // есть подозрение что в атрибутах присутствует xmlns
-                newalias = (name !== 'xmlns'
-                    ? name.charCodeAt(0) === 120 && name.substr(0, 6) === 'xmlns:' ? name.substr(6) : null
-                    : 'xmlns'
+                newalias = (
+                    name === 'xmlns'
+                        ? 'xmlns'
+                        : (name.charCodeAt(0) === 120 && name.substr(0, 6) === 'xmlns:')
+                            ? name.substr(6)
+                            : null
                 );
 
                 // handle xmlns(:alias) assignment
@@ -405,6 +421,7 @@ function EasySAXParser() {
                     continue;
                 }
 
+                // need to collect namespace declarations first
                 attrList.push(name, value);
                 continue;
             }
@@ -427,6 +444,7 @@ function EasySAXParser() {
             return attr_res = true;  // атрибутов нет, ошибок тоже нет
         }
 
+        // handle deferred namespace declarations
         if (maybeNS)  {
             xmlnsAlias = nsmatrix['xmlns'];
 

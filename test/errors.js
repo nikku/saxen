@@ -40,6 +40,22 @@ describe('handler errors', function() {
     });
 
 
+    it('should throw per default', function() {
+
+        // given
+        parser.on('startNode', function() {
+            throw new Error('foo');
+        });
+
+        // when
+        assert.throws(function() {
+
+            // then
+            parser.parse('<xml />');
+        }, /foo/);
+    });
+
+
     it('should handle in #onError', function() {
 
         // given
