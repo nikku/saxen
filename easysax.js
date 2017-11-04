@@ -476,11 +476,9 @@ function EasySAXParser() {
         , tagend = false
         , j = 0, i = 0
         , x, y, q, w
-        , stopIndex = 0
         , _nsmatrix
         , xmlns
         , elem
-        , stop // используется при разборе "namespace" . если встретился неизвестное пространство то события не генерируются
         ;
 
         /**
@@ -537,7 +535,6 @@ function EasySAXParser() {
         }
 
         while (j !== -1) {
-            stop = stopIndex > 0;
 
             if (xml.charCodeAt(j) === 60) { // "<"
                 i = j;
@@ -554,7 +551,7 @@ function EasySAXParser() {
                 return;
             }
 
-            if (j !== i && !stop) {
+            if (j !== i) {
                 onTextNode(xml.substring(j, i), unEntities);
                 if (parseStop) {
                     return;
@@ -572,11 +569,9 @@ function EasySAXParser() {
                         return;
                     }
 
-                    if (!stop) {
-                        onCDATA(xml.substring(i + 9, j), false);
-                        if (parseStop) {
-                            return;
-                        }
+                    onCDATA(xml.substring(i + 9, j), false);
+                    if (parseStop) {
+                        return;
                     }
 
                     j += 3;
@@ -592,7 +587,7 @@ function EasySAXParser() {
                     }
 
 
-                    if (is_onComment && !stop) {
+                    if (is_onComment) {
                         onComment(xml.substring(i + 4, j), unEntities);
                         if (parseStop) {
                             return;
@@ -609,7 +604,7 @@ function EasySAXParser() {
                     return;
                 }
 
-                if (is_onAttention && !stop) {
+                if (is_onAttention) {
                     onAttention(xml.substring(i, j + 1), unEntities);
                     if (parseStop) {
                         return;
@@ -715,21 +710,6 @@ function EasySAXParser() {
             }
 
             if (isNamespace) {
-                if (stop) {
-                    if (tagend) {
-                        if (!tagstart) {
-                            if (--stopIndex === 0) {
-                                nsmatrix = stacknsmatrix.pop();
-                            }
-                        }
-
-                    } else {
-                        stopIndex += 1;
-                    }
-
-                    j += 1;
-                    continue;
-                }
 
                 _nsmatrix = nsmatrix;
 
@@ -771,7 +751,6 @@ function EasySAXParser() {
                         }
 
                     } else {
-                        stopIndex = 1; // первый элемент для которого не определено пространство имен
                         attr_res = true;
                     }
 
