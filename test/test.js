@@ -10,6 +10,11 @@ describe('document parsing', function() {
 
   });
 
+
+  if (!process.env.TRAVIS) {
+    require('./performance');
+  }
+
 });
 
 
