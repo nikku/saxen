@@ -159,16 +159,15 @@ function EasySAXParser() {
         is_onQuestion,
         is_onAttention;
 
-    var default_xmlns;
+    var getContext = noopGetContext;
+
     var maybeNS = false;
     var isNamespace = false;
     var returnError = null;
-    var getContext = noopGetContext;
     var parseStop = false; // прервать парсер
-    var nsmatrix = {xmlns: xmlns};
     var useNS;
-    var xmlns;
-    var anonymousNsCount = 0;
+
+    var defaultNsPrefix;
 
     function failSafe(cb, onError) {
         return function() {
@@ -241,7 +240,7 @@ function EasySAXParser() {
             throw error('no namespace uri defined for <' + defaultPrefix + '>');
         }
 
-        default_xmlns = defaultPrefix;
+        defaultNsPrefix = defaultPrefix;
         isNamespace = true;
         useNS = _useNS;
 
@@ -254,21 +253,11 @@ function EasySAXParser() {
         }
 
         returnError = null;
+
+        parse(xml);
+
         getContext = noopGetContext;
-
-        if (isNamespace) {
-            nsmatrix = {xmlns: default_xmlns};
-
-            parse(xml);
-
-            nsmatrix = false;
-
-        } else {
-            parse(xml);
-        }
-
         parseStop = false;
-        attr_res = true;
 
         return returnError;
     };
@@ -277,209 +266,215 @@ function EasySAXParser() {
         parseStop = true;
     };
 
-    // -----------------------------------------------------
-
-
-    var attr_string = ''; // строка атрибутов
-    var attr_posstart = 0; //
-    var attr_res; // закешированный результат разбора атрибутов , null - разбор не проводился, object - хеш атрибутов, true - нет атрибутов, false - невалидный xml
-
-    /**
-     * Parse attributes on demand and returns the parsed attributes.
-     *
-     * Return semantics: (1) `false` on attribute parse error,
-     * (2) true on no attributes, (3) object hash on extracted attrs.
-     *
-     * @return {Boolean|Object}
-     */
-    function getAttrs() {
-        if (attr_res !== null) {
-            return attr_res;
-        }
-
-        var xmlnsAlias
-        , nsAttrName
-        , attrList = isNamespace && maybeNS ? [] : null
-        , i = attr_posstart
-        , s = attr_string
-        , l = s.length
-        , hasNewMatrix
-        , newalias
-        , value
-        , alias
-        , name
-        , res = {}
-        , ok
-        , w
-        , j
-        ;
-
-
-        for (; i < l; i++) {
-            w = s.charCodeAt(i);
-
-            if (w === 32 || (w < 14 && w > 8) ) { // \f\n\r\t\v
-                continue
-            }
-
-            if (w < 65 || w > 122 || (w > 90 && w < 97) ) { // ожидаем символ
-                if (w !== 95 && w !== 58) { // char 95"_" 58":"
-                    return attr_res = false; // error. invalid first char
-                }
-            }
-
-            for (j = i + 1; j < l; j++) { // проверяем все символы имени атрибута
-                w = s.charCodeAt(j);
-
-                if ( w > 96 && w < 123 || w > 64 && w < 91 || w > 47 && w < 59 || w === 45 || w === 95) {
-                    continue;
-                }
-
-                if (w !== 61) { // "=" == 61
-                    return attr_res = false; // error. invalid char "="
-                }
-
-                break;
-            }
-
-            name = s.substring(i, j);
-            ok = true;
-
-            if (name === 'xmlns:xmlns') {
-                return attr_res = false; // error. invalid name
-            }
-
-            w = s.charCodeAt(j + 1);
-
-            if (w === 34) {  // '"'
-                j = s.indexOf('"', i = j + 2 );
-
-            } else {
-                if (w !== 39) { // "'"
-                    return attr_res = false; // error. invalid char
-                }
-
-                j = s.indexOf('\'', i = j + 2 );
-            }
-
-            if (j === -1) {
-                return attr_res = false; // error. invalid char
-            }
-
-            if (j + 1 < l) {
-                w = s.charCodeAt(j + 1);
-
-                if (w > 32 || w < 9 || (w < 32 && w > 13)) {
-                    // error. invalid char
-                    return attr_res = false;
-                }
-            }
-
-
-            value = s.substring(i, j);
-            i = j + 1; // след. семвол уже проверен потому проверять нужно следуюший
-
-            if (!isNamespace) { //
-                res[name] = value;
-                continue;
-            }
-
-            if (maybeNS) {
-                // есть подозрение что в атрибутах присутствует xmlns
-                newalias = (
-                    name === 'xmlns'
-                        ? 'xmlns'
-                        : (name.charCodeAt(0) === 120 && name.substr(0, 6) === 'xmlns:')
-                            ? name.substr(6)
-                            : null
-                );
-
-                // handle xmlns(:alias) assignment
-                if (newalias !== null) {
-                    alias = useNS[unEntities(value)];
-
-                    if (!alias) {
-                      if (newalias === 'xmlns') {
-                        alias = 'ns' + (anonymousNsCount++);
-                      } else {
-                        alias = newalias;
-                      }
-
-                      useNS[unEntities(value)] = alias;
-                    }
-
-                    if (nsmatrix[newalias] !== alias) {
-                        if (!hasNewMatrix) {
-                            nsmatrix = cloneMatrixNS(nsmatrix);
-                            hasNewMatrix = true;
-                        }
-
-                        nsmatrix[newalias] = alias;
-                    }
-
-                    res[name] = value;
-                    continue;
-                }
-
-                // need to collect namespace declarations first
-                attrList.push(name, value);
-                continue;
-            }
-
-            w = name.indexOf(':');
-            if (w === -1) {
-                res[name] = value;
-                continue;
-            }
-
-            // normalize namespaced attribute names
-            if ((nsAttrName = nsmatrix[name.substring(0, w)])) {
-                nsAttrName = nsmatrix['xmlns'] === nsAttrName ? name.substr(w + 1) : nsAttrName;
-                res[nsAttrName + name.substr(w)] = value;
-            }
-        }
-
-
-        if (!ok) {
-            return attr_res = true;  // атрибутов нет, ошибок тоже нет
-        }
-
-        // handle deferred namespace declarations
-        if (maybeNS)  {
-            xmlnsAlias = nsmatrix['xmlns'];
-
-            for (i = 0, l = attrList.length; i < l; i++) {
-                name = attrList[i++];
-
-                w = name.indexOf(':');
-                if (w !== -1) {
-                    if ((nsAttrName = nsmatrix[name.substring(0, w)])) {
-                        nsAttrName = xmlnsAlias === nsAttrName ? name.substr(w + 1) : nsAttrName + name.substr(w);
-                        res[nsAttrName] = attrList[i];
-                    }
-                    continue;
-                }
-                res[name] = attrList[i];
-            }
-        }
-
-        return attr_res = res;
-    }
-
-
     // xml - string
     function parse(str) {
         var xml = ('' + str)
-        , stacknsmatrix = []
+        , nsmatrixStack = isNamespace ? [] : null
+        , nsmatrix = isNamespace ? { xmlns: defaultNsPrefix } : null
+        , _nsmatrix
         , nodestack = []
+        , anonymousNsCount = 0
         , tagstart = false
         , tagend = false
         , j = 0, i = 0
         , x, y, q, w
-        , _nsmatrix
         , xmlns
         , elem
+        , _elem
         ;
+
+        var attr_string = ''
+        , attr_posstart = 0
+        , attr_res // false = parsed with errors, null = needs parsing
+        ;
+
+        /**
+         * Parse attributes on demand and returns the parsed attributes.
+         *
+         * Return semantics: (1) `false` on attribute parse error,
+         * (2) true on no attributes, (3) object hash on extracted attrs.
+         *
+         * @return {Boolean|Object}
+         */
+        function getAttrs() {
+            if (attr_res !== null) {
+                return attr_res;
+            }
+
+            var nsAttrName
+            , attrList = isNamespace && maybeNS ? [] : null
+            , i = attr_posstart
+            , s = attr_string
+            , l = s.length
+            , hasNewMatrix
+            , newalias
+            , value
+            , alias
+            , name
+            , res = {}
+            , ok
+            , w
+            , j
+            ;
+
+
+            for (; i < l; i++) {
+                w = s.charCodeAt(i);
+
+                if (w === 32 || (w < 14 && w > 8) ) { // \f\n\r\t\v
+                    continue
+                }
+
+                // wait for non whitespace character
+                if (w < 65 || w > 122 || (w > 90 && w < 97) ) {
+                    if (w !== 95 && w !== 58) { // char 95"_" 58":"
+                        return attr_res = false; // error. invalid first char
+                    }
+                }
+
+                // parse attribute name
+                for (j = i + 1; j < l; j++) {
+                    w = s.charCodeAt(j);
+
+                    if ( w > 96 && w < 123 || w > 64 && w < 91 || w > 47 && w < 59 || w === 45 || w === 95) {
+                        continue;
+                    }
+
+                    if (w !== 61) { // "=" == 61
+                        return attr_res = false; // error. invalid char "="
+                    }
+
+                    break;
+                }
+
+                name = s.substring(i, j);
+                ok = true;
+
+                if (name === 'xmlns:xmlns') {
+                    return attr_res = false; // error. invalid name
+                }
+
+                w = s.charCodeAt(j + 1);
+
+                if (w === 34) {  // '"'
+                    j = s.indexOf('"', i = j + 2 );
+
+                } else {
+                    if (w !== 39) { // "'"
+                        return attr_res = false; // error. invalid char
+                    }
+
+                    j = s.indexOf('\'', i = j + 2 );
+                }
+
+                if (j === -1) {
+                    return attr_res = false; // error. invalid char
+                }
+
+                if (j + 1 < l) {
+                    w = s.charCodeAt(j + 1);
+
+                    if (w > 32 || w < 9 || (w < 32 && w > 13)) {
+                        // error. invalid char
+                        return attr_res = false;
+                    }
+                }
+
+
+                value = s.substring(i, j);
+
+                // advance cursor to next attribute
+                i = j + 1;
+
+                if (!isNamespace) {
+                    res[name] = value;
+                    continue;
+                }
+
+                // try to extract namespace information
+                if (maybeNS) {
+                    newalias = (
+                        name === 'xmlns'
+                            ? 'xmlns'
+                            : (name.charCodeAt(0) === 120 && name.substr(0, 6) === 'xmlns:')
+                                ? name.substr(6)
+                                : null
+                    );
+
+                    // handle xmlns(:alias) assignment
+                    if (newalias !== null) {
+                        alias = useNS[unEntities(value)];
+
+                        if (!alias) {
+                          if (newalias === 'xmlns') {
+                            alias = 'ns' + (anonymousNsCount++);
+                          } else {
+                            alias = newalias;
+                          }
+
+                          useNS[unEntities(value)] = alias;
+                        }
+
+                        if (nsmatrix[newalias] !== alias) {
+                            if (!hasNewMatrix) {
+                                nsmatrix = cloneMatrixNS(nsmatrix);
+                                hasNewMatrix = true;
+                            }
+
+                            nsmatrix[newalias] = alias;
+                        }
+
+                        // expose xmlns(:asd)="..." in attributes
+                        res[name] = value;
+                        continue;
+                    }
+
+                    // collect attributes until all namespace declarations
+                    // are processed
+                    attrList.push(name, value);
+                    continue;
+                }
+
+                w = name.indexOf(':');
+                if (w === -1) {
+                    res[name] = value;
+                    continue;
+                }
+
+                // normalize namespaced attribute names
+                if ((nsAttrName = nsmatrix[name.substring(0, w)])) {
+                    nsAttrName = nsmatrix['xmlns'] === nsAttrName ? name.substr(w + 1) : nsAttrName;
+                    res[nsAttrName + name.substr(w)] = value;
+                }
+            }
+
+
+            if (!ok) {
+                // could not parse attributes, skipping
+                return attr_res = true;
+            }
+
+            // handle deferred, possibly namespaced attributes
+            if (maybeNS)  {
+                alias = nsmatrix['xmlns'];
+
+                for (i = 0, l = attrList.length; i < l; i++) {
+                    name = attrList[i++];
+
+                    w = name.indexOf(':');
+                    if (w !== -1) {
+                        if ((nsAttrName = nsmatrix[name.substring(0, w)])) {
+                            nsAttrName = alias === nsAttrName ? name.substr(w + 1) : nsAttrName + name.substr(w);
+                            res[nsAttrName] = attrList[i];
+                        }
+                        continue;
+                    }
+                    res[name] = attrList[i];
+                }
+            }
+
+            return attr_res = res;
+        }
 
         /**
          * Extract the parse context { line, column, part }
@@ -487,7 +482,7 @@ function EasySAXParser() {
          *
          * @return {Object} parse context
          */
-        getContext = function() {
+        function getParseContext() {
             var splitsRe = /(\r\n|\r|\n)/g;
 
             var line = 0;
@@ -534,6 +529,10 @@ function EasySAXParser() {
             };
         }
 
+        getContext = getParseContext;
+
+
+        // actual parse logic
         while (j !== -1) {
 
             if (xml.charCodeAt(j) === 60) { // "<"
@@ -640,14 +639,14 @@ function EasySAXParser() {
                 return;
             }
 
-            attr_res = true; // атрибутов нет
+            attr_res = true; // stop attribute processing
 
             //if (xml.charCodeAt(i+1) === 47) { // </...
             if (w === 47) { // </...
                 tagstart = false;
                 tagend = true;
 
-                // проверяем что должен быть закрыт тотже тег что и открывался
+                // verify open <-> close tag match
                 x = elem = nodestack.pop();
                 q = i + 2 + x.length;
 
@@ -660,7 +659,7 @@ function EasySAXParser() {
                 for (; q < j; q++) {
                     w = xml.charCodeAt(q);
 
-                    if (w === 32 || (w > 8 && w < 14)) {  // \f\n\r\t\v пробел
+                    if (w === 32 || (w > 8 && w < 14)) {  // \f\n\r\t\v space
                         continue;
                     }
 
@@ -694,9 +693,10 @@ function EasySAXParser() {
                         continue;
                     }
 
-                    if (w === 32 || (w < 14 && w > 8)) { // \f\n\r\t\v пробел
+                    if (w === 32 || (w < 14 && w > 8)) { // \f\n\r\t\v space
                         elem = x.substring(0, q);
-                        attr_res = null; // возможно есть атирибуты
+                        // maybe there are attributes
+                        attr_res = null;
                         break;
                     }
 
@@ -717,11 +717,14 @@ function EasySAXParser() {
                     // remember old namespace
                     // unless we're self-closing
                     if (!tagend) {
-                        stacknsmatrix.push(_nsmatrix);
+                        nsmatrixStack.push(_nsmatrix);
                     }
 
                     if (attr_res !== true) {
-                        if ((maybeNS = x.indexOf('xmlns', q) !== -1)) { // есть подозрение на xmlns
+                        // quick check, whether there may be namespace
+                        // declarations on the node; if that is the case
+                        // we need to eagerly parse the node attributes
+                        if ((maybeNS = x.indexOf('xmlns', q) !== -1)) {
                             attr_posstart = q;
                             attr_string = x;
 
@@ -732,24 +735,27 @@ function EasySAXParser() {
                     }
                 }
 
+                _elem = elem;
+
                 w = elem.indexOf(':');
                 if (w !== -1) {
                     xmlns = nsmatrix[elem.substring(0, w)];
                     elem = elem.substr(w + 1);
-
                 } else {
                     xmlns = nsmatrix.xmlns;
                 }
 
-
                 if (!xmlns) {
+                    handleError('missing namespace on <' + _elem + '>');
+
+                    // skip bad element, in case error handler
+                    // wishes recovery...
                     if (tagend) {
                         if (tagstart) {
                             nsmatrix = _nsmatrix;
                         } else {
-                            nsmatrix = stacknsmatrix.pop();
+                            nsmatrix = nsmatrixStack.pop();
                         }
-
                     } else {
                         attr_res = true;
                     }
@@ -782,7 +788,7 @@ function EasySAXParser() {
                 // restore old namespace
                 if (isNamespace) {
                     if (!tagstart) {
-                        nsmatrix = stacknsmatrix.pop();
+                        nsmatrix = nsmatrixStack.pop();
                     } else {
                         nsmatrix = _nsmatrix;
                     }
@@ -793,4 +799,3 @@ function EasySAXParser() {
         }
     }
 }
-
