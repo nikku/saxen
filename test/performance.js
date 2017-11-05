@@ -25,20 +25,20 @@ describe('performance', function() {
       var parser = new EasySax(options);
 
       parser.ns({
-          'http://foo': 'foo'
+        'http://foo': 'foo'
       });
 
       var counter = 0;
 
       parser.on('startNode', function(el, attrs) {
-          counter++;
+        counter++;
 
-          // el.attrs;
-          el.name;
-          el.originalName;
-          el.ns;
+        // el.attrs;
+        el.name;
+        el.originalName;
+        el.ns;
 
-          // attrs();
+        // attrs();
       });
 
       // when
@@ -86,7 +86,7 @@ describe('performance', function() {
     console.log('avg', average1);
     console.log('sum', t1);
 
-    console.log('PERF (proxy)')
+    console.log('PERF (proxy)');
     console.log('avg', average);
     console.log('sum', t);
 

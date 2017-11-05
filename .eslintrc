@@ -1,15 +1,16 @@
 {
   "rules": {
-    "keyword-spacing": [ "warn" ],
-    "object-curly-spacing": [ "warn", "never"],
-    "space-before-blocks": [ "warn", "always"],
-    "indent": [ "warn", 4, {
+    "keyword-spacing": [ "error" ],
+    "object-curly-spacing": [ "error", "always"],
+    "space-before-blocks": [ "error", "always"],
+    "indent": [ "error", 2, {
       "VariableDeclarator": { "var": 2, "let": 2, "const": 3 } }
     ],
-    "no-unused-vars": [ "warn", { "args": "none" } ],
-    "space-before-function-paren": [ "warn", "never" ],
-    "quotes": [ "warn", "single" ],
-    "semi": [ "warn", "always" ],
+    "comma-style": [ "error", "last" ],
+    "no-unused-vars": [ "error", { "args": "none" } ],
+    "space-before-function-paren": [ "error", "never" ],
+    "quotes": [ "error", "single" ],
+    "semi": [ "error", "always" ],
     "no-console": 0,
     "mocha/no-exclusive-tests": 2
   },

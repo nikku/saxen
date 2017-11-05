@@ -4,88 +4,88 @@ var assert = require('assert');
 
 describe('handler errors', function() {
 
-    var parser;
+  var parser;
 
-    beforeEach(function() {
+  beforeEach(function() {
 
-        parser = new EasySax();
+    parser = new EasySax();
+  });
+
+  it('should pass to #onError', function() {
+
+    // given
+    var called = false;
+
+    parser.on('error', function(err, getContext) {
+
+      called = true;
+
+      assert.equal(err.message, 'foo');
+      assert.ok(getContext);
     });
 
-    it('should pass to #onError', function() {
-
-        // given
-        var called = false;
-
-        parser.on('error', function(err, getContext) {
-
-            called = true;
-
-            assert.equal(err.message, 'foo');
-            assert.ok(getContext);
-        });
-
-        parser.on('startNode', function() {
-            throw new Error('foo');
-        });
-
-        // when
-        parser.parse('<xml />');
-
-        // then
-        assert.ok(called, 'error called == true');
+    parser.on('startNode', function() {
+      throw new Error('foo');
     });
 
+    // when
+    parser.parse('<xml />');
 
-    it('should throw per default', function() {
+    // then
+    assert.ok(called, 'error called == true');
+  });
 
-        // given
-        parser.on('startNode', function() {
-            throw new Error('foo');
-        });
 
-        // when
-        assert.throws(function() {
+  it('should throw per default', function() {
 
-            // then
-            parser.parse('<xml />');
-        }, /foo/);
+    // given
+    parser.on('startNode', function() {
+      throw new Error('foo');
     });
 
+    // when
+    assert.throws(function() {
 
-    it('should handle in #onError', function() {
+      // then
+      parser.parse('<xml />');
+    }, /foo/);
+  });
 
-        // given
-        parser.on('error', function(err, getContext) {
-            throw err;
-        });
 
-        parser.on('startNode', function() {
-            throw new Error('foo');
-        });
+  it('should handle in #onError', function() {
 
-        // when
-        assert.throws(function() {
-            parser.parse('<xml />');
-        }, /foo/);
+    // given
+    parser.on('error', function(err, getContext) {
+      throw err;
     });
+
+    parser.on('startNode', function() {
+      throw new Error('foo');
+    });
+
+    // when
+    assert.throws(function() {
+      parser.parse('<xml />');
+    }, /foo/);
+  });
 
 });
 
 
 describe('ns configuration', function() {
 
-    it('should throw on invalid #ns args', function() {
+  it('should throw on invalid #ns args', function() {
 
-        // given
-        var parser = new EasySax();
+    // given
+    var parser = new EasySax();
 
-        // when
-        function configure() {
-            parser.ns('bar');
-        }
+    // when
+    function configure() {
+      parser.ns('bar');
+    }
 
-        // then
-        assert.throws(configure, /required args <nsMap={}>/);
-    });
+    // then
+    assert.throws(configure, /required args <nsMap={}>/);
+  });
 
 });
