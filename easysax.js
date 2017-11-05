@@ -49,7 +49,7 @@ function replaceEntities(s, d, x, z) {
     return stringFromCharCode(parseInt(x, 16));
 }
 
-function unEntities(s) {
+function decodeEntities(s) {
     s = ('' + s);
 
     if (s.length > 3 && s.indexOf('&') !== -1) {
@@ -65,10 +65,10 @@ function unEntities(s) {
     return s;
 }
 
-function cloneMatrixNS(nsmatrix) {
-    var nn = {};
-    for (var n in nsmatrix) {
-        nn[n] = nsmatrix[n];
+function cloneNsMatrix(nsMatrix) {
+    var nn = {}, n;
+    for (n in nsMatrix) {
+        nn[n] = nsMatrix[n];
     }
     return nn;
 }
@@ -221,20 +221,20 @@ function EasySAXParser(options) {
      */
     function parse(str) {
         var xml = ('' + str)
-        , nsmatrixStack = isNamespace ? [] : null
-        , nsmatrix = isNamespace ? {} : null
-        , _nsmatrix
-        , nodestack = []
+        , nsMatrixStack = isNamespace ? [] : null
+        , nsMatrix = isNamespace ? {} : null
+        , _nsMatrix
+        , nodeStack = []
         , anonymousNsCount = 0
-        , tagstart = false
-        , tagend = false
+        , tagStart = false
+        , tagEnd = false
         , j = 0, i = 0
         , x, y, q, w
         , xmlns
         , xmlnsStack = isNamespace ? [] : null
         , _xmlns
-        , elem
-        , _elem
+        , elementName
+        , _elementName
         , elementProxy
         ;
 
@@ -358,7 +358,7 @@ function EasySAXParser(options) {
 
                     // handle xmlns(:alias) assignment
                     if (newalias !== null) {
-                        alias = useNS[unEntities(value)];
+                        alias = useNS[decodeEntities(value)];
 
                         if (!alias) {
                           if (newalias === 'xmlns') {
@@ -367,16 +367,16 @@ function EasySAXParser(options) {
                             alias = newalias;
                           }
 
-                          useNS[unEntities(value)] = alias;
+                          useNS[decodeEntities(value)] = alias;
                         }
 
-                        if (nsmatrix[newalias] !== alias) {
+                        if (nsMatrix[newalias] !== alias) {
                             if (!hasNewMatrix) {
-                                nsmatrix = cloneMatrixNS(nsmatrix);
+                                nsMatrix = cloneNsMatrix(nsMatrix);
                                 hasNewMatrix = true;
                             }
 
-                            nsmatrix[newalias] = alias;
+                            nsMatrix[newalias] = alias;
                         }
 
                         // expose xmlns(:asd)="..." in attributes
@@ -397,8 +397,8 @@ function EasySAXParser(options) {
                 }
 
                 // normalize namespaced attribute names
-                if ((nsAttrName = nsmatrix[name.substring(0, w)])) {
-                    nsAttrName = nsmatrix['xmlns'] === nsAttrName ? name.substr(w + 1) : nsAttrName;
+                if ((nsAttrName = nsMatrix[name.substring(0, w)])) {
+                    nsAttrName = nsMatrix['xmlns'] === nsAttrName ? name.substr(w + 1) : nsAttrName;
                     res[nsAttrName + name.substr(w)] = value;
                 }
             }
@@ -411,14 +411,14 @@ function EasySAXParser(options) {
 
             // handle deferred, possibly namespaced attributes
             if (maybeNS)  {
-                alias = nsmatrix['xmlns'];
+                alias = nsMatrix['xmlns'];
 
                 for (i = 0, l = attrList.length; i < l; i++) {
                     name = attrList[i++];
 
                     w = name.indexOf(':');
                     if (w !== -1) {
-                        if ((nsAttrName = nsmatrix[name.substring(0, w)])) {
+                        if ((nsAttrName = nsMatrix[name.substring(0, w)])) {
                             nsAttrName = alias === nsAttrName ? name.substr(w + 1) : nsAttrName + name.substr(w);
                             res[nsAttrName] = attrList[i];
                         }
@@ -491,12 +491,12 @@ function EasySAXParser(options) {
             elementProxy = Object.create({}, {
                 name: {
                     get: function() {
-                        return elem;
+                        return elementName;
                     }
                 },
                 originalName: {
                     get: function() {
-                        return _elem;
+                        return _elementName;
                     }
                 },
                 attrs: {
@@ -515,7 +515,7 @@ function EasySAXParser(options) {
             }
 
             if (i === -1) { // конец разбора
-                if (nodestack.length) {
+                if (nodeStack.length) {
                     return handleError('unexpected end of file');
                 }
 
@@ -523,7 +523,7 @@ function EasySAXParser(options) {
             }
 
             if (j !== i) {
-                onTextNode(xml.substring(j, i), unEntities);
+                onTextNode(xml.substring(j, i), decodeEntities);
                 if (parseStop) {
                     return;
                 }
@@ -557,7 +557,7 @@ function EasySAXParser(options) {
 
 
                     if (onComment) {
-                        onComment(xml.substring(i + 4, j), unEntities);
+                        onComment(xml.substring(i + 4, j), decodeEntities);
                         if (parseStop) {
                             return;
                         }
@@ -573,7 +573,7 @@ function EasySAXParser(options) {
                 }
 
                 if (onAttention) {
-                    onAttention(xml.substring(i, j + 1), unEntities);
+                    onAttention(xml.substring(i, j + 1), decodeEntities);
                     if (parseStop) {
                         return;
                     }
@@ -610,11 +610,11 @@ function EasySAXParser(options) {
 
             //if (xml.charCodeAt(i+1) === 47) { // </...
             if (w === 47) { // </...
-                tagstart = false;
-                tagend = true;
+                tagStart = false;
+                tagEnd = true;
 
                 // verify open <-> close tag match
-                x = elem = nodestack.pop();
+                x = elementName = nodeStack.pop();
                 q = i + 2 + x.length;
 
                 if (xml.substring(i + 2, q) !== x) {
@@ -634,16 +634,16 @@ function EasySAXParser(options) {
 
             } else {
                 if (xml.charCodeAt(j - 1) ===  47) { // .../>
-                    x = elem = xml.substring(i + 1, j - 1);
+                    x = elementName = xml.substring(i + 1, j - 1);
 
-                    tagstart = true;
-                    tagend = true;
+                    tagStart = true;
+                    tagEnd = true;
 
                 } else {
-                    x = elem = xml.substring(i + 1, j);
+                    x = elementName = xml.substring(i + 1, j);
 
-                    tagstart = true;
-                    tagend = false;
+                    tagStart = true;
+                    tagEnd = false;
                 }
 
                 if (!(w > 96  && w < 123 || w > 64 && w < 91 || w === 95 || w === 58)) { // char 95"_" 58":"
@@ -658,7 +658,7 @@ function EasySAXParser(options) {
                     }
 
                     if (w === 32 || (w < 14 && w > 8)) { // \f\n\r\t\v space
-                        elem = x.substring(0, q);
+                        elementName = x.substring(0, q);
                         // maybe there are attributes
                         attr_res = null;
                         break;
@@ -667,21 +667,21 @@ function EasySAXParser(options) {
                     return handleError('invalid nodeName');
                 }
 
-                if (!tagend) {
-                    nodestack.push(elem);
+                if (!tagEnd) {
+                    nodeStack.push(elementName);
                 }
             }
 
             if (isNamespace) {
 
-                _nsmatrix = nsmatrix;
+                _nsMatrix = nsMatrix;
                 _xmlns = xmlns;
 
-                if (tagstart) {
+                if (tagStart) {
                     // remember old namespace
                     // unless we're self-closing
-                    if (!tagend) {
-                        nsmatrixStack.push(_nsmatrix);
+                    if (!tagEnd) {
+                        nsMatrixStack.push(_nsMatrix);
                         xmlnsStack.push(xmlns);
                     }
 
@@ -700,14 +700,14 @@ function EasySAXParser(options) {
                     }
                 }
 
-                _elem = elem;
+                _elementName = elementName;
 
-                w = elem.indexOf(':');
+                w = elementName.indexOf(':');
                 if (w !== -1) {
-                    xmlns = nsmatrix[elem.substring(0, w)];
-                    elem = elem.substr(w + 1);
+                    xmlns = nsMatrix[elementName.substring(0, w)];
+                    elementName = elementName.substr(w + 1);
                 } else {
-                    xmlns = nsmatrix.xmlns;
+                    xmlns = nsMatrix.xmlns;
 
                     if (!xmlns && _xmlns) {
                         // if no default xmlns is defined,
@@ -717,20 +717,20 @@ function EasySAXParser(options) {
                 }
 
                 if (!xmlns) {
-                    return handleError('missing namespace on <' + _elem + '>');
+                    return handleError('missing namespace on <' + _elementName + '>');
                 }
 
-                elem = xmlns + ':' + elem;
+                elementName = xmlns + ':' + elementName;
             }
 
-            if (tagstart) {
+            if (tagStart) {
                 attr_posstart = q;
                 attr_string = x;
 
                 if (proxy) {
-                    onStartNode(elementProxy, unEntities, tagend, getContext);
+                    onStartNode(elementProxy, decodeEntities, tagEnd, getContext);
                 } else {
-                    onStartNode(elem, getAttrs, unEntities, tagend, getContext);
+                    onStartNode(elementName, getAttrs, decodeEntities, tagEnd, getContext);
                 }
 
                 if (parseStop) {
@@ -740,8 +740,8 @@ function EasySAXParser(options) {
                 attr_res = true;
             }
 
-            if (tagend) {
-                onEndNode(proxy ? elementProxy : elem, unEntities, tagstart, getContext);
+            if (tagEnd) {
+                onEndNode(proxy ? elementProxy : elementName, decodeEntities, tagStart, getContext);
 
                 if (parseStop) {
                     return;
@@ -749,11 +749,11 @@ function EasySAXParser(options) {
 
                 // restore old namespace
                 if (isNamespace) {
-                    if (!tagstart) {
-                        nsmatrix = nsmatrixStack.pop();
+                    if (!tagStart) {
+                        nsMatrix = nsMatrixStack.pop();
                         xmlns = xmlnsStack.pop();
                     } else {
-                        nsmatrix = _nsmatrix;
+                        nsMatrix = _nsMatrix;
                         xmlns = _xmlns;
                     }
                 }
