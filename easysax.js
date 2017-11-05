@@ -238,9 +238,9 @@ function EasySAXParser(options) {
         , elementProxy
         ;
 
-        var attr_string = ''
-        , attr_posstart = 0
-        , attr_res // false = parsed with errors, null = needs parsing
+        var attrsString = ''
+        , attrsStart = 0
+        , parsedAttrs // false = parsed with errors, null = needs parsing
         ;
 
         /**
@@ -252,14 +252,14 @@ function EasySAXParser(options) {
          * @return {Boolean|Object}
          */
         function getAttrs() {
-            if (attr_res !== null) {
-                return attr_res;
+            if (parsedAttrs !== null) {
+                return parsedAttrs;
             }
 
             var nsAttrName
             , attrList = isNamespace && maybeNS ? [] : null
-            , i = attr_posstart
-            , s = attr_string
+            , i = attrsStart
+            , s = attrsString
             , l = s.length
             , hasNewMatrix
             , newalias
@@ -283,7 +283,7 @@ function EasySAXParser(options) {
                 // wait for non whitespace character
                 if (w < 65 || w > 122 || (w > 90 && w < 97) ) {
                     if (w !== 95 && w !== 58) { // char 95"_" 58":"
-                        return attr_res = false; // error. invalid first char
+                        return parsedAttrs = false; // error. invalid first char
                     }
                 }
 
@@ -296,7 +296,7 @@ function EasySAXParser(options) {
                     }
 
                     if (w !== 61) { // "=" == 61
-                        return attr_res = false; // error. invalid char "="
+                        return parsedAttrs = false; // error. invalid char "="
                     }
 
                     break;
@@ -306,7 +306,7 @@ function EasySAXParser(options) {
                 ok = true;
 
                 if (name === 'xmlns:xmlns') {
-                    return attr_res = false; // error. invalid name
+                    return parsedAttrs = false; // error. invalid name
                 }
 
                 w = s.charCodeAt(j + 1);
@@ -316,14 +316,14 @@ function EasySAXParser(options) {
 
                 } else {
                     if (w !== 39) { // "'"
-                        return attr_res = false; // error. invalid char
+                        return parsedAttrs = false; // error. invalid char
                     }
 
                     j = s.indexOf('\'', i = j + 2 );
                 }
 
                 if (j === -1) {
-                    return attr_res = false; // error. invalid char
+                    return parsedAttrs = false; // error. invalid char
                 }
 
                 if (j + 1 < l) {
@@ -331,7 +331,7 @@ function EasySAXParser(options) {
 
                     if (w > 32 || w < 9 || (w < 32 && w > 13)) {
                         // error. invalid char
-                        return attr_res = false;
+                        return parsedAttrs = false;
                     }
                 }
 
@@ -406,7 +406,7 @@ function EasySAXParser(options) {
 
             if (!ok) {
                 // could not parse attributes, skipping
-                return attr_res = true;
+                return parsedAttrs = true;
             }
 
             // handle deferred, possibly namespaced attributes
@@ -428,7 +428,7 @@ function EasySAXParser(options) {
                 }
             }
 
-            return attr_res = res;
+            return parsedAttrs = res;
         }
 
         /**
@@ -606,7 +606,7 @@ function EasySAXParser(options) {
                 return handleError('unclosed tag');
             }
 
-            attr_res = true; // stop attribute processing
+            parsedAttrs = true; // stop attribute processing
 
             //if (xml.charCodeAt(i+1) === 47) { // </...
             if (w === 47) { // </...
@@ -660,7 +660,7 @@ function EasySAXParser(options) {
                     if (w === 32 || (w < 14 && w > 8)) { // \f\n\r\t\v space
                         elementName = x.substring(0, q);
                         // maybe there are attributes
-                        attr_res = null;
+                        parsedAttrs = null;
                         break;
                     }
 
@@ -685,13 +685,13 @@ function EasySAXParser(options) {
                         xmlnsStack.push(xmlns);
                     }
 
-                    if (attr_res !== true) {
+                    if (parsedAttrs !== true) {
                         // quick check, whether there may be namespace
                         // declarations on the node; if that is the case
                         // we need to eagerly parse the node attributes
                         if ((maybeNS = x.indexOf('xmlns', q) !== -1)) {
-                            attr_posstart = q;
-                            attr_string = x;
+                            attrsStart = q;
+                            attrsString = x;
 
                             getAttrs();
 
@@ -724,8 +724,8 @@ function EasySAXParser(options) {
             }
 
             if (tagStart) {
-                attr_posstart = q;
-                attr_string = x;
+                attrsStart = q;
+                attrsString = x;
 
                 if (proxy) {
                     onStartNode(elementProxy, decodeEntities, tagEnd, getContext);
@@ -737,7 +737,7 @@ function EasySAXParser(options) {
                     return;
                 }
 
-                attr_res = true;
+                parsedAttrs = true;
             }
 
             if (tagEnd) {
