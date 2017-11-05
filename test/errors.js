@@ -9,10 +9,6 @@ describe('handler errors', function() {
     beforeEach(function() {
 
         parser = new EasySax();
-
-        parser.ns('foo', {
-            'http://foo': 'foo'
-        });
     });
 
     it('should pass to #onError', function() {
@@ -36,7 +32,7 @@ describe('handler errors', function() {
         parser.parse('<xml />');
 
         // then
-        assert.ok(called);
+        assert.ok(called, 'error called == true');
     });
 
 
