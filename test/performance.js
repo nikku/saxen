@@ -23,7 +23,7 @@ describe('performance', function() {
 
     var parser = new EasySax();
 
-    parser.ns('foo', {
+    parser.ns({
         'http://foo': 'foo'
     });
 

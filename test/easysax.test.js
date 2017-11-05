@@ -47,7 +47,7 @@ function test(options) {
         parser = new EasySax();
 
         if (options.ns) {
-            parser.ns(options.ns, {
+            parser.ns({
                 'http://search.yahoo.com/mrss/': 'media',
                 'http://www.w3.org/1999/xhtml': 'xhtml',
                 'http://www.w3.org/2005/Atom': 'atom',

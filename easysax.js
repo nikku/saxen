@@ -167,8 +167,6 @@ function EasySAXParser() {
     var parseStop = false; // прервать парсер
     var useNS;
 
-    var defaultNsPrefix;
-
     function failSafe(cb, onError) {
         return function() {
             try {
@@ -214,33 +212,22 @@ function EasySAXParser() {
     /**
      * Set the namespace mapping.
      *
-     * @param  {String} defaultPrefix
      * @param  {Object} nsMap
      *
      * @return {EasySax}
      */
-    this.ns = function(defaultPrefix, nsMap) {
-        if (typeof defaultPrefix !== 'string' || !nsMap) {
-            throw error('required args <defaultPrefix, nsMap>');
+    this.ns = function(nsMap) {
+
+        if (typeof nsMap !== 'object') {
+            throw error('required args <nsMap={}>');
         }
 
-        var _useNS = {}, defaultDeclared, v, i;
+        var _useNS = {}, k;
 
-        for (i in nsMap) {
-            v = nsMap[i];
-
-            if (defaultPrefix === v) {
-                defaultDeclared = true;
-            }
-
-            _useNS[i] = v;
+        for (k in nsMap) {
+            _useNS[k] = nsMap[k];
         }
 
-        if (!defaultDeclared) {
-            throw error('no namespace uri defined for <' + defaultPrefix + '>');
-        }
-
-        defaultNsPrefix = defaultPrefix;
         isNamespace = true;
         useNS = _useNS;
 
@@ -270,7 +257,7 @@ function EasySAXParser() {
     function parse(str) {
         var xml = ('' + str)
         , nsmatrixStack = isNamespace ? [] : null
-        , nsmatrix = isNamespace ? { xmlns: defaultNsPrefix } : null
+        , nsmatrix = isNamespace ? {} : null
         , _nsmatrix
         , nodestack = []
         , anonymousNsCount = 0

@@ -74,23 +74,6 @@ describe('handler errors', function() {
 
 describe('ns configuration', function() {
 
-    it('should throw on missing default ns uri', function() {
-
-        // given
-        var parser = new EasySax();
-
-        // when
-        function configure() {
-            parser.ns('bar', {
-                'http://foo': 'foo'
-            });
-        }
-
-        // then
-        assert.throws(configure, /no namespace uri defined for <bar>/);
-    });
-
-
     it('should throw on invalid #ns args', function() {
 
         // given
@@ -102,7 +85,7 @@ describe('ns configuration', function() {
         }
 
         // then
-        assert.throws(configure, /required args <defaultPrefix, nsMap>/);
+        assert.throws(configure, /required args <nsMap={}>/);
     });
 
 });
