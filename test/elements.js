@@ -453,3 +453,22 @@ test({
     ],
 });
 
+
+// test missing namespace
+test({
+    xml: (
+        '<foo xmlns="http://xxx">' +
+            '<bar:unknown />' +
+        '</foo>'
+    ),
+    ns: 'atom',
+    to: [
+        ['startNode', 'ns0:foo' ],
+        ['error', 'missing namespace on <bar:unknown>', {
+            data: '<bar:unknown />',
+            line: 0,
+            column: 24
+        } ]
+    ],
+});
+

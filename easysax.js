@@ -516,8 +516,7 @@ function EasySAXParser(options) {
 
             if (i === -1) { // конец разбора
                 if (nodestack.length) {
-                    handleError('unexpected end of file');
-                    return;
+                    return handleError('unexpected end of file');
                 }
 
                 return;
@@ -537,8 +536,7 @@ function EasySAXParser(options) {
                 if (w === 91 && xml.substr(i + 3, 6) === 'CDATA[') { // 91 == "["
                     j = xml.indexOf(']]>', i);
                     if (j === -1) {
-                        handleError('unclosed cdata');
-                        return;
+                        return handleError('unclosed cdata');
                     }
 
                     onCDATA(xml.substring(i + 9, j), false);
@@ -554,8 +552,7 @@ function EasySAXParser(options) {
                 if (w === 45 && xml.charCodeAt(i + 3) === 45) { // 45 == "-"
                     j = xml.indexOf('-->', i);
                     if (j === -1) {
-                        handleError('unclosed comment');
-                        return;
+                        return handleError('unclosed comment');
                     }
 
 
@@ -572,8 +569,7 @@ function EasySAXParser(options) {
 
                 j = xml.indexOf('>', i + 1);
                 if (j === -1) {
-                    handleError('unclosed tag');
-                    return;
+                    return handleError('unclosed tag');
                 }
 
                 if (onAttention) {
@@ -590,8 +586,7 @@ function EasySAXParser(options) {
             if (w === 63) { // "?"
                 j = xml.indexOf('?>', i);
                 if (j === -1) { // error
-                    handleError('unclosed question');
-                    return;
+                    return handleError('unclosed question');
                 }
 
                 if (onQuestion) {
@@ -608,8 +603,7 @@ function EasySAXParser(options) {
             j = xml.indexOf('>', i + 1);
 
             if (j == -1) { // error
-                handleError('unclosed tag');
-                return;
+                return handleError('unclosed tag');
             }
 
             attr_res = true; // stop attribute processing
@@ -624,8 +618,7 @@ function EasySAXParser(options) {
                 q = i + 2 + x.length;
 
                 if (xml.substring(i + 2, q) !== x) {
-                    handleError('closing tag mismatch');
-                    return;
+                    return handleError('closing tag mismatch');
                 }
 
                 // проверим что в закрываюшем теге нет лишнего
@@ -636,8 +629,7 @@ function EasySAXParser(options) {
                         continue;
                     }
 
-                    handleError('close tag');
-                    return;
+                    return handleError('close tag');
                 }
 
             } else {
@@ -655,8 +647,7 @@ function EasySAXParser(options) {
                 }
 
                 if (!(w > 96  && w < 123 || w > 64 && w < 91 || w === 95 || w === 58)) { // char 95"_" 58":"
-                    handleError('illegal first char nodeName');
-                    return;
+                    return handleError('illegal first char nodeName');
                 }
 
                 for (q = 1, y = x.length; q < y; q++) {
@@ -673,8 +664,7 @@ function EasySAXParser(options) {
                         break;
                     }
 
-                    handleError('invalid nodeName');
-                    return;
+                    return handleError('invalid nodeName');
                 }
 
                 if (!tagend) {
@@ -727,24 +717,7 @@ function EasySAXParser(options) {
                 }
 
                 if (!xmlns) {
-                    handleError('missing namespace on <' + _elem + '>');
-
-                    // skip bad element, in case error handler
-                    // wishes recovery...
-                    if (tagend) {
-                        if (tagstart) {
-                            nsmatrix = _nsmatrix;
-                            xmlns = _xmlns;
-                        } else {
-                            nsmatrix = nsmatrixStack.pop();
-                            xmlns = xmlnsStack.pop();
-                        }
-                    } else {
-                        attr_res = true;
-                    }
-
-                    j += 1;
-                    continue;
+                    return handleError('missing namespace on <' + _elem + '>');
                 }
 
                 elem = xmlns + ':' + elem;
