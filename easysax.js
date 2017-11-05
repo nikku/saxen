@@ -136,11 +136,12 @@ function EasySAXParser(options) {
    * @return {EasySax}
    */
   this.on = function(name, cb) {
+
     if (typeof cb !== 'function') {
-      if (cb !== null) return;
+      throw error('required args <name, cb>');
     }
 
-    if (typeof cb === 'function' && name !== 'error') {
+    if (name !== 'error') {
       cb = failSafe(cb, handleError);
     }
 
@@ -193,7 +194,7 @@ function EasySAXParser(options) {
    */
   this.parse = function(xml) {
     if (typeof xml !== 'string') {
-      return;
+      throw error('required args <xml=string>');
     }
 
     returnError = null;
