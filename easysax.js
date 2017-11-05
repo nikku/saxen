@@ -187,6 +187,14 @@ function EasySAXParser() {
         onError(err, getContext);
     }
 
+    /**
+     * Register parse listener.
+     *
+     * @param  {String}   name
+     * @param  {Function} cb
+     *
+     * @return {EasySax}
+     */
     this.on = function(name, cb) {
         if (typeof cb !== 'function') {
             if (cb !== null) return;
@@ -207,6 +215,8 @@ function EasySAXParser() {
             case 'question': onQuestion = cb; is_onQuestion = !!cb; break; // <? ....  ?>
             case 'comment': onComment = cb; is_onComment = !!cb; break;
         }
+
+        return this;
     };
 
     /**
@@ -234,6 +244,13 @@ function EasySAXParser() {
         return this;
     };
 
+    /**
+     * Parse xml string.
+     *
+     * @param  {String} xml
+     *
+     * @return {Error} returnError, if not thrown
+     */
     this.parse = function(xml) {
         if (typeof xml !== 'string') {
             return;
@@ -249,11 +266,19 @@ function EasySAXParser() {
         return returnError;
     };
 
+    /**
+     * Stop parsing.
+     */
     this.stop = function() {
         parseStop = true;
     };
 
-    // xml - string
+
+    /**
+     * Parse string, invoking configured listeners on element.
+     *
+     * @param  {String} str
+     */
     function parse(str) {
         var xml = ('' + str)
         , nsmatrixStack = isNamespace ? [] : null
