@@ -365,7 +365,7 @@ test({
     ],
 });
 
-// nested <unprefixed></unprefixed> namespace handling
+// nested <unprefixed></unprefixed> with default namespace
 test({
     xml: (
         '<foo xmlns="http://this" xmlns:bar="http://bar">' +
@@ -382,6 +382,26 @@ test({
         ['endNode', 'ns1:n'],
         ['endNode', 'ns1:t'],
         ['endNode', 'ns0:foo'],
+    ],
+});
+
+// nested <unprefixed /> with non-default namespace handling
+test({
+    xml: (
+        '<foo:root xmlns:foo="http://foo" xmlns:bar="http://bar">' +
+            '<bar:outer>' +
+                '<nested/>' +
+            '</bar:outer>' +
+        '</foo:root>'
+    ),
+    ns: 'atom',
+    to: [
+        ['startNode', 'foo:root'],
+        ['startNode', 'bar:outer'],
+        ['startNode', 'bar:nested'],
+        ['endNode', 'bar:nested'],
+        ['endNode', 'bar:outer'],
+        ['endNode', 'foo:root'],
     ],
 });
 

@@ -293,6 +293,8 @@ function EasySAXParser(options) {
         , j = 0, i = 0
         , x, y, q, w
         , xmlns
+        , xmlnsStack = isNamespace ? [] : null
+        , _xmlns
         , elem
         , _elem
         , elementProxy
@@ -745,12 +747,14 @@ function EasySAXParser(options) {
             if (isNamespace) {
 
                 _nsmatrix = nsmatrix;
+                _xmlns = xmlns;
 
                 if (tagstart) {
                     // remember old namespace
                     // unless we're self-closing
                     if (!tagend) {
                         nsmatrixStack.push(_nsmatrix);
+                        xmlnsStack.push(xmlns);
                     }
 
                     if (attr_res !== true) {
@@ -776,6 +780,12 @@ function EasySAXParser(options) {
                     elem = elem.substr(w + 1);
                 } else {
                     xmlns = nsmatrix.xmlns;
+
+                    if (!xmlns && _xmlns) {
+                        // if no default xmlns is defined,
+                        // inherit xmlns from parent
+                        xmlns = _xmlns;
+                    }
                 }
 
                 if (!xmlns) {
@@ -786,8 +796,10 @@ function EasySAXParser(options) {
                     if (tagend) {
                         if (tagstart) {
                             nsmatrix = _nsmatrix;
+                            xmlns = _xmlns;
                         } else {
                             nsmatrix = nsmatrixStack.pop();
+                            xmlns = xmlnsStack.pop();
                         }
                     } else {
                         attr_res = true;
@@ -828,8 +840,10 @@ function EasySAXParser(options) {
                 if (isNamespace) {
                     if (!tagstart) {
                         nsmatrix = nsmatrixStack.pop();
+                        xmlns = xmlnsStack.pop();
                     } else {
                         nsmatrix = _nsmatrix;
+                        xmlns = _xmlns;
                     }
                 }
             }
