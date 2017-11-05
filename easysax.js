@@ -99,10 +99,6 @@ function EasySAXParser(options) {
         onQuestion,
         onAttention;
 
-    var is_onComment,
-        is_onQuestion,
-        is_onAttention;
-
     var getContext = noopGetContext;
 
     var maybeNS = false;
@@ -155,9 +151,9 @@ function EasySAXParser(options) {
             case 'error': onError = cb || throwFunc; break;
             case 'cdata': onCDATA = cb || nullFunc; break;
 
-            case 'attention': onAttention = cb; is_onAttention = !!cb; break; // <!XXXXX zzzz="eeee">
-            case 'question': onQuestion = cb; is_onQuestion = !!cb; break; // <? ....  ?>
-            case 'comment': onComment = cb; is_onComment = !!cb; break;
+            case 'attention': onAttention = cb; break; // <!XXXXX zzzz="eeee">
+            case 'question': onQuestion = cb; break; // <? ....  ?>
+            case 'comment': onComment = cb; break;
         }
 
         return this;
@@ -563,7 +559,7 @@ function EasySAXParser(options) {
                     }
 
 
-                    if (is_onComment) {
+                    if (onComment) {
                         onComment(xml.substring(i + 4, j), unEntities);
                         if (parseStop) {
                             return;
@@ -580,7 +576,7 @@ function EasySAXParser(options) {
                     return;
                 }
 
-                if (is_onAttention) {
+                if (onAttention) {
                     onAttention(xml.substring(i, j + 1), unEntities);
                     if (parseStop) {
                         return;
@@ -598,7 +594,7 @@ function EasySAXParser(options) {
                     return;
                 }
 
-                if (is_onQuestion) {
+                if (onQuestion) {
                     onQuestion(xml.substring(i, j + 2));
                     if (parseStop) {
                         return;
