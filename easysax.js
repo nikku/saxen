@@ -143,7 +143,7 @@ function EasySAXParser() {
     'use strict';
 
     if (!this) {
-        return null;
+        return new EasySAXParser();
     }
 
     var onTextNode = nullFunc,
