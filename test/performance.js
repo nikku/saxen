@@ -19,27 +19,35 @@ describe('performance', function() {
   }
 
 
-  function test() {
+  function test(options) {
 
-    var parser = new EasySax();
+    return function() {
+      var parser = new EasySax(options);
 
-    parser.ns({
-        'http://foo': 'foo'
-    });
+      parser.ns({
+          'http://foo': 'foo'
+      });
 
-    var counter = 0;
+      var counter = 0;
 
-    parser.on('startNode', function(name, attrs) {
-        counter++;
+      parser.on('startNode', function(el, attrs) {
+          counter++;
 
-        attrs();
-    });
+          // el.attrs;
+          el.name;
+          el.originalName;
+          el.ns;
 
-    // when
-    parser.parse(xml);
+          // attrs();
+      });
 
-    // then
-    assert.ok(counter > 2000);
+      // when
+      parser.parse(xml);
+
+      // then
+      assert.ok(counter > 2000);
+    };
+
   }
 
 
@@ -56,16 +64,35 @@ describe('performance', function() {
   }
 
 
-  it('should parse FAST', function() {
+  it('should parse FAST (proxy)', function() {
 
     // given
-    repeat(test, 5);
-    var no = 20;
+    var no = 200;
 
     // when
-    var t = time(repeater(test, no));
+    repeat(test({ proxy: true }), 5);
+
+    var t = time(repeater(test({ proxy: true }), no));
 
     var average = t / no;
+
+    repeat(test(), 5);
+
+    var t1 = time(repeater(test(), no));
+
+    var average1 = t1 / no;
+
+    console.log('PERF (plain)');
+    console.log('avg', average1);
+    console.log('sum', t1);
+
+    console.log('PERF (proxy)')
+    console.log('avg', average);
+    console.log('sum', t);
+
+    var difference = Math.round((t/t1) * 100) - 100;
+
+    console.log('difference %s%s%', difference > 0 ? '+' : '', difference);
 
     // then
     assert.ok(average < 12, average + ' < 5');

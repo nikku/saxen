@@ -139,12 +139,14 @@ function throwFunc(err) {
     throw err;
 }
 
-function EasySAXParser() {
+function EasySAXParser(options) {
     'use strict';
 
     if (!this) {
-        return new EasySAXParser();
+        return new EasySAXParser(options);
     }
+
+    var proxy = options && options.proxy;
 
     var onTextNode = nullFunc,
         onStartNode = nullFunc,
@@ -293,6 +295,7 @@ function EasySAXParser() {
         , xmlns
         , elem
         , _elem
+        , elementProxy
         ;
 
         var attr_string = ''
@@ -544,6 +547,24 @@ function EasySAXParser() {
         getContext = getParseContext;
 
 
+        if (proxy) {
+            elementProxy = Object.create({}, {
+                name: {
+                    get: function() {
+                        return elem;
+                    }
+                },
+                originalName: {
+                    get: function() {
+                        return _elem;
+                    }
+                },
+                attrs: {
+                    get: getAttrs
+                }
+            });
+        }
+
         // actual parse logic
         while (j !== -1) {
 
@@ -783,7 +804,12 @@ function EasySAXParser() {
                 attr_posstart = q;
                 attr_string = x;
 
-                onStartNode(elem, getAttrs, unEntities, tagend, getContext);
+                if (proxy) {
+                    onStartNode(elementProxy, unEntities, tagend, getContext);
+                } else {
+                    onStartNode(elem, getAttrs, unEntities, tagend, getContext);
+                }
+
                 if (parseStop) {
                     return;
                 }
@@ -792,7 +818,8 @@ function EasySAXParser() {
             }
 
             if (tagend) {
-                onEndNode(elem, unEntities, tagstart, getContext);
+                onEndNode(proxy ? elementProxy : elem, unEntities, tagstart, getContext);
+
                 if (parseStop) {
                     return;
                 }
