@@ -81,8 +81,14 @@ function throwFunc(err) {
   throw err;
 }
 
+/**
+ * Creates a new parser with the given options.
+ *
+ * @param {Object} options
+ *
+ * @constructor
+ */
 function EasySAXParser(options) {
-  'use strict';
 
   if (!this) {
     return new EasySAXParser(options);
