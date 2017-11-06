@@ -15,7 +15,9 @@ describe('document parsing', function() {
     require('./performance');
   }
 
-  require('./proxy');
+  require('./modes');
+
+  require('./decode');
 
 });
 

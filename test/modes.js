@@ -3,7 +3,7 @@ var assert = require('assert');
 var Parser = require('../');
 
 
-describe('proxy mode', function() {
+describe('modes', function() {
 
   it('should parse in proxy mode', function() {
 
@@ -15,7 +15,7 @@ describe('proxy mode', function() {
 
     var counter = 0;
 
-    parser.on('startNode', function(el, attrs) {
+    parser.on('startNode', function(el, decodeEntities) {
       counter++;
 
       assert.equal(el.name, 'ns:root');
@@ -23,15 +23,25 @@ describe('proxy mode', function() {
 
       assert.deepEqual(el.attrs, {
         xmlns: 'http://ns',
-        foo: 'BAR'
+        foo: '&quot;'
       });
+
+      assert.equal(decodeEntities(el.attrs.foo), '"');
     });
 
     // when
-    parser.parse('<root xmlns="http://ns" foo="BAR" />');
+    parser.parse('<root xmlns="http://ns" foo="&quot;" />');
 
     // then
     assert.ok(counter === 1, 'parsed one node');
+  });
+
+
+  it('should instantiate functional', function() {
+
+    var parser = Parser();
+
+    assert.ok(parser instanceof Parser, 'Parser() instanceof Parser');
   });
 
 });

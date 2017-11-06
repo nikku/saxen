@@ -5,7 +5,7 @@
     "all": "run-s lint test",
     "lint": "eslint parser.js test/*.js",
     "test": "mocha test/index.js",
-    "test-coverage": "NO_PERF=1 nyc --check-coverage --statements 90 npm test"
+    "test-coverage": "NO_PERF=1 nyc --check-coverage --statements 95 npm test"
   },
   "keywords": [
     "xml",
