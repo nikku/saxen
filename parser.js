@@ -182,6 +182,10 @@ function Saxen(options) {
    */
   this.ns = function(nsMap) {
 
+    if (typeof nsMap === 'undefined') {
+      nsMap = {};
+    }
+
     if (typeof nsMap !== 'object') {
       throw error('required args <nsMap={}>');
     }

@@ -11,6 +11,7 @@ describe('handler errors', function() {
     parser = new Parser();
   });
 
+
   it('should pass to #onError', function() {
 
     // given
@@ -86,6 +87,21 @@ describe('ns configuration', function() {
 
     // then
     assert.throws(configure, /required args <nsMap={}>/);
+  });
+
+
+  it('should NOT throw on empty #ns args', function() {
+
+    // given
+    var parser = new Parser();
+
+    // when
+    function configure() {
+      parser.ns();
+    }
+
+    // then
+    assert.doesNotThrow(configure);
   });
 
 });
