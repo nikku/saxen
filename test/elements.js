@@ -255,7 +255,7 @@ test({
 
 test({
   xml: '<feed xmlns="http://www.w3.org/2005/Atom" xmlns:media="http://search.yahoo.com/mrss/" id="aa" media:title="bb"/>',
-  ns: 'atom',
+  ns: true,
   to: [
     ['startNode', 'atom:feed', { id: 'aa', 'media:title': 'bb' }],
     ['endNode', 'atom:feed'],
@@ -264,7 +264,7 @@ test({
 
 test({
   xml: '<feed xmlns="http://www.w3.org/2005/Atom" xmlns:media="http://search.yahoo.com/mrss/" id="aa" media:title="bb"></feed>',
-  ns: 'atom',
+  ns: true,
   to: [
     ['startNode', 'atom:feed', { id: 'aa', 'media:title': 'bb' }],
     ['endNode', 'atom:feed'],
@@ -273,7 +273,7 @@ test({
 
 test({
   xml: '<feed xmlns="http://www.w3.org/2005/Atom" xmlns:m="http://search.yahoo.com/mrss/" id="aa" m:title="bb"/>',
-  ns: 'atom',
+  ns: true,
   to: [
     ['startNode', 'atom:feed', { id: 'aa', 'media:title': 'bb' }],
     ['endNode', 'atom:feed'],
@@ -282,7 +282,7 @@ test({
 
 test({
   xml: '<feed xmlns="http://www.w3.org/2005/Atom" xmlns:a="http://www.w3.org/2005/Atom" id="aa" a:title="bb"/>',
-  ns: 'atom',
+  ns: true,
   to: [
     ['startNode', 'atom:feed', { id: 'aa', 'title': 'bb' }],
     ['endNode', 'atom:feed'],
@@ -291,7 +291,7 @@ test({
 
 test({
   xml: '<feed xmlns="http://www.w3.org/2005/Atom" xmlns:media="http://search.yahoo.com/mrss/"><media:title>text</media:title></feed>',
-  ns: 'atom',
+  ns: true,
   to: [
     ['startNode', 'atom:feed'],
     ['startNode', 'media:title'],
@@ -303,7 +303,7 @@ test({
 
 test({
   xml: '<feed xmlns="http://www.w3.org/2005/Atom" xmlns:m="http://search.yahoo.com/mrss/"><m:title>text</m:title></feed>',
-  ns: 'atom',
+  ns: true,
   to: [
     ['startNode', 'atom:feed'],
     ['startNode', 'media:title'],
@@ -316,7 +316,7 @@ test({
 
 test({
   xml: '<feed xmlns="http://www.w3.org/2005/Atom" xmlns:a="http://www.w3.org/2005/Atom"><a:title>text</a:title></feed>',
-  ns: 'atom',
+  ns: true,
   to: [
     ['startNode', 'atom:feed'],
     ['startNode', 'atom:title'],
@@ -328,7 +328,7 @@ test({
 
 test({
   xml: '<feed xmlns="http://www.w3.org/2005/Atom" xmlns:="http://search.yahoo.com/mrss/" id="aa" :title="bb"><:text/></feed>',
-  ns: 'atom',
+  ns: true,
   to: [
     ['startNode', 'atom:feed', { id: 'aa', 'media:title': 'bb' }],
     ['startNode', 'media:text'],
@@ -340,7 +340,7 @@ test({
 // un-registered namespace handling
 test({
   xml: '<root xmlns="http://foo" xmlns:bar="http://bar" id="aa" bar:title="bb"><bar:child /></root>',
-  ns: 'atom',
+  ns: true,
   to: [
     ['startNode', 'ns0:root', { id: 'aa', 'bar:title': 'bb' }],
     ['startNode', 'bar:child'],
@@ -357,7 +357,7 @@ test({
     '  <:text/>\n' +
     '</feed>'
   ),
-  ns: 'atom',
+  ns: true,
   to: [
     ['startNode', 'atom:feed', { id: 'aa', 'media:title': 'bb' }, false, {
       line: 0,
@@ -383,7 +383,7 @@ test({
       '<:text/>' +
     '</feed>'
   ),
-  ns: 'atom',
+  ns: true,
   to: [
     ['startNode', 'atom:feed', { id: 'aa', 'media:title': 'bb' }, false, {
       line: 0,
@@ -405,7 +405,7 @@ test({
   xml: (
     '<foo xmlns="http://this" xmlns:that="http://that" id="aa" that:title="bb" />'
   ),
-  ns: 'atom',
+  ns: true,
   to: [
     ['startNode', 'ns0:foo', { id: 'aa', 'that:title': 'bb' }, true, {
       line: 0,
@@ -427,7 +427,7 @@ test({
       '<t xmlns="http://that" id="aa" bar:title="bb" />' +
     '</foo>'
   ),
-  ns: 'atom',
+  ns: true,
   to: [
     ['startNode', 'ns0:foo', true, false],
     ['startNode', 'ns1:t', { id: 'aa', 'bar:title': 'bb' }, true],
@@ -446,7 +446,7 @@ test({
       '</t>' +
     '</foo>'
   ),
-  ns: 'atom',
+  ns: true,
   to: [
     ['startNode', 'ns0:foo'],
     ['startNode', 'ns1:t'],
@@ -468,7 +468,7 @@ test({
       '</t>' +
     '</foo>'
   ),
-  ns: 'atom',
+  ns: true,
   to: [
     ['startNode', 'ns0:foo'],
     ['startNode', 'ns1:t' ],
@@ -488,7 +488,7 @@ test({
       '</bar:outer>' +
     '</foo:root>'
   ),
-  ns: 'atom',
+  ns: true,
   to: [
     ['startNode', 'foo:root'],
     ['startNode', 'bar:outer'],
@@ -508,7 +508,7 @@ test({
       '</t>' +
     '</foo>'
   ),
-  ns: 'atom',
+  ns: true,
   to: [
     ['startNode', 'ns0:foo'],
     ['startNode', 'ns1:t'],
@@ -524,7 +524,7 @@ test({
   xml: (
     '<foo xmlns="http://xxx"></foo>'
   ),
-  ns: 'atom',
+  ns: true,
   to: [
     ['startNode', 'ns0:foo', { xmlns: 'http://xxx' } ],
     ['endNode', 'ns0:foo', false],
@@ -536,7 +536,7 @@ test({
   xml: (
     '<foo xmlns="http://xxx" xmlns:a="http://www.w3.org/2005/Atom" a:xx="foo"></foo>'
   ),
-  ns: 'atom',
+  ns: true,
   to: [
     ['startNode', 'ns0:foo', {
       'xmlns:a': 'http://www.w3.org/2005/Atom',
@@ -547,7 +547,6 @@ test({
   ],
 });
 
-
 // test missing namespace
 test({
   xml: (
@@ -555,7 +554,7 @@ test({
       '<bar:unknown />' +
     '</foo>'
   ),
-  ns: 'atom',
+  ns: true,
   to: [
     ['startNode', 'ns0:foo' ],
     ['error', 'missing namespace on <bar:unknown>', {
@@ -566,3 +565,37 @@ test({
   ],
 });
 
+// illegal namespace prefix
+test({
+  xml: (
+    '<a$uri:foo xmlns:a$uri="http://not-atom" />'
+  ),
+  ns: true,
+  to: [
+    ['error', 'invalid nodeName'],
+  ],
+});
+
+// namespace collision
+test({
+  xml: (
+    '<atom:foo xmlns:atom="http://not-atom" />'
+  ),
+  ns: true,
+  to: [
+    ['startNode', 'ns0:foo'],
+    ['endNode', 'ns0:foo'],
+  ],
+});
+
+// anonymous ns prefix collision
+test({
+  xml: (
+    '<foo xmlns="http://not-ns0" xmlns:ns0="http://ns0" ns0:bar="BAR" />'
+  ),
+  ns: true,
+  to: [
+    ['startNode', 'ns0:foo', { 'ns1:bar': 'BAR' } ],
+    ['endNode', 'ns0:foo'],
+  ],
+});
