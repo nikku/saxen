@@ -73,6 +73,24 @@ function cloneNsMatrix(nsMatrix) {
   return nn;
 }
 
+function uriPrefix(prefix) {
+  return prefix + '$uri';
+}
+
+function buildNsMatrix(useNS) {
+  var nsMatrix = {},
+      uri,
+      prefix;
+
+  for (uri in useNS) {
+    prefix = useNS[uri];
+    nsMatrix[prefix] = prefix;
+    nsMatrix[uriPrefix(prefix)] = uri;
+  }
+
+  return nsMatrix;
+}
+
 function noopGetContext() {  return { line: 0, column: 0 }; }
 
 function nullFunc() {}
@@ -242,7 +260,7 @@ function Saxen(options) {
   function parse(str) {
     var xml = ('' + str),
         nsMatrixStack = isNamespace ? [] : null,
-        nsMatrix = isNamespace ? {} : null,
+        nsMatrix = isNamespace ? buildNsMatrix(useNS) : null,
         _nsMatrix,
         nodeStack = [],
         anonymousNsCount = 0,
@@ -277,6 +295,8 @@ function Saxen(options) {
       }
 
       var nsAttrName,
+          nsUri,
+          nsUriPrefix,
           attrList = isNamespace && maybeNS ? [] : null,
           i = attrsStart,
           s = attrsString,
@@ -377,16 +397,26 @@ function Saxen(options) {
 
           // handle xmlns(:alias) assignment
           if (newalias !== null) {
-            alias = useNS[decodeEntities(value)];
+            nsUri = decodeEntities(value);
+            nsUriPrefix = uriPrefix(newalias);
+
+            alias = useNS[nsUri];
 
             if (!alias) {
-              if (newalias === 'xmlns') {
-                alias = 'ns' + (anonymousNsCount++);
+              // no prefix defined or prefix collision
+              if (
+                (newalias === 'xmlns') ||
+                (nsUriPrefix in nsMatrix && nsMatrix[nsUriPrefix] !== nsUri)
+              ) {
+                // alocate free ns prefix
+                do {
+                  alias = 'ns' + (anonymousNsCount++);
+                } while (typeof nsMatrix[alias] !== 'undefined');
               } else {
                 alias = newalias;
               }
 
-              useNS[decodeEntities(value)] = alias;
+              useNS[nsUri] = alias;
             }
 
             if (nsMatrix[newalias] !== alias) {
@@ -396,6 +426,11 @@ function Saxen(options) {
               }
 
               nsMatrix[newalias] = alias;
+              if (newalias === 'xmlns') {
+                nsMatrix[uriPrefix(alias)] = nsUri;
+              }
+
+              nsMatrix[nsUriPrefix] = nsUri;
             }
 
             // expose xmlns(:asd)="..." in attributes
