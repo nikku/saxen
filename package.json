@@ -2,7 +2,7 @@
   "name": "saxen",
   "description": "A tiny, super fast, namespace aware sax-style XML parser written in plain JavaScript",
   "scripts": {
-    "all": "run-s lint test",
+    "all": "run-s lint test-coverage",
     "lint": "eslint parser.js test/*.js",
     "test": "mocha test/index.js",
     "test-coverage": "NO_PERF=1 nyc --check-coverage --statements 95 npm test"
