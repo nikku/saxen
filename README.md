@@ -25,7 +25,7 @@ var parser = new Parser();
 // to the ones configured here
 parser.ns({
   'http://foo': 'foo',
-  'bar': 'http://bar'
+  'http://bar': 'bar'
 });
 
 parser.on('startNode', function(elementName, getAttrs, decodeEntity, isClosing, getContext) {
@@ -34,7 +34,7 @@ parser.on('startNode', function(elementName, getAttrs, decodeEntity, isClosing, 
   // with prefix, i.e. foo:blub
 
   var attrs = getAttrs();
-  // { name: value }
+  // { 'bar:aa': 'A', ... }
 });
 
 parser.on('endNode', function(elementName, decodeEntity, isOpening, getContext) {
@@ -45,7 +45,7 @@ parser.on('error', function(err, getContext) {
   // rethrow or compensate for err
 });
 
-parser.parse('<blub xmlns="http://foo" />');
+parser.parse('<blub xmlns="http://foo" xmlns:bar="http://bar" bar:aa="A" />');
 ```
 
 
