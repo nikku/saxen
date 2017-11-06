@@ -1,6 +1,6 @@
 'use strict';
 
-module.exports = EasySAXParser;
+module.exports = Saxen;
 
 var stringFromCharCode = String.fromCharCode;
 var xharsQuot = {
@@ -88,10 +88,10 @@ function throwFunc(err) {
  *
  * @constructor
  */
-function EasySAXParser(options) {
+function Saxen(options) {
 
   if (!this) {
-    return new EasySAXParser(options);
+    return new Saxen(options);
   }
 
   var proxy = options && options.proxy;

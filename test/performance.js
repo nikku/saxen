@@ -2,7 +2,7 @@ var assert = require('assert');
 
 var fs = require('fs');
 
-var EasySax = require('../easysax');
+var Parser = require('../');
 
 
 describe('performance', function() {
@@ -22,7 +22,7 @@ describe('performance', function() {
   function test(options) {
 
     return function() {
-      var parser = new EasySax(options);
+      var parser = new Parser(options);
 
       parser.ns({
         'http://foo': 'foo'

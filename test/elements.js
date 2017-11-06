@@ -1,4 +1,4 @@
-var test = require('./easysax.test.js');
+var test = require('./test');
 
 // // default ns:
 // // {

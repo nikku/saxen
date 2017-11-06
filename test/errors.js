@@ -1,4 +1,4 @@
-var EasySax = require('../easysax');
+var Parser = require('../');
 var assert = require('assert');
 
 
@@ -8,7 +8,7 @@ describe('handler errors', function() {
 
   beforeEach(function() {
 
-    parser = new EasySax();
+    parser = new Parser();
   });
 
   it('should pass to #onError', function() {
@@ -77,7 +77,7 @@ describe('ns configuration', function() {
   it('should throw on invalid #ns args', function() {
 
     // given
-    var parser = new EasySax();
+    var parser = new Parser();
 
     // when
     function configure() {
