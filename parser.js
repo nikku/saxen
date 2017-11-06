@@ -550,6 +550,7 @@ function Saxen(options) {
 
       w = xml.charCodeAt(i+1);
 
+      // parse comments + CDATA
       if (w === 33) { // "!"
         w = xml.charCodeAt(i+2);
         if (w === 91 && xml.substr(i + 3, 6) === 'CDATA[') { // 91 == "["
