@@ -152,15 +152,17 @@ function Saxen(options) {
     }
 
     switch (name) {
-    case 'startNode': onStartNode = cb || nullFunc; break;
-    case 'textNode': onTextNode = cb || nullFunc; break;
-    case 'endNode': onEndNode = cb || nullFunc; break;
-    case 'error': onError = cb || throwFunc; break;
-    case 'cdata': onCDATA = cb || nullFunc; break;
+    case 'startNode': onStartNode = cb; break;
+    case 'textNode': onTextNode = cb; break;
+    case 'endNode': onEndNode = cb; break;
+    case 'error': onError = cb; break;
+    case 'cdata': onCDATA = cb; break;
 
     case 'attention': onAttention = cb; break; // <!XXXXX zzzz="eeee">
     case 'question': onQuestion = cb; break; // <? ....  ?>
     case 'comment': onComment = cb; break;
+    default:
+      throw error('unsupported event: ' + name);
     }
 
     return this;
