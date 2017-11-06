@@ -11,9 +11,11 @@ describe('document parsing', function() {
   });
 
 
-  if (!process.env.TRAVIS) {
+  if (!process.env.TRAVIS && !process.env.NO_PERF) {
     require('./performance');
   }
+
+  require('./proxy');
 
 });
 

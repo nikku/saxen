@@ -17,12 +17,98 @@ test({
 });
 
 test({
+  xml: '<DIVa="B"></DIV>',
+  to: [
+    ['startNode', 'DIV'],
+    ['endNode', 'DIV'],
+  ],
+});
+
+test({
+  xml: '<div></div >',
+  to: [
+    ['startNode', 'div'],
+    ['error', 'close tag'],
+  ]
+});
+
+test({
+  xml: '<!XXXXX zzzz="eeee">',
+  to: [
+    ['attention', '<!XXXXX zzzz="eeee">'],
+  ],
+});
+
+test({
+  xml: '<!-- HELLO -->',
+  to: [
+    ['comment', ' HELLO '],
+  ],
+});
+
+test({
+  xml: '<!-- HELLO',
+  to: [
+    ['error', 'unclosed comment'],
+  ],
+});
+
+test({
+  xml: '<!- HELLO',
+  to: [
+    ['error', 'unclosed tag'],
+  ],
+});
+
+test({
+  xml: '<? QUESTION ?>',
+  to: [
+    ['question', '<? QUESTION ?>'],
+  ],
+});
+
+test({
+  xml: '<? QUESTION',
+  to: [
+    ['error', 'unclosed question'],
+  ],
+});
+
+test({
   xml: '<a><b/></a>',
   to: [
     ['startNode', 'a', true, false],
     ['startNode', 'b', true, true],
     ['endNode', 'b', true],
     ['endNode', 'a', false],
+  ],
+});
+
+test({
+  xml: '<open',
+  to: [
+    ['error', 'unclosed tag'],
+  ],
+});
+
+test({
+  xml: '<open /',
+  to: [
+    ['error', 'unclosed tag'],
+  ],
+});
+
+test({
+  xml: '<=div></=div>',
+  to: [
+    ['error', 'illegal first char nodeName'],
+  ],
+});
+
+test({
+  xml: '<div=></div=>',
+  to: [
+    ['error', 'invalid nodeName'],
   ],
 });
 
@@ -98,9 +184,9 @@ test({
 });
 
 test({
-  xml: '<root length="abc=abc"></root>',
+  xml: '<root LENGTH="abc=ABC"></root>',
   to: [
-    ['startNode', 'root', { length: 'abc=abc' }, false],
+    ['startNode', 'root', { LENGTH: 'abc=ABC' }, false],
     ['endNode', 'root', false],
   ],
 });
@@ -156,6 +242,14 @@ test({
     ['startNode', 'r'],
     ['cdata', '[[[[[[[[]]]]]]]]'],
     ['endNode', 'r'],
+  ],
+});
+
+test({
+  xml: '<r><![CDATA[</r>',
+  to: [
+    ['startNode', 'r'],
+    ['error', 'unclosed cdata'],
   ],
 });
 
@@ -259,9 +353,9 @@ test({
 test({
   xml: (
     '<feed xmlns="http://www.w3.org/2005/Atom" \r\n' +
-        '      xmlns:="http://search.yahoo.com/mrss/" id="aa" :title="bb">\r' +
-        '  <:text/>\n' +
-        '</feed>'
+    '      xmlns:="http://search.yahoo.com/mrss/" id="aa" :title="bb">\r' +
+    '  <:text/>\n' +
+    '</feed>'
   ),
   ns: 'atom',
   to: [
@@ -286,8 +380,8 @@ test({
 test({
   xml: (
     '<feed xmlns="http://www.w3.org/2005/Atom" xmlns:="http://search.yahoo.com/mrss/" id="aa" :title="bb">' +
-            '<:text/>' +
-        '</feed>'
+      '<:text/>' +
+    '</feed>'
   ),
   ns: 'atom',
   to: [
@@ -330,8 +424,8 @@ test({
 test({
   xml: (
     '<foo xmlns="http://this" xmlns:bar="http://bar">' +
-            '<t xmlns="http://that" id="aa" bar:title="bb" />' +
-        '</foo>'
+      '<t xmlns="http://that" id="aa" bar:title="bb" />' +
+    '</foo>'
   ),
   ns: 'atom',
   to: [
@@ -346,11 +440,11 @@ test({
 test({
   xml: (
     '<foo xmlns="http://this" xmlns:bar="http://bar">' +
-            '<t xmlns="http://that">' +
-                '<n/>' +
-                '<n/>' +
-            '</t>' +
-        '</foo>'
+      '<t xmlns="http://that">' +
+        '<n/>' +
+        '<n/>' +
+      '</t>' +
+    '</foo>'
   ),
   ns: 'atom',
   to: [
@@ -369,10 +463,10 @@ test({
 test({
   xml: (
     '<foo xmlns="http://this" xmlns:bar="http://bar">' +
-            '<t xmlns="http://that">' +
-                '<n id="b" bar:title="BAR"></n>' +
-            '</t>' +
-        '</foo>'
+      '<t xmlns="http://that">' +
+        '<n id="b" bar:title="BAR"></n>' +
+      '</t>' +
+    '</foo>'
   ),
   ns: 'atom',
   to: [
@@ -389,10 +483,10 @@ test({
 test({
   xml: (
     '<foo:root xmlns:foo="http://foo" xmlns:bar="http://bar">' +
-            '<bar:outer>' +
-                '<nested/>' +
-            '</bar:outer>' +
-        '</foo:root>'
+      '<bar:outer>' +
+        '<nested/>' +
+      '</bar:outer>' +
+    '</foo:root>'
   ),
   ns: 'atom',
   to: [
@@ -409,10 +503,10 @@ test({
 test({
   xml: (
     '<foo xmlns="http://this" xmlns:bar="http://bar">' +
-            '<t xmlns="http://that" xmlns:b="http://bar">' +
-                '<b:other bar:attr="BAR" />' +
-            '</t>' +
-        '</foo>'
+      '<t xmlns="http://that" xmlns:b="http://bar">' +
+        '<b:other bar:attr="BAR" />' +
+      '</t>' +
+    '</foo>'
   ),
   ns: 'atom',
   to: [
@@ -458,8 +552,8 @@ test({
 test({
   xml: (
     '<foo xmlns="http://xxx">' +
-            '<bar:unknown />' +
-        '</foo>'
+      '<bar:unknown />' +
+    '</foo>'
   ),
   ns: 'atom',
   to: [

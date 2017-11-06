@@ -73,9 +73,62 @@ describe('handler errors', function() {
 });
 
 
-describe('ns configuration', function() {
+describe('#parse', function() {
 
-  it('should throw on invalid #ns args', function() {
+  it('should throw on invalid arg', function() {
+
+    // given
+    var parser = new Parser();
+
+    // when
+    function parse() {
+      parser.parse({});
+    }
+
+    // then
+    assert.throws(parse, /required args <xml=string>/);
+  });
+
+});
+
+
+describe('#on', function() {
+
+  it('should throw on invalid args', function() {
+
+    // given
+    var parser = new Parser();
+
+    // when
+    function configure() {
+      parser.on('startNode');
+    }
+
+    // then
+    assert.throws(configure, /required args <name, cb>/);
+  });
+
+
+  it('should throw on invalid event', function() {
+
+    // given
+    var parser = new Parser();
+
+    // when
+    function configure() {
+      parser.on('foo', function() { });
+    }
+
+    // then
+    assert.throws(configure, /unsupported event: foo/);
+  });
+
+});
+
+
+describe('#ns', function() {
+
+  it('should throw on invalid args', function() {
 
     // given
     var parser = new Parser();
@@ -90,7 +143,7 @@ describe('ns configuration', function() {
   });
 
 
-  it('should NOT throw on empty #ns args', function() {
+  it('should NOT throw on no args', function() {
 
     // given
     var parser = new Parser();

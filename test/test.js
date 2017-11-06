@@ -150,6 +150,14 @@ function test(options) {
     record('comment', text);
   });
 
+  parser.on('attention', function(data) {
+    record('attention', data);
+  });
+
+  parser.on('question', function(data) {
+    record('question', data);
+  });
+
   parser.parse(options.xml);
 
   return verify();
