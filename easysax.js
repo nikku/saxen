@@ -167,7 +167,14 @@ function EasySAXParser(options) {
   };
 
   /**
-   * Set the namespace mapping.
+   * Set the namespace to prefix mapping.
+   *
+   * @example
+   *
+   * parser.ns({
+   *   'http://foo': 'foo',
+   *   'http://bar': 'bar'
+   * });
    *
    * @param  {Object} nsMap
    *
