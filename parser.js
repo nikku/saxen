@@ -190,7 +190,7 @@ function Saxen(options) {
    * @param  {String}   name
    * @param  {Function} cb
    *
-   * @return {EasySax}
+   * @return {Saxen}
    */
   this.on = function(name, cb) {
 
@@ -231,7 +231,7 @@ function Saxen(options) {
    *
    * @param  {Object} nsMap
    *
-   * @return {EasySax}
+   * @return {Saxen}
    */
   this.ns = function(nsMap) {
 
