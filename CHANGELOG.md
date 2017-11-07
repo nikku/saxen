@@ -1,3 +1,12 @@
+# 1.1.0
+
+* `FEAT`: handle non-xml input
+
+# 1.0.4
+
+* `DOCS`: better `@type` annotations
+* `CHORE`: save a few bytes in decoding logic
+
 # 1.0.3
 
 * `DOCS`: correct `@type` and `@return` annotations in parser
