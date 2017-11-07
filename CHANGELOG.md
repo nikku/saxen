@@ -1,3 +1,11 @@
+# 2.0.0
+
+* `FEAT`: rename events
+
+  * `textNode -> text`
+  * `startNode -> openTag`
+  * `endNode -> closeTag`
+
 # 1.1.0
 
 * `FEAT`: handle non-xml input
