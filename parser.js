@@ -102,9 +102,9 @@ function throwFunc(err) {
 /**
  * Creates a new parser with the given options.
  *
- * @param {Object} options
- *
  * @constructor
+ *
+ * @param  {!Object<string, ?>} options
  */
 function Saxen(options) {
 
@@ -159,7 +159,7 @@ function Saxen(options) {
    * This map will ensure we can normalize prefixes during processing;
    * for each uri, only one prefix will be exposed to the handlers.
    *
-   * @type {Object}
+   * @type {!Object<string, string>}}
    */
   var nsUriToPrefix;
 
@@ -187,7 +187,7 @@ function Saxen(options) {
   /**
    * Register parse listener.
    *
-   * @param  {String}   name
+   * @param  {string}   name
    * @param  {Function} cb
    *
    * @return {Saxen}
@@ -229,7 +229,7 @@ function Saxen(options) {
    *   'http://bar': 'bar'
    * });
    *
-   * @param  {Object} nsMap
+   * @param  {!Object<string, string>} nsMap
    *
    * @return {Saxen}
    */
@@ -258,7 +258,7 @@ function Saxen(options) {
   /**
    * Parse xml string.
    *
-   * @param  {String} xml
+   * @param  {string} xml
    *
    * @return {Error} returnError, if not thrown
    */
@@ -284,11 +284,10 @@ function Saxen(options) {
     parseStop = true;
   };
 
-
   /**
    * Parse string, invoking configured listeners on element.
    *
-   * @param  {String} str
+   * @param  {string} str
    */
   function parse(str) {
     var xml = ('' + str),
@@ -795,7 +794,7 @@ function Saxen(options) {
           xmlns = nsMatrix[elementName.substring(0, w)];
           elementName = elementName.substr(w + 1);
         } else {
-          xmlns = nsMatrix.xmlns;
+          xmlns = nsMatrix['xmlns'];
 
           if (!xmlns && _xmlns) {
             // if no default xmlns is defined,
@@ -849,5 +848,6 @@ function Saxen(options) {
 
       j += 1;
     }
-  }
+  } /** end parse */
+
 }
