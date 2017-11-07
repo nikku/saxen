@@ -161,17 +161,6 @@ function Saxen(options) {
    */
   var nsUriToPrefix;
 
-
-  function failSafe(cb, onError) {
-    return function() {
-      try {
-        cb.apply(this, arguments);
-      } catch (err) {
-        onError(err);
-      }
-    };
-  }
-
   function handleError(err) {
     if (!(err instanceof Error)) {
       err = error(err);
@@ -194,10 +183,6 @@ function Saxen(options) {
 
     if (typeof cb !== 'function') {
       throw error('required args <name, cb>');
-    }
-
-    if (name !== 'error') {
-      cb = failSafe(cb, handleError);
     }
 
     switch (name) {

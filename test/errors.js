@@ -12,17 +12,11 @@ describe('handler errors', function() {
   });
 
 
-  it('should pass to #onError', function() {
+  it('should NOT pass to #onError', function() {
 
     // given
-    var called = false;
-
     parser.on('error', function(err, getContext) {
-
-      called = true;
-
-      assert.equal(err.message, 'foo');
-      assert.ok(getContext);
+      assert.ok(false, 'error called');
     });
 
     parser.on('openTag', function() {
@@ -30,44 +24,12 @@ describe('handler errors', function() {
     });
 
     // when
-    parser.parse('<xml />');
+    function parse() {
+      parser.parse('<xml />');
+    }
 
     // then
-    assert.ok(called, 'error called == true');
-  });
-
-
-  it('should throw per default', function() {
-
-    // given
-    parser.on('openTag', function() {
-      throw new Error('foo');
-    });
-
-    // when
-    assert.throws(function() {
-
-      // then
-      parser.parse('<xml />');
-    }, /foo/);
-  });
-
-
-  it('should handle in #onError', function() {
-
-    // given
-    parser.on('error', function(err, getContext) {
-      throw err;
-    });
-
-    parser.on('openTag', function() {
-      throw new Error('foo');
-    });
-
-    // when
-    assert.throws(function() {
-      parser.parse('<xml />');
-    }, /foo/);
+    assert.throws(parse, /foo/);
   });
 
 });
