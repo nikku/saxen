@@ -33,6 +33,13 @@ test({
 });
 
 test({
+  xml: '\n\x01asdasd',
+  to: [
+    ['error', 'missing start tag']
+  ]
+});
+
+test({
   xml: '<!XXXXX zzzz="eeee">',
   to: [
     ['attention', '<!XXXXX zzzz="eeee">'],

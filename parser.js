@@ -296,7 +296,7 @@ function Saxen(options) {
         anonymousNsCount = 0,
         tagStart = false,
         tagEnd = false,
-        j = 0, i = 0,
+        i = 0, j = 0,
         x, y, q, w,
         xmlns,
         xmlnsStack = isNamespace ? [] : null,
@@ -598,9 +598,14 @@ function Saxen(options) {
         i = xml.indexOf('<', j);
       }
 
-      if (i === -1) { // конец разбора
+      // parse end
+      if (i === -1) {
         if (nodeStack.length) {
           return handleError('unexpected end of file');
+        }
+
+        if (j === 0) {
+          return handleError('missing start tag');
         }
 
         return;
