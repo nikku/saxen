@@ -1,3 +1,7 @@
+# 1.0.3
+
+* `DOCS`: correct `@type` and `@return` annotations in parser
+
 # 1.0.2
 
 * `FIX`: properly handle namespace prefix collisions [#1](https://github.com/nikku/saxen/issues/1)
