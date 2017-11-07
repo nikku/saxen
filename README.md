@@ -28,7 +28,7 @@ parser.ns({
   'http://bar': 'bar'
 });
 
-parser.on('startNode', function(elementName, getAttrs, decodeEntity, isClosing, getContext) {
+parser.on('openTag', function(elementName, getAttrs, decodeEntity, selfClosing, getContext) {
 
   elementName;
   // with prefix, i.e. foo:blub
@@ -37,7 +37,7 @@ parser.on('startNode', function(elementName, getAttrs, decodeEntity, isClosing, 
   // { 'bar:aa': 'A', ... }
 });
 
-parser.on('endNode', function(elementName, decodeEntity, isOpening, getContext) {
+parser.on('closeTag', function(elementName, decodeEntity, selfClosing, getContext) {
   ...
 });
 

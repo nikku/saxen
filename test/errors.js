@@ -25,7 +25,7 @@ describe('handler errors', function() {
       assert.ok(getContext);
     });
 
-    parser.on('startNode', function() {
+    parser.on('openTag', function() {
       throw new Error('foo');
     });
 
@@ -40,7 +40,7 @@ describe('handler errors', function() {
   it('should throw per default', function() {
 
     // given
-    parser.on('startNode', function() {
+    parser.on('openTag', function() {
       throw new Error('foo');
     });
 
@@ -60,7 +60,7 @@ describe('handler errors', function() {
       throw err;
     });
 
-    parser.on('startNode', function() {
+    parser.on('openTag', function() {
       throw new Error('foo');
     });
 
@@ -101,7 +101,7 @@ describe('#on', function() {
 
     // when
     function configure() {
-      parser.on('startNode');
+      parser.on('openTag');
     }
 
     // then

@@ -16,7 +16,7 @@ test({
     xml: '<div/>',
     ns: false, // 'rss',
     to: [
-        ['startNode', 'div', {}, true],
+        ['openTag', 'div', {}, true],
     ],
 });
 */
@@ -78,7 +78,7 @@ function test(options) {
       var expectedValue = expected[idx];
       var actualValue = actual[idx];
 
-      if (name === 'startNode' && idx === 2) {
+      if (name === 'openTag' && idx === 2) {
         // be able to skip attrs check
         if (!expectedValue || expectedValue === true) {
           assert.equal(!!actualValue, expectedValue, prefix(idx) + ' attrs equal ' + expectedValue);
@@ -130,16 +130,16 @@ function test(options) {
     record('error', msg, getContext());
   });
 
-  parser.on('startNode', function(elem, attr, uq, tagend, getContext) {
-    record('startNode', elem, attr(), tagend, getContext());
+  parser.on('openTag', function(elem, attr, uq, tagend, getContext) {
+    record('openTag', elem, attr(), tagend, getContext());
   });
 
-  parser.on('endNode', function(elem, uq, tagstart, getContext) {
-    record('endNode', elem, tagstart, getContext());
+  parser.on('closeTag', function(elem, uq, tagstart, getContext) {
+    record('closeTag', elem, tagstart, getContext());
   });
 
-  parser.on('textNode', function(s, uq) {
-    record('textNode', s);
+  parser.on('text', function(s, uq) {
+    record('text', s);
   });
 
   parser.on('cdata', function(data) {

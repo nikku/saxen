@@ -30,7 +30,7 @@ describe('performance', function() {
 
       var counter = 0;
 
-      parser.on('startNode', function(el, attrs) {
+      parser.on('openTag', function(el, attrs) {
         counter++;
 
         // el.attrs;

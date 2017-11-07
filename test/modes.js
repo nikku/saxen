@@ -15,7 +15,7 @@ describe('modes', function() {
 
     var counter = 0;
 
-    parser.on('startNode', function(el, decodeEntities) {
+    parser.on('openTag', function(el, decodeEntities) {
       counter++;
 
       assert.equal(el.name, 'ns:root');

@@ -11,23 +11,23 @@ var test = require('./test');
 test({
   xml: '<div/>',
   to: [
-    ['startNode', 'div', true, true],
-    ['endNode', 'div', true],
+    ['openTag', 'div', true, true],
+    ['closeTag', 'div', true],
   ],
 });
 
 test({
   xml: '<DIVa="B"></DIV>',
   to: [
-    ['startNode', 'DIV'],
-    ['endNode', 'DIV'],
+    ['openTag', 'DIV'],
+    ['closeTag', 'DIV'],
   ],
 });
 
 test({
   xml: '<div></div >',
   to: [
-    ['startNode', 'div'],
+    ['openTag', 'div'],
     ['error', 'close tag'],
   ]
 });
@@ -84,10 +84,10 @@ test({
 test({
   xml: '<a><b/></a>',
   to: [
-    ['startNode', 'a', true, false],
-    ['startNode', 'b', true, true],
-    ['endNode', 'b', true],
-    ['endNode', 'a', false],
+    ['openTag', 'a', true, false],
+    ['openTag', 'b', true, true],
+    ['closeTag', 'b', true],
+    ['closeTag', 'a', false],
   ],
 });
 
@@ -122,8 +122,8 @@ test({
 test({
   xml: '<a><b></c></b></a>',
   to: [
-    ['startNode', 'a', true, false],
-    ['startNode', 'b', true, false],
+    ['openTag', 'a', true, false],
+    ['openTag', 'b', true, false],
     ['error', 'closing tag mismatch', { data: '</c>', line: 0, column: 6 } ],
   ],
 });
@@ -131,27 +131,27 @@ test({
 test({
   xml: '<_a><:b></:b></_a>',
   to: [
-    ['startNode', '_a', true, false],
-    ['startNode', ':b', true, false],
-    ['endNode', ':b', false],
-    ['endNode', '_a', false],
+    ['openTag', '_a', true, false],
+    ['openTag', ':b', true, false],
+    ['closeTag', ':b', false],
+    ['closeTag', '_a', false],
   ],
 });
 
 test({
   xml: '<a><!--comment text--></a>',
   to: [
-    ['startNode', 'a', true, false],
+    ['openTag', 'a', true, false],
     ['comment', 'comment text'],
-    ['endNode', 'a', false],
+    ['closeTag', 'a', false],
   ],
 });
 
 test({
   xml: '<root><foo>',
   to: [
-    ['startNode', 'root'],
-    ['startNode', 'foo'],
+    ['openTag', 'root'],
+    ['openTag', 'foo'],
     ['error', 'unexpected end of file', { data: '', line: 0, column: 11 } ],
   ],
 });
@@ -159,8 +159,8 @@ test({
 test({
   xml: '<root/><f',
   to: [
-    ['startNode', 'root', true, true],
-    ['endNode', 'root', true],
+    ['openTag', 'root', true, true],
+    ['closeTag', 'root', true],
     ['error', 'unclosed tag', { data: '<f', line: 0, column: 7 } ],
   ],
 });
@@ -168,7 +168,7 @@ test({
 test({
   xml: '<root></rof',
   to: [
-    ['startNode', 'root', true, false],
+    ['openTag', 'root', true, false],
     ['error', 'unclosed tag', { data: '</rof', line: 0, column: 6 } ]
   ],
 });
@@ -176,7 +176,7 @@ test({
 test({
   xml: '<root></rof</root>',
   to: [
-    ['startNode', 'root', true, false],
+    ['openTag', 'root', true, false],
     ['error', 'closing tag mismatch', { data: '</rof</root>', line: 0, column: 6 } ]
   ],
 });
@@ -184,33 +184,33 @@ test({
 test({
   xml: '<root>text</root>',
   to: [
-    ['startNode', 'root'],
-    ['textNode', 'text'],
-    ['endNode', 'root'],
+    ['openTag', 'root'],
+    ['text', 'text'],
+    ['closeTag', 'root'],
   ],
 });
 
 test({
   xml: '<root LENGTH="abc=ABC"></root>',
   to: [
-    ['startNode', 'root', { LENGTH: 'abc=ABC' }, false],
-    ['endNode', 'root', false],
+    ['openTag', 'root', { LENGTH: 'abc=ABC' }, false],
+    ['closeTag', 'root', false],
   ],
 });
 
 test({
   xml: '<root length=\'abc=abc\'></root>',
   to: [
-    ['startNode', 'root', { length: 'abc=abc' }, false],
-    ['endNode', 'root', false],
+    ['openTag', 'root', { length: 'abc=abc' }, false],
+    ['closeTag', 'root', false],
   ],
 });
 
 test({
   xml: '<root _abc="abc=abc" :abc="abc"></root>',
   to: [
-    ['startNode', 'root', { _abc: 'abc=abc', ':abc': 'abc' }, false],
-    ['endNode', 'root', false],
+    ['openTag', 'root', { _abc: 'abc=abc', ':abc': 'abc' }, false],
+    ['closeTag', 'root', false],
   ],
 });
 
@@ -218,44 +218,44 @@ test({
 test({
   xml: '<root attr1="first"\t attr2="second"/>',
   to: [
-    ['startNode', 'root', { attr1: 'first', attr2: 'second' }, true],
-    ['endNode', 'root', true],
+    ['openTag', 'root', { attr1: 'first', attr2: 'second' }, true],
+    ['closeTag', 'root', true],
   ],
 });
 
 test({
   xml: '<root length=\'12345\'><item/></root>',
   to: [
-    ['startNode', 'root', { length: '12345' }, false],
-    ['startNode', 'item', true, true],
-    ['endNode', 'item', true],
-    ['endNode', 'root', false]
+    ['openTag', 'root', { length: '12345' }, false],
+    ['openTag', 'item', true, true],
+    ['closeTag', 'item', true],
+    ['closeTag', 'root', false]
   ],
 });
 
 test({
   xml: '<r><![CDATA[ this is ]]><![CDATA[ this is ]]></r>',
   to: [
-    ['startNode', 'r'],
+    ['openTag', 'r'],
     ['cdata', ' this is '],
     ['cdata', ' this is '],
-    ['endNode', 'r'],
+    ['closeTag', 'r'],
   ],
 });
 
 test({
   xml: '<r><![CDATA[[[[[[[[[]]]]]]]]]]></r>',
   to: [
-    ['startNode', 'r'],
+    ['openTag', 'r'],
     ['cdata', '[[[[[[[[]]]]]]]]'],
-    ['endNode', 'r'],
+    ['closeTag', 'r'],
   ],
 });
 
 test({
   xml: '<r><![CDATA[</r>',
   to: [
-    ['startNode', 'r'],
+    ['openTag', 'r'],
     ['error', 'unclosed cdata'],
   ],
 });
@@ -264,8 +264,8 @@ test({
   xml: '<feed xmlns="http://www.w3.org/2005/Atom" xmlns:media="http://search.yahoo.com/mrss/" id="aa" media:title="bb"/>',
   ns: true,
   to: [
-    ['startNode', 'atom:feed', { id: 'aa', 'media:title': 'bb' }],
-    ['endNode', 'atom:feed'],
+    ['openTag', 'atom:feed', { id: 'aa', 'media:title': 'bb' }],
+    ['closeTag', 'atom:feed'],
   ],
 });
 
@@ -273,8 +273,8 @@ test({
   xml: '<feed xmlns="http://www.w3.org/2005/Atom" xmlns:media="http://search.yahoo.com/mrss/" id="aa" media:title="bb"></feed>',
   ns: true,
   to: [
-    ['startNode', 'atom:feed', { id: 'aa', 'media:title': 'bb' }],
-    ['endNode', 'atom:feed'],
+    ['openTag', 'atom:feed', { id: 'aa', 'media:title': 'bb' }],
+    ['closeTag', 'atom:feed'],
   ],
 });
 
@@ -282,8 +282,8 @@ test({
   xml: '<feed xmlns="http://www.w3.org/2005/Atom" xmlns:m="http://search.yahoo.com/mrss/" id="aa" m:title="bb"/>',
   ns: true,
   to: [
-    ['startNode', 'atom:feed', { id: 'aa', 'media:title': 'bb' }],
-    ['endNode', 'atom:feed'],
+    ['openTag', 'atom:feed', { id: 'aa', 'media:title': 'bb' }],
+    ['closeTag', 'atom:feed'],
   ],
 });
 
@@ -291,8 +291,8 @@ test({
   xml: '<feed xmlns="http://www.w3.org/2005/Atom" xmlns:a="http://www.w3.org/2005/Atom" id="aa" a:title="bb"/>',
   ns: true,
   to: [
-    ['startNode', 'atom:feed', { id: 'aa', 'title': 'bb' }],
-    ['endNode', 'atom:feed'],
+    ['openTag', 'atom:feed', { id: 'aa', 'title': 'bb' }],
+    ['closeTag', 'atom:feed'],
   ],
 });
 
@@ -300,11 +300,11 @@ test({
   xml: '<feed xmlns="http://www.w3.org/2005/Atom" xmlns:media="http://search.yahoo.com/mrss/"><media:title>text</media:title></feed>',
   ns: true,
   to: [
-    ['startNode', 'atom:feed'],
-    ['startNode', 'media:title'],
-    ['textNode', 'text'],
-    ['endNode', 'media:title'],
-    ['endNode', 'atom:feed'],
+    ['openTag', 'atom:feed'],
+    ['openTag', 'media:title'],
+    ['text', 'text'],
+    ['closeTag', 'media:title'],
+    ['closeTag', 'atom:feed'],
   ],
 });
 
@@ -312,11 +312,11 @@ test({
   xml: '<feed xmlns="http://www.w3.org/2005/Atom" xmlns:m="http://search.yahoo.com/mrss/"><m:title>text</m:title></feed>',
   ns: true,
   to: [
-    ['startNode', 'atom:feed'],
-    ['startNode', 'media:title'],
-    ['textNode', 'text'],
-    ['endNode', 'media:title'],
-    ['endNode', 'atom:feed'],
+    ['openTag', 'atom:feed'],
+    ['openTag', 'media:title'],
+    ['text', 'text'],
+    ['closeTag', 'media:title'],
+    ['closeTag', 'atom:feed'],
   ],
 });
 
@@ -325,11 +325,11 @@ test({
   xml: '<feed xmlns="http://www.w3.org/2005/Atom" xmlns:a="http://www.w3.org/2005/Atom"><a:title>text</a:title></feed>',
   ns: true,
   to: [
-    ['startNode', 'atom:feed'],
-    ['startNode', 'atom:title'],
-    ['textNode', 'text'],
-    ['endNode', 'atom:title'],
-    ['endNode', 'atom:feed'],
+    ['openTag', 'atom:feed'],
+    ['openTag', 'atom:title'],
+    ['text', 'text'],
+    ['closeTag', 'atom:title'],
+    ['closeTag', 'atom:feed'],
   ],
 });
 
@@ -337,10 +337,10 @@ test({
   xml: '<feed xmlns="http://www.w3.org/2005/Atom" xmlns:="http://search.yahoo.com/mrss/" id="aa" :title="bb"><:text/></feed>',
   ns: true,
   to: [
-    ['startNode', 'atom:feed', { id: 'aa', 'media:title': 'bb' }],
-    ['startNode', 'media:text'],
-    ['endNode', 'media:text'],
-    ['endNode', 'atom:feed'],
+    ['openTag', 'atom:feed', { id: 'aa', 'media:title': 'bb' }],
+    ['openTag', 'media:text'],
+    ['closeTag', 'media:text'],
+    ['closeTag', 'atom:feed'],
   ],
 });
 
@@ -349,10 +349,10 @@ test({
   xml: '<root xmlns="http://foo" xmlns:bar="http://bar" id="aa" bar:title="bb"><bar:child /></root>',
   ns: true,
   to: [
-    ['startNode', 'ns0:root', { id: 'aa', 'bar:title': 'bb' }],
-    ['startNode', 'bar:child'],
-    ['endNode', 'bar:child'],
-    ['endNode', 'ns0:root'],
+    ['openTag', 'ns0:root', { id: 'aa', 'bar:title': 'bb' }],
+    ['openTag', 'bar:child'],
+    ['closeTag', 'bar:child'],
+    ['closeTag', 'ns0:root'],
   ],
 });
 
@@ -366,16 +366,16 @@ test({
   ),
   ns: true,
   to: [
-    ['startNode', 'atom:feed', { id: 'aa', 'media:title': 'bb' }, false, {
+    ['openTag', 'atom:feed', { id: 'aa', 'media:title': 'bb' }, false, {
       line: 0,
       column: 0,
       data: '<feed xmlns="http://www.w3.org/2005/Atom" \r\n      xmlns:="http://search.yahoo.com/mrss/" id="aa" :title="bb">'
     }],
-    ['textNode', '\r  '],
-    ['startNode', 'media:text', true, true, { line: 2, column: 2, data: '<:text/>' }],
-    ['endNode', 'media:text', true, { line: 2, column: 2, data: '<:text/>' }],
-    ['textNode', '\n'],
-    ['endNode', 'atom:feed', false, {
+    ['text', '\r  '],
+    ['openTag', 'media:text', true, true, { line: 2, column: 2, data: '<:text/>' }],
+    ['closeTag', 'media:text', true, { line: 2, column: 2, data: '<:text/>' }],
+    ['text', '\n'],
+    ['closeTag', 'atom:feed', false, {
       line: 3,
       column: 0,
       data: '</feed>'
@@ -392,14 +392,14 @@ test({
   ),
   ns: true,
   to: [
-    ['startNode', 'atom:feed', { id: 'aa', 'media:title': 'bb' }, false, {
+    ['openTag', 'atom:feed', { id: 'aa', 'media:title': 'bb' }, false, {
       line: 0,
       column: 0,
       data: '<feed xmlns="http://www.w3.org/2005/Atom" xmlns:="http://search.yahoo.com/mrss/" id="aa" :title="bb">'
     }],
-    ['startNode', 'media:text', true, true, { line: 0, column: 101, data: '<:text/>' }],
-    ['endNode', 'media:text', true, { line: 0, column: 101, data: '<:text/>' }],
-    ['endNode', 'atom:feed', false, {
+    ['openTag', 'media:text', true, true, { line: 0, column: 101, data: '<:text/>' }],
+    ['closeTag', 'media:text', true, { line: 0, column: 101, data: '<:text/>' }],
+    ['closeTag', 'atom:feed', false, {
       line: 0,
       column: 109,
       data: '</feed>'
@@ -414,12 +414,12 @@ test({
   ),
   ns: true,
   to: [
-    ['startNode', 'ns0:foo', { id: 'aa', 'that:title': 'bb' }, true, {
+    ['openTag', 'ns0:foo', { id: 'aa', 'that:title': 'bb' }, true, {
       line: 0,
       column: 0,
       data: '<foo xmlns="http://this" xmlns:that="http://that" id="aa" that:title="bb" />'
     }],
-    ['endNode', 'ns0:foo', true, {
+    ['closeTag', 'ns0:foo', true, {
       line: 0,
       column: 0,
       data: '<foo xmlns="http://this" xmlns:that="http://that" id="aa" that:title="bb" />'
@@ -436,10 +436,10 @@ test({
   ),
   ns: true,
   to: [
-    ['startNode', 'ns0:foo', true, false],
-    ['startNode', 'ns1:t', { id: 'aa', 'bar:title': 'bb' }, true],
-    ['endNode', 'ns1:t', true],
-    ['endNode', 'ns0:foo', false],
+    ['openTag', 'ns0:foo', true, false],
+    ['openTag', 'ns1:t', { id: 'aa', 'bar:title': 'bb' }, true],
+    ['closeTag', 'ns1:t', true],
+    ['closeTag', 'ns0:foo', false],
   ],
 });
 
@@ -455,14 +455,14 @@ test({
   ),
   ns: true,
   to: [
-    ['startNode', 'ns0:foo'],
-    ['startNode', 'ns1:t'],
-    ['startNode', 'ns1:n'],
-    ['endNode', 'ns1:n'],
-    ['startNode', 'ns1:n'],
-    ['endNode', 'ns1:n'],
-    ['endNode', 'ns1:t'],
-    ['endNode', 'ns0:foo'],
+    ['openTag', 'ns0:foo'],
+    ['openTag', 'ns1:t'],
+    ['openTag', 'ns1:n'],
+    ['closeTag', 'ns1:n'],
+    ['openTag', 'ns1:n'],
+    ['closeTag', 'ns1:n'],
+    ['closeTag', 'ns1:t'],
+    ['closeTag', 'ns0:foo'],
   ],
 });
 
@@ -477,12 +477,12 @@ test({
   ),
   ns: true,
   to: [
-    ['startNode', 'ns0:foo'],
-    ['startNode', 'ns1:t' ],
-    ['startNode', 'ns1:n', { id: 'b', 'bar:title': 'BAR' }],
-    ['endNode', 'ns1:n'],
-    ['endNode', 'ns1:t'],
-    ['endNode', 'ns0:foo'],
+    ['openTag', 'ns0:foo'],
+    ['openTag', 'ns1:t' ],
+    ['openTag', 'ns1:n', { id: 'b', 'bar:title': 'BAR' }],
+    ['closeTag', 'ns1:n'],
+    ['closeTag', 'ns1:t'],
+    ['closeTag', 'ns0:foo'],
   ],
 });
 
@@ -497,12 +497,12 @@ test({
   ),
   ns: true,
   to: [
-    ['startNode', 'foo:root'],
-    ['startNode', 'bar:outer'],
-    ['startNode', 'bar:nested'],
-    ['endNode', 'bar:nested'],
-    ['endNode', 'bar:outer'],
-    ['endNode', 'foo:root'],
+    ['openTag', 'foo:root'],
+    ['openTag', 'bar:outer'],
+    ['openTag', 'bar:nested'],
+    ['closeTag', 'bar:nested'],
+    ['closeTag', 'bar:outer'],
+    ['closeTag', 'foo:root'],
   ],
 });
 
@@ -517,12 +517,12 @@ test({
   ),
   ns: true,
   to: [
-    ['startNode', 'ns0:foo'],
-    ['startNode', 'ns1:t'],
-    ['startNode', 'bar:other', { 'bar:attr': 'BAR' }],
-    ['endNode', 'bar:other'],
-    ['endNode', 'ns1:t'],
-    ['endNode', 'ns0:foo'],
+    ['openTag', 'ns0:foo'],
+    ['openTag', 'ns1:t'],
+    ['openTag', 'bar:other', { 'bar:attr': 'BAR' }],
+    ['closeTag', 'bar:other'],
+    ['closeTag', 'ns1:t'],
+    ['closeTag', 'ns0:foo'],
   ],
 });
 
@@ -533,8 +533,8 @@ test({
   ),
   ns: true,
   to: [
-    ['startNode', 'ns0:foo', { xmlns: 'http://xxx' } ],
-    ['endNode', 'ns0:foo', false],
+    ['openTag', 'ns0:foo', { xmlns: 'http://xxx' } ],
+    ['closeTag', 'ns0:foo', false],
   ],
 });
 
@@ -545,12 +545,12 @@ test({
   ),
   ns: true,
   to: [
-    ['startNode', 'ns0:foo', {
+    ['openTag', 'ns0:foo', {
       'xmlns:a': 'http://www.w3.org/2005/Atom',
       'xmlns': 'http://xxx',
       'atom:xx': 'foo'
     } ],
-    ['endNode', 'ns0:foo', false],
+    ['closeTag', 'ns0:foo', false],
   ],
 });
 
@@ -563,7 +563,7 @@ test({
   ),
   ns: true,
   to: [
-    ['startNode', 'ns0:foo' ],
+    ['openTag', 'ns0:foo' ],
     ['error', 'missing namespace on <bar:unknown>', {
       data: '<bar:unknown />',
       line: 0,
@@ -590,8 +590,8 @@ test({
   ),
   ns: true,
   to: [
-    ['startNode', 'ns0:foo'],
-    ['endNode', 'ns0:foo'],
+    ['openTag', 'ns0:foo'],
+    ['closeTag', 'ns0:foo'],
   ],
 });
 
@@ -602,7 +602,7 @@ test({
   ),
   ns: true,
   to: [
-    ['startNode', 'ns0:foo', { 'ns1:bar': 'BAR' } ],
-    ['endNode', 'ns0:foo'],
+    ['openTag', 'ns0:foo', { 'ns1:bar': 'BAR' } ],
+    ['closeTag', 'ns0:foo'],
   ],
 });

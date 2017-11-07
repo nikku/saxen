@@ -201,9 +201,9 @@ function Saxen(options) {
     }
 
     switch (name) {
-    case 'startNode': onStartNode = cb; break;
-    case 'textNode': onTextNode = cb; break;
-    case 'endNode': onEndNode = cb; break;
+    case 'openTag': onStartNode = cb; break;
+    case 'text': onTextNode = cb; break;
+    case 'closeTag': onEndNode = cb; break;
     case 'error': onError = cb; break;
     case 'cdata': onCDATA = cb; break;
 

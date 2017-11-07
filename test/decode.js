@@ -13,7 +13,7 @@ describe('decode', function() {
 
     var counter = 0;
 
-    parser.on('startNode', function(el, getAttrs, decodeEntities) {
+    parser.on('openTag', function(el, getAttrs, decodeEntities) {
       counter++;
 
       var attrs = getAttrs();
