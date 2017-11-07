@@ -1,3 +1,11 @@
+# 1.0.2
+
+* `FIX`: properly handle namespace prefix collisions [#1](https://github.com/nikku/saxen/issues/1)
+
+# 1.0.1
+
+* `CHORE`: improve test coverage and documentation
+
 # 1.0.0
 
 * `FEAT`: don't skip unknown namespace nodes
