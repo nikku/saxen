@@ -1,3 +1,7 @@
+# TBD
+
+* `FEAT`: throw on handler errors ([`4b0ebb1`](https://github.com/nikku/saxen/commit/4b0ebb12edb6f98064f33f555d519f58a8ec3a63))
+
 # 2.0.0
 
 * `FEAT`: rename events
