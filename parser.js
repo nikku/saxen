@@ -128,14 +128,14 @@ function Saxen(options) {
   /**
    * Do we need to parse the current elements attributes for namespaces?
    *
-   * @type {Boolean}
+   * @type {boolean}
    */
   var maybeNS = false;
 
   /**
    * Do we process namespaces at all?
    *
-   * @type {Boolean}
+   * @type {boolean}
    */
   var isNamespace = false;
 
@@ -149,7 +149,7 @@ function Saxen(options) {
   /**
    * Should we stop parsing?
    *
-   * @type {Boolean}
+   * @type {boolean}
    */
   var parseStop = false; // прервать парсер
 
@@ -320,7 +320,7 @@ function Saxen(options) {
      * Return semantics: (1) `false` on attribute parse error,
      * (2) true on no attributes, (3) object hash on extracted attrs.
      *
-     * @return {Boolean|Object}
+     * @return {boolean|Object}
      */
     function getAttrs() {
       if (cachedAttrs !== null) {
