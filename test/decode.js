@@ -18,11 +18,24 @@ describe('decode', function() {
 
       var attrs = getAttrs();
 
-      assert.equal(decodeEntities(attrs.encoded), '"<>\'&{İ»');
+      assert.equal(decodeEntities(attrs.encoded), '"<>\'&{İ»\x01\x01');
     });
 
+    var specialChars = [
+      '&quot;',
+      '&lt;',
+      '&gt;',
+      '&#39;',
+      '&#38;',
+      '&#0123;',
+      '&#x0130;',
+      '&raquo;',
+      '&foo;',
+      '&constructor;'
+    ];
+
     // when
-    parser.parse('<root xmlns="http://ns" encoded="&quot;&lt;&gt;&#39;&#38;&#0123;&#x0130;&raquo;" />');
+    parser.parse('<root xmlns="http://ns" encoded="' + specialChars.join('') + '" />');
 
     // then
     assert.ok(counter === 1, 'parsed one node');

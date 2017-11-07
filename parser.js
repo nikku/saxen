@@ -2,15 +2,13 @@
 
 module.exports = Saxen;
 
-var stringFromCharCode = String.fromCharCode;
+function hasProperty(o, prop) {
+  return Object.prototype.hasOwnProperty.call(o, prop);
+}
+
+var fromCharCode = String.fromCharCode;
+
 var xharsQuot = {
-  constructor: false,
-  propertyIsEnumerable: false,
-  toLocaleString: false,
-  hasOwnProperty: false,
-  isPrototypeOf: false,
-  toString: false,
-  valueOf: false,
   quot: '"',
   QUOT: '"',
   amp: '&',
@@ -39,14 +37,14 @@ function error(msg) {
 
 function replaceEntities(s, d, x, z) {
   if (z) {
-    return xharsQuot[z] || '\x01';
+    return hasProperty(xharsQuot, z) && xharsQuot[z] || '\x01';
   }
 
   if (d) {
-    return stringFromCharCode(d);
+    return fromCharCode(d);
   }
 
-  return stringFromCharCode(parseInt(x, 16));
+  return fromCharCode(parseInt(x, 16));
 }
 
 function decodeEntities(s) {
