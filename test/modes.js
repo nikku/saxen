@@ -26,6 +26,13 @@ describe('modes', function() {
         foo: '&quot;'
       });
 
+      assert.deepEqual(el.ns, {
+        'ns': 'ns',
+        'ns$uri': 'http://ns',
+        'xmlns': 'ns',
+        'xmlns$uri': 'http://ns'
+      });
+
       assert.equal(decodeEntities(el.attrs.foo), '"');
     });
 

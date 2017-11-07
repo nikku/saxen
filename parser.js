@@ -35,6 +35,12 @@ function error(msg) {
   return new Error(msg);
 }
 
+function getter(getFn) {
+  return {
+    get: getFn
+  };
+}
+
 function replaceEntities(s, d, x, z) {
   if (z) {
     return hasProperty(xharsQuot, z) && xharsQuot[z] || '\x01';
@@ -558,19 +564,16 @@ function Saxen(options) {
 
     if (proxy) {
       elementProxy = Object.create({}, {
-        name: {
-          get: function() {
-            return elementName;
-          }
-        },
-        originalName: {
-          get: function() {
-            return _elementName;
-          }
-        },
-        attrs: {
-          get: getAttrs
-        }
+        name: getter(function() {
+          return elementName;
+        }),
+        originalName: getter(function() {
+          return _elementName;
+        }),
+        attrs: getter(getAttrs),
+        ns: getter(function() {
+          return nsMatrix;
+        })
       });
     }
 
