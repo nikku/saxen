@@ -66,24 +66,24 @@ function decodeEntities(s) {
 }
 
 function cloneNsMatrix(nsMatrix) {
-  var nn = {}, n;
-  for (n in nsMatrix) {
-    nn[n] = nsMatrix[n];
+  var clone = {}, key;
+  for (key in nsMatrix) {
+    clone[key] = nsMatrix[key];
   }
-  return nn;
+  return clone;
 }
 
 function uriPrefix(prefix) {
   return prefix + '$uri';
 }
 
-function buildNsMatrix(useNS) {
+function buildNsMatrix(nsUriToPrefix) {
   var nsMatrix = {},
       uri,
       prefix;
 
-  for (uri in useNS) {
-    prefix = useNS[uri];
+  for (uri in nsUriToPrefix) {
+    prefix = nsUriToPrefix[uri];
     nsMatrix[prefix] = prefix;
     nsMatrix[uriPrefix(prefix)] = uri;
   }
@@ -125,11 +125,44 @@ function Saxen(options) {
 
   var getContext = noopGetContext;
 
+  /**
+   * Do we need to parse the current elements attributes for namespaces?
+   *
+   * @type {Boolean}
+   */
   var maybeNS = false;
+
+  /**
+   * Do we process namespaces at all?
+   *
+   * @type {Boolean}
+   */
   var isNamespace = false;
+
+  /**
+   * The caught error returned on parse end
+   *
+   * @type {Error}
+   */
   var returnError = null;
+
+  /**
+   * Should we stop parsing?
+   *
+   * @type {Boolean}
+   */
   var parseStop = false; // прервать парсер
-  var useNS;
+
+  /**
+   * A map of { uri: prefix } used by the parser.
+   *
+   * This map will ensure we can normalize prefixes during processing;
+   * for each uri, only one prefix will be exposed to the handlers.
+   *
+   * @type {Object}
+   */
+  var nsUriToPrefix;
+
 
   function failSafe(cb, onError) {
     return function() {
@@ -210,14 +243,14 @@ function Saxen(options) {
       throw error('required args <nsMap={}>');
     }
 
-    var _useNS = {}, k;
+    var _nsUriToPrefix = {}, k;
 
     for (k in nsMap) {
-      _useNS[k] = nsMap[k];
+      _nsUriToPrefix[k] = nsMap[k];
     }
 
     isNamespace = true;
-    useNS = _useNS;
+    nsUriToPrefix = _nsUriToPrefix;
 
     return this;
   };
@@ -260,7 +293,7 @@ function Saxen(options) {
   function parse(str) {
     var xml = ('' + str),
         nsMatrixStack = isNamespace ? [] : null,
-        nsMatrix = isNamespace ? buildNsMatrix(useNS) : null,
+        nsMatrix = isNamespace ? buildNsMatrix(nsUriToPrefix) : null,
         _nsMatrix,
         nodeStack = [],
         anonymousNsCount = 0,
@@ -400,7 +433,7 @@ function Saxen(options) {
             nsUri = decodeEntities(value);
             nsUriPrefix = uriPrefix(newalias);
 
-            alias = useNS[nsUri];
+            alias = nsUriToPrefix[nsUri];
 
             if (!alias) {
               // no prefix defined or prefix collision
@@ -416,7 +449,7 @@ function Saxen(options) {
                 alias = newalias;
               }
 
-              useNS[nsUri] = alias;
+              nsUriToPrefix[nsUri] = alias;
             }
 
             if (nsMatrix[newalias] !== alias) {
