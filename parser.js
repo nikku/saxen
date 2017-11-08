@@ -13,26 +13,11 @@ var XSI_PREFIX = 'xsi';
 var XSI_TYPE = 'xsi:type';
 
 var SPECIAL_CHARS_MAPPING = {
-  quot: '"',
-  QUOT: '"',
   amp: '&',
-  AMP: '&',
-  nbsp: '\u00A0',
   apos: '\'',
-  lt: '<',
-  LT: '<',
   gt: '>',
-  GT: '>',
-  copy: '\u00A9',
-  laquo: '\u00AB',
-  raquo: '\u00BB',
-  reg: '\u00AE',
-  deg: '\u00B0',
-  plusmn: '\u00B1',
-  sup2: '\u00B2',
-  sup3: '\u00B3',
-  micro: '\u00B5',
-  para: '\u00B6'
+  lt: '<',
+  quot: '"'
 };
 
 function error(msg) {
@@ -49,15 +34,33 @@ function getter(getFn) {
   };
 }
 
-function replaceEntities(s, d, x, z) {
+function replaceEntities(_, d, x, z) {
+
+  var _z;
+
+  // reserved names, i.e. &nbsp;
   if (z) {
-    return hasProperty(SPECIAL_CHARS_MAPPING, z) && SPECIAL_CHARS_MAPPING[z] || '&' + z + ';';
+    if (hasProperty(SPECIAL_CHARS_MAPPING, z)) {
+      return SPECIAL_CHARS_MAPPING[z];
+    }
+
+    _z = z.toLowerCase();
+
+    if (hasProperty(SPECIAL_CHARS_MAPPING, _z)) {
+      return SPECIAL_CHARS_MAPPING[_z];
+    }
+
+    // return original char, as we don't understand the
+    // user input
+    return '&' + z + ';';
   }
 
+  // decimal encoded char
   if (d) {
     return fromCharCode(d);
   }
 
+  // hex encoded char
   return fromCharCode(parseInt(x, 16));
 }
 
@@ -65,12 +68,8 @@ function decodeEntities(s) {
   s = ('' + s);
 
   if (s.length > 3 && s.indexOf('&') !== -1) {
-    if (s.indexOf('&quot;') !== -1) s = s.replace(/&quot;/g, '"');
-    if (s.indexOf('&gt;') !== -1) s = s.replace(/&gt;/g, '>');
-    if (s.indexOf('&lt;') !== -1) s = s.replace(/&lt;/g, '<');
-
     if (s.indexOf('&') !== -1) {
-      s = s.replace(/&#(\d+);|&#x([0-9a-f]+);|&(\w+);/ig, replaceEntities);
+      return s.replace(/&#(\d+);|&#x([0-9a-f]+);|&(\w+);/ig, replaceEntities);
     }
   }
 
