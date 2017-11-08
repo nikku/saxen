@@ -29,6 +29,7 @@
       "url": "https://github.com/nikku"
     }
   ],
+  "license": "MIT",
   "files": [
     "parser.js",
     "LICENSE",
