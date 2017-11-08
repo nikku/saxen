@@ -125,9 +125,9 @@ function Saxen(options) {
 
   var proxy = options && options.proxy;
 
-  var onTextNode = nullFunc,
-      onStartNode = nullFunc,
-      onEndNode = nullFunc,
+  var onText = nullFunc,
+      onOpenTag = nullFunc,
+      onCloseTag = nullFunc,
       onCDATA = nullFunc,
       onError = throwFunc,
       onWarning = nullFunc,
@@ -208,9 +208,9 @@ function Saxen(options) {
     }
 
     switch (name) {
-    case 'openTag': onStartNode = cb; break;
-    case 'text': onTextNode = cb; break;
-    case 'closeTag': onEndNode = cb; break;
+    case 'openTag': onOpenTag = cb; break;
+    case 'text': onText = cb; break;
+    case 'closeTag': onCloseTag = cb; break;
     case 'error': onError = cb; break;
     case 'warn': onWarning = cb; break;
     case 'cdata': onCDATA = cb; break;
@@ -672,7 +672,7 @@ function Saxen(options) {
       }
 
       if (j !== i) {
-        onTextNode(xml.substring(j, i), decodeEntities);
+        onText(xml.substring(j, i), decodeEntities);
         if (parseStop) {
           return;
         }
@@ -878,9 +878,9 @@ function Saxen(options) {
         attrsString = x;
 
         if (proxy) {
-          onStartNode(elementProxy, decodeEntities, tagEnd, getContext);
+          onOpenTag(elementProxy, decodeEntities, tagEnd, getContext);
         } else {
-          onStartNode(elementName, getAttrs, decodeEntities, tagEnd, getContext);
+          onOpenTag(elementName, getAttrs, decodeEntities, tagEnd, getContext);
         }
 
         if (parseStop) {
@@ -891,7 +891,7 @@ function Saxen(options) {
       }
 
       if (tagEnd) {
-        onEndNode(proxy ? elementProxy : elementName, decodeEntities, tagStart, getContext);
+        onCloseTag(proxy ? elementProxy : elementName, decodeEntities, tagStart, getContext);
 
         if (parseStop) {
           return;
