@@ -320,7 +320,6 @@ test({
   ],
 });
 
-
 test({
   xml: '<feed xmlns="http://www.w3.org/2005/Atom" xmlns:a="http://www.w3.org/2005/Atom"><a:title>text</a:title></feed>',
   ns: true,
@@ -603,6 +602,42 @@ test({
   ns: true,
   to: [
     ['openTag', 'ns0:foo', { 'ns1:bar': 'BAR' } ],
+    ['closeTag', 'ns0:foo'],
+  ],
+});
+
+// normalize xsi:type
+test({
+  xml: (
+    '<foo xmlns="http://foo" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="Foo" />'
+  ),
+  ns: true,
+  to: [
+    ['openTag', 'ns0:foo', { 'xsi:type': 'ns0:Foo' } ],
+    ['closeTag', 'ns0:foo'],
+  ],
+});
+
+// normalize prefixed xsi:type
+test({
+  xml: (
+    '<foo xmlns="http://foo" xmlns:bar="http://bar" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="bar:Bar" />'
+  ),
+  ns: true,
+  to: [
+    ['openTag', 'ns0:foo', { 'xsi:type': 'bar:Bar' } ],
+    ['closeTag', 'ns0:foo'],
+  ],
+});
+
+// normalize xsi:type / preserve unknown prefix in value
+test({
+  xml: (
+    '<foo xmlns="http://foo" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="xs:string" />'
+  ),
+  ns: true,
+  to: [
+    ['openTag', 'ns0:foo', { 'xsi:type': 'xs:string' } ],
     ['closeTag', 'ns0:foo'],
   ],
 });

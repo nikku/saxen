@@ -126,8 +126,8 @@ function test(options) {
     assert.equal(results.length, list.length, 'expected ' + list.length + ' records, got ' + results.length);
   }
 
-  parser.on('error', function(msg, getContext) {
-    record('error', msg, getContext());
+  parser.on('error', function(err, getContext) {
+    record('error', err, getContext());
   });
 
   parser.on('openTag', function(elem, attr, uq, tagend, getContext) {

@@ -8,7 +8,11 @@ function hasProperty(o, prop) {
 
 var fromCharCode = String.fromCharCode;
 
-var xharsQuot = {
+var XSI_URI = 'http://www.w3.org/2001/XMLSchema-instance';
+var XSI_PREFIX = 'xsi';
+var XSI_TYPE = 'xsi:type';
+
+var SPECIAL_CHARS_MAPPING = {
   quot: '"',
   QUOT: '"',
   amp: '&',
@@ -43,7 +47,7 @@ function getter(getFn) {
 
 function replaceEntities(s, d, x, z) {
   if (z) {
-    return hasProperty(xharsQuot, z) && xharsQuot[z] || '\x01';
+    return hasProperty(SPECIAL_CHARS_MAPPING, z) && SPECIAL_CHARS_MAPPING[z] || '\x01';
   }
 
   if (d) {
@@ -238,6 +242,9 @@ function Saxen(options) {
       _nsUriToPrefix[k] = nsMap[k];
     }
 
+    // FORCE default mapping for schema instance
+    _nsUriToPrefix[XSI_URI] = XSI_PREFIX;
+
     isNamespace = true;
     nsUriToPrefix = _nsUriToPrefix;
 
@@ -315,9 +322,10 @@ function Saxen(options) {
         return cachedAttrs;
       }
 
-      var nsAttrName,
-          nsUri,
+      var nsUri,
           nsUriPrefix,
+          nsName,
+          defaultAlias,
           attrList = isNamespace && maybeNS ? [] : null,
           i = attrsStart,
           s = attrsString,
@@ -459,8 +467,8 @@ function Saxen(options) {
             continue;
           }
 
-          // collect attributes until all namespace declarations
-          // are processed
+          // collect attributes until all namespace
+          // declarations are processed
           attrList.push(name, value);
           continue;
         }
@@ -471,11 +479,17 @@ function Saxen(options) {
           continue;
         }
 
-        // normalize namespaced attribute names
-        if ((nsAttrName = nsMatrix[name.substring(0, w)])) {
-          nsAttrName = nsMatrix['xmlns'] === nsAttrName ? name.substr(w + 1) : nsAttrName;
-          attrs[nsAttrName + name.substr(w)] = value;
+        // normalize ns attribute name
+        if (!(nsName = nsMatrix[name.substring(0, w)])) {
+          continue;
         }
+
+        attrs[
+          nsMatrix['xmlns'] === nsName
+            ? name.substr(w + 1)
+            : nsName + name.substr(w)
+        ] = value;
+        // end: normalize ns attribute name
       }
 
 
@@ -486,21 +500,46 @@ function Saxen(options) {
 
       // handle deferred, possibly namespaced attributes
       if (maybeNS)  {
-        alias = nsMatrix['xmlns'];
+        defaultAlias = nsMatrix['xmlns'];
 
+        // normalize captured attributes
         for (i = 0, l = attrList.length; i < l; i++) {
+
           name = attrList[i++];
+          value = attrList[i];
 
           w = name.indexOf(':');
+
           if (w !== -1) {
-            if ((nsAttrName = nsMatrix[name.substring(0, w)])) {
-              nsAttrName = alias === nsAttrName ? name.substr(w + 1) : nsAttrName + name.substr(w);
-              attrs[nsAttrName] = attrList[i];
+            // normalize ns attribute name
+            if (!(nsName = nsMatrix[name.substring(0, w)])) {
+              continue;
             }
-            continue;
+
+            name = defaultAlias === nsName
+              ? name.substr(w + 1)
+              : nsName + name.substr(w);
+            // end: normalize ns attribute name
+
+            // normalize xsi:type ns attribute value
+            if (name === XSI_TYPE) {
+              w = value.indexOf(':');
+
+              if (w !== -1) {
+                nsName = value.substring(0, w);
+                // handle default prefixes, i.e. xs:String gracefully
+                nsName = nsMatrix[nsName] || nsName;
+                value = nsName + value.substring(w);
+              } else {
+                value = defaultAlias + ':' + value;
+              }
+            }
+            // end: normalize xsi:type ns attribute value
           }
-          attrs[name] = attrList[i];
+
+          attrs[name] = value;
         }
+        // end: normalize captured attributes
       }
 
       return cachedAttrs = attrs;
