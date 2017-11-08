@@ -13,7 +13,7 @@
     "parser",
     "pure"
   ],
-  "version": "3.0.1",
+  "version": "3.1.0",
   "main": "./parser.js",
   "bugs": {
     "url": "https://github.com/nikku/saxen/issues"
