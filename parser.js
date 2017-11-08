@@ -51,7 +51,7 @@ function getter(getFn) {
 
 function replaceEntities(s, d, x, z) {
   if (z) {
-    return hasProperty(SPECIAL_CHARS_MAPPING, z) && SPECIAL_CHARS_MAPPING[z] || '\x01';
+    return hasProperty(SPECIAL_CHARS_MAPPING, z) && SPECIAL_CHARS_MAPPING[z] || '&' + z + ';';
   }
 
   if (d) {
@@ -70,7 +70,7 @@ function decodeEntities(s) {
     if (s.indexOf('&lt;') !== -1) s = s.replace(/&lt;/g, '<');
 
     if (s.indexOf('&') !== -1) {
-      s = s.replace(/&#(\d+);|&#x([0123456789abcdef]+);|&(\w+);/ig, replaceEntities);
+      s = s.replace(/&#(\d+);|&#x([0-9a-f]+);|&(\w+);/ig, replaceEntities);
     }
   }
 

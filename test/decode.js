@@ -18,11 +18,12 @@ describe('decode', function() {
 
       var attrs = getAttrs();
 
-      assert.equal(decodeEntities(attrs.encoded), '"<>\'&{İ»\x01\x01');
+      assert.equal(decodeEntities(attrs.encoded), '""<>\'&{İ»&foo;&constructor;');
     });
 
     var specialChars = [
       '&quot;',
+      '&QUOT;',
       '&lt;',
       '&gt;',
       '&#39;',
