@@ -99,7 +99,7 @@ function test(options) {
 
 
       // compare actual Error{message} with expected error message
-      if (name === 'error' && idx === 1) {
+      if ((name === 'error' || name === 'warn') && idx === 1) {
         assert.ok(actualValue instanceof Error, prefix(idx) + inspect(actualValue) + ' is Error');
         assert.equal(actualValue.message, expectedValue);
 
@@ -128,6 +128,10 @@ function test(options) {
 
   parser.on('error', function(err, getContext) {
     record('error', err, getContext());
+  });
+
+  parser.on('warn', function(err, getContext) {
+    record('warn', err, getContext());
   });
 
   parser.on('openTag', function(elem, attr, uq, tagend, getContext) {

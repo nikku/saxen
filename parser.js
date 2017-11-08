@@ -39,6 +39,10 @@ function error(msg) {
   return new Error(msg);
 }
 
+function unmappedPrefix(prefix) {
+  return 'unmapped prefix <' + prefix + '>';
+}
+
 function getter(getFn) {
   return {
     get: getFn
@@ -127,6 +131,7 @@ function Saxen(options) {
       onEndNode = nullFunc,
       onCDATA = nullFunc,
       onError = throwFunc,
+      onWarning = nullFunc,
       onComment,
       onQuestion,
       onAttention;
@@ -181,6 +186,14 @@ function Saxen(options) {
     onError(err, getContext);
   }
 
+  function handleWarning(err) {
+    if (!(err instanceof Error)) {
+      err = error(err);
+    }
+
+    onWarning(err, getContext);
+  }
+
   /**
    * Register parse listener.
    *
@@ -200,6 +213,7 @@ function Saxen(options) {
     case 'text': onTextNode = cb; break;
     case 'closeTag': onEndNode = cb; break;
     case 'error': onError = cb; break;
+    case 'warn': onWarning = cb; break;
     case 'cdata': onCDATA = cb; break;
 
     case 'attention': onAttention = cb; break; // <!XXXXX zzzz="eeee">
@@ -481,6 +495,7 @@ function Saxen(options) {
 
         // normalize ns attribute name
         if (!(nsName = nsMatrix[name.substring(0, w)])) {
+          handleWarning(unmappedPrefix(name.substring(0, w)));
           continue;
         }
 
@@ -513,6 +528,7 @@ function Saxen(options) {
           if (w !== -1) {
             // normalize ns attribute name
             if (!(nsName = nsMatrix[name.substring(0, w)])) {
+              handleWarning(unmappedPrefix(name.substring(0, w)));
               continue;
             }
 

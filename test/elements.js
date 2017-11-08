@@ -641,3 +641,20 @@ test({
     ['closeTag', 'ns0:foo'],
   ],
 });
+
+// unmapped prefix
+test({
+  xml: (
+    '<foo:foo xmlns:foo="http://foo" bar:no-ns="BAR" />'
+  ),
+  ns: true,
+  to: [
+    ['warn', 'unmapped prefix <bar>', {
+      column: 0,
+      line: 0,
+      data: '<foo:foo xmlns:foo="http://foo" bar:no-ns="BAR" />'
+    }],
+    ['openTag', 'foo:foo'],
+    ['closeTag', 'foo:foo']
+  ],
+});

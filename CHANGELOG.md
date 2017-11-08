@@ -1,8 +1,9 @@
 # TBD
 
-* `FEAT`: throw on handler errors ([`4b0ebb1`](https://github.com/nikku/saxen/commit/4b0ebb12edb6f98064f33f555d519f58a8ec3a63))
+* `FEAT`: throw on handler errors [`4b0ebb1`](https://github.com/nikku/saxen/commit/4b0ebb12edb6f98064f33f555d519f58a8ec3a63)
 * `FEAT`: expose current namespaces in proxy mode
 * `FEAT`: normalize `xsi:type` attribute values [#4](https://github.com/nikku/saxen/issues/4)
+* `FEAT`: add `warn` event, informing about recoverable errors [`7fce2151`](https://github.com/nikku/saxen/commit/7fce2151acc9bf006feab6cb3d892a004504c6ce)
 
 # 2.0.0
 
