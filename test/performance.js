@@ -66,36 +66,47 @@ describe('performance', function() {
 
   it('should parse FAST (proxy)', function() {
 
-    // given
-    var no = 200;
+    this.timeout(10000);
 
-    // when
-    repeat(test({ proxy: true }), 5);
+    console.log('PERF (proxy -> plain)');
 
-    var t = time(repeater(test({ proxy: true }), no));
+    repeat(function() {
+      // given
+      var no = 200;
 
-    var average = t / no;
+      // when
+      repeat(test({ proxy: true }), 5);
 
-    repeat(test(), 5);
+      var t = time(repeater(test({ proxy: true }), no));
 
-    var t1 = time(repeater(test(), no));
+      var average = t / no;
 
-    var average1 = t1 / no;
+      repeat(test(), 5);
 
-    console.log('PERF (plain)');
-    console.log('avg', average1);
-    console.log('sum', t1);
+      var t1 = time(repeater(test(), no));
 
-    console.log('PERF (proxy)');
-    console.log('avg', average);
-    console.log('sum', t);
+      var average1 = t1 / no;
 
-    var difference = Math.round((t/t1) * 100) - 100;
+      var difference = Math.round((t/t1) * 100) - 100;
 
-    console.log('difference %s%s%', difference > 0 ? '+' : '', difference);
+      console.table({
+        PLAIN: {
+          avg: average1,
+          sum: t1,
+          diff: ''
+        },
+        PROXY: {
+          avg: average,
+          sum: t,
+          diff: (difference > 0 ? '+' : '') + difference + '%'
+        }
+      });
 
-    // then
-    assert.ok(average < 12, average + ' < 5');
+      console.log('diff: %s%s% ', (difference > 0 ? '+' : ''), difference);
+
+      // then
+      assert.ok(average < 12, average + ' < 5');
+    }, 5);
   });
 
 });
