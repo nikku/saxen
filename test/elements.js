@@ -642,6 +642,54 @@ test({
   ],
 });
 
+// normalize nested xsi:type
+test({
+  xml: (
+    '<foo xmlns="http://foo" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">' +
+      '<bar xsi:type="Bar" />' +
+    '</foo>'
+  ),
+  ns: true,
+  to: [
+    ['openTag', 'ns0:foo' ],
+    ['openTag', 'ns0:bar', { 'xsi:type': 'ns0:Bar' } ],
+    ['closeTag', 'ns0:bar'],
+    ['closeTag', 'ns0:foo'],
+  ],
+});
+
+// normalize nested prefixed xsi:type
+test({
+  xml: (
+    '<foo xmlns="http://foo" xmlns:bar="http://bar" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">' +
+      '<bar xsi:type="bar:Bar" />' +
+    '</foo>'
+  ),
+  ns: true,
+  to: [
+    ['openTag', 'ns0:foo' ],
+    ['openTag', 'ns0:bar', { 'xsi:type': 'bar:Bar' } ],
+    ['closeTag', 'ns0:bar'],
+    ['closeTag', 'ns0:foo'],
+  ],
+});
+
+// normalize nested xsi:type / preserve unknown prefix in value
+test({
+  xml: (
+    '<foo xmlns="http://foo" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">' +
+      '<bar xsi:type="xs:string" />' +
+    '</foo>'
+  ),
+  ns: true,
+  to: [
+    ['openTag', 'ns0:foo' ],
+    ['openTag', 'ns0:bar', { 'xsi:type': 'xs:string' } ],
+    ['closeTag', 'ns0:bar'],
+    ['closeTag', 'ns0:foo'],
+  ],
+});
+
 // unmapped prefix
 test({
   xml: (

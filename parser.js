@@ -339,7 +339,7 @@ function Saxen(options) {
       var nsUri,
           nsUriPrefix,
           nsName,
-          defaultAlias,
+          defaultAlias = isNamespace && nsMatrix['xmlns'],
           attrList = isNamespace && maybeNS ? [] : null,
           i = attrsStart,
           s = attrsString,
@@ -471,6 +471,7 @@ function Saxen(options) {
               nsMatrix[newalias] = alias;
               if (newalias === 'xmlns') {
                 nsMatrix[uriPrefix(alias)] = nsUri;
+                defaultAlias = alias;
               }
 
               nsMatrix[nsUriPrefix] = nsUri;
@@ -485,8 +486,11 @@ function Saxen(options) {
           // declarations are processed
           attrList.push(name, value);
           continue;
-        }
 
+        } /** end if (maybeNs) */
+
+        // handle attributes on element without
+        // namespace declarations
         w = name.indexOf(':');
         if (w === -1) {
           attrs[name] = value;
@@ -499,12 +503,27 @@ function Saxen(options) {
           continue;
         }
 
-        attrs[
-          nsMatrix['xmlns'] === nsName
-            ? name.substr(w + 1)
-            : nsName + name.substr(w)
-        ] = value;
+        name = defaultAlias === nsName
+          ? name.substr(w + 1)
+          : nsName + name.substr(w);
         // end: normalize ns attribute name
+
+        // normalize xsi:type ns attribute value
+        if (name === XSI_TYPE) {
+          w = value.indexOf(':');
+
+          if (w !== -1) {
+            nsName = value.substring(0, w);
+            // handle default prefixes, i.e. xs:String gracefully
+            nsName = nsMatrix[nsName] || nsName;
+            value = nsName + value.substring(w);
+          } else {
+            value = defaultAlias + ':' + value;
+          }
+        }
+        // end: normalize xsi:type ns attribute value
+
+        attrs[name] = value;
       }
 
 
@@ -515,7 +534,6 @@ function Saxen(options) {
 
       // handle deferred, possibly namespaced attributes
       if (maybeNS)  {
-        defaultAlias = nsMatrix['xmlns'];
 
         // normalize captured attributes
         for (i = 0, l = attrList.length; i < l; i++) {
