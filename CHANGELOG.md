@@ -1,3 +1,8 @@
+# 3.1.0
+
+* `FEAT`: keep non-decodeable entities _as is_
+* `FEAT`: decode only [required sub-set](https://www.w3.org/TR/REC-xml/#sec-predefined-ent) of named entities
+
 # 3.0.1
 
 * `CHORE`: add license field to `package.json`
