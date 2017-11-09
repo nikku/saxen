@@ -6,6 +6,8 @@ All notable changes to [saxen](https://github.com/nikku/saxen) are documented he
 
 ___Note:__ Yet to be released changes appear here._
 
+## 4.0.0
+
 * `FEAT`: fully support anonymous elements in namespace mode [`2f48744a`](https://github.com/nikku/saxen/commit/2f48744a077ec096a411d60f3f948903fa53bfc2)
 * `FEAT`: emit <warn> for all attribute parse issues [`a5014b25`](https://github.com/nikku/saxen/commit/a5014b257cc4635d55daa2df9d38ce6e3b0da13d)
 
