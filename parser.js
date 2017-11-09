@@ -310,8 +310,6 @@ function Saxen(options) {
         i = 0, j = 0,
         x, y, q, w,
         xmlns,
-        xmlnsStack = isNamespace ? [] : null,
-        _xmlns,
         elementName,
         _elementName,
         elementProxy
@@ -832,14 +830,12 @@ function Saxen(options) {
       if (isNamespace) {
 
         _nsMatrix = nsMatrix;
-        _xmlns = xmlns;
 
         if (tagStart) {
           // remember old namespace
           // unless we're self-closing
           if (!tagEnd) {
             nsMatrixStack.push(_nsMatrix);
-            xmlnsStack.push(xmlns);
           }
 
           if (cachedAttrs !== true) {
@@ -862,22 +858,29 @@ function Saxen(options) {
         w = elementName.indexOf(':');
         if (w !== -1) {
           xmlns = nsMatrix[elementName.substring(0, w)];
+
+          // prefix given; namespace must exist
+          if (!xmlns) {
+            return handleError('missing namespace on <' + _elementName + '>');
+          }
+
           elementName = elementName.substr(w + 1);
         } else {
           xmlns = nsMatrix['xmlns'];
 
-          if (!xmlns && _xmlns) {
-            // if no default xmlns is defined,
-            // inherit xmlns from parent
-            xmlns = _xmlns;
-          }
+          // if no default namespace is defined,
+          // we'll import the element as anonymous.
+          //
+          // it is up to users to correct that to the document defined
+          // targetNamespace, or whatever their undersanding of the
+          // XML spec mandates.
         }
 
-        if (!xmlns) {
-          return handleError('missing namespace on <' + _elementName + '>');
+        // adjust namespace prefixs as configured
+        if (xmlns) {
+          elementName = xmlns + ':' + elementName;
         }
 
-        elementName = xmlns + ':' + elementName;
       }
 
       if (tagStart) {
@@ -908,10 +911,8 @@ function Saxen(options) {
         if (isNamespace) {
           if (!tagStart) {
             nsMatrix = nsMatrixStack.pop();
-            xmlns = xmlnsStack.pop();
           } else {
             nsMatrix = _nsMatrix;
-            xmlns = _xmlns;
           }
         }
       }

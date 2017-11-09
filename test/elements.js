@@ -391,6 +391,16 @@ test({
   ]
 });
 
+// namespaces
+test({
+  xml: '<xmlns/>',
+  ns: true,
+  expect: [
+    ['openTag', 'xmlns'],
+    ['closeTag', 'xmlns'],
+  ]
+});
+
 test({
   xml: '<feed xmlns="http://www.w3.org/2005/Atom" xmlns:media="http://search.yahoo.com/mrss/" id="aa" media:title="bb"/>',
   ns: true,
@@ -629,8 +639,8 @@ test({
   expect: [
     ['openTag', 'foo:root'],
     ['openTag', 'bar:outer'],
-    ['openTag', 'bar:nested'],
-    ['closeTag', 'bar:nested'],
+    ['openTag', 'nested'],
+    ['closeTag', 'nested'],
     ['closeTag', 'bar:outer'],
     ['closeTag', 'foo:root'],
   ],
