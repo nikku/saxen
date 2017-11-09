@@ -43,7 +43,7 @@ parser.parse('<blub xmlns="http://foo" xmlns:bar="http://bar" bar:aa="A" />');
 
 ## Supported Hooks
 
-Saxen supports the following parse hooks:
+We support the following parse hooks:
 
 * `openTag(elementName, attrGetter, decodeEntities, selfClosing, contextGetter)`
 * `closeTag(elementName, selfClosing, contextGetter)`
@@ -80,7 +80,7 @@ parser.ns();
 
 ## Non-Features
 
-This library lacks some features known in other XML parsers such as [sax-js](https://github.com/isaacs/sax-js):
+`/saxen/` lacks some features known in other XML parsers such as [sax-js](https://github.com/isaacs/sax-js):
 
 * no support for parsing loose documents, such as arbitrary HTML snippets
 * no support for text trimming
@@ -92,9 +92,9 @@ This library lacks some features known in other XML parsers such as [sax-js](htt
 
 ## Credits
 
-This library builds on the awesome work done by [easysax](https://github.com/vflash/easysax).
+We build on the awesome work done by [easysax](https://github.com/vflash/easysax).
 
-It is named after [Sachsen](https://en.wikipedia.org/wiki/Saxony), a federal state of Germany. So geht sächsisch!
+`/saxen/` is named after [Sachsen](https://en.wikipedia.org/wiki/Saxony), a federal state of Germany. So geht sächsisch!
 
 
 ## LICENSE
