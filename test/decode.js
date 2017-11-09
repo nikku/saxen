@@ -18,7 +18,7 @@ describe('decode', function() {
 
       var attrs = getAttrs();
 
-      assert.equal(decodeEntities(attrs.encoded), '&\'><""\'&{İ&raquo;&constructor;');
+      assert.equal(decodeEntities(attrs.encoded), '&\'><""\'&{İ&raquo;&constructor;&#NaN;');
     });
 
     var specialChars = [
@@ -33,7 +33,8 @@ describe('decode', function() {
       '&#0123;',
       '&#x0130;',
       '&raquo;',
-      '&constructor;'
+      '&constructor;',
+      '&#NaN;'
     ];
 
     // when
