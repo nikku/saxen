@@ -17,6 +17,46 @@ test({
 });
 
 test({
+  xml: '<div />',
+  expect: [
+    ['openTag', 'div', true, true],
+    ['closeTag', 'div', true],
+  ],
+});
+
+test({
+  xml: '<div></div>',
+  expect: [
+    ['openTag', 'div', true, false ],
+    ['closeTag', 'div', false ],
+  ]
+});
+
+test({
+  xml: '<DIV/>',
+  expect: [
+    ['openTag', 'DIV', true, true],
+    ['closeTag', 'DIV', true],
+  ],
+});
+
+test({
+  xml: '<DIV />',
+  expect: [
+    ['openTag', 'DIV', true, true],
+    ['closeTag', 'DIV', true],
+  ],
+});
+
+test({
+  xml: '<DIV></DIV>',
+  expect: [
+    ['openTag', 'DIV', true, false ],
+    ['closeTag', 'DIV', false ],
+  ]
+});
+
+test({
   xml: '<DIVa="B"></DIV>',
   expect: [
     ['openTag', 'DIV'],
@@ -63,7 +103,11 @@ test({
 test({
   xml: '<!- HELLO',
   expect: [
-    ['error', 'unclosed tag'],
+    ['error', 'unclosed tag', {
+      line: 0,
+      column: 0,
+      data: '<!- HELLO'
+    }]
   ],
 });
 
@@ -190,6 +234,7 @@ test({
   ],
 });
 
+// attributes / ""
 test({
   xml: '<root LENGTH="abc=ABC"></root>',
   expect: [
@@ -198,6 +243,17 @@ test({
   ],
 });
 
+// attributes / no xmlns assignment
+test({
+  xml: '<root xmlns:xmlns="http://foo"></root>',
+  expect: [
+    ['warn', 'illegal declaration of xmlns'],
+    ['openTag', 'root'],
+    ['closeTag', 'root'],
+  ],
+});
+
+// attributes / ''
 test({
   xml: '<root length=\'abc=abc\'></root>',
   expect: [
@@ -206,6 +262,7 @@ test({
   ],
 });
 
+// attributes / = inside attribute
 test({
   xml: '<root _abc="abc=abc" :abc="abc"></root>',
   expect: [
@@ -214,11 +271,71 @@ test({
   ],
 });
 
-
+// attributes / space between attributes
 test({
   xml: '<root attr1="first"\t attr2="second"/>',
   expect: [
     ['openTag', 'root', { attr1: 'first', attr2: 'second' }, true],
+    ['closeTag', 'root', true],
+  ],
+});
+
+// attributes / warnings / no space between attributes
+test({
+  xml: '<root attr1="first"attr2="second"/>',
+  expect: [
+    ['warn', 'illegal character after attribute end' ],
+    ['openTag', 'root', false, true],
+    ['closeTag', 'root', true],
+  ],
+});
+
+// attributes / warnings / illegal first char
+test({
+  xml: '<root =attr1="first"/>',
+  expect: [
+    ['warn', 'illegal first char attribute name'],
+    ['openTag', 'root', false, true],
+    ['closeTag', 'root', true],
+  ],
+});
+
+// attributes / warnings / open - close missmatch
+test({
+  xml: '<root attr1="first\'/>',
+  expect: [
+    ['warn', 'attribute value quote missmatch'],
+    ['openTag', 'root', false, true],
+    ['closeTag', 'root', true],
+  ],
+});
+
+// attributes / warnings / open - close missmatch
+test({
+  xml: '<root attr1=\'first"/>',
+  expect: [
+    ['warn', 'attribute value quote missmatch'],
+    ['openTag', 'root', false, true],
+    ['closeTag', 'root', true],
+  ],
+});
+
+// attributes / warnings / attribute without value
+test({
+  xml: '<root attr1 attr2="second"/>',
+  expect: [
+    ['warn', 'missing attribute value' ],
+    ['openTag', 'root', false, true],
+    ['closeTag', 'root', true],
+  ],
+});
+
+// attributes / warnings / missing quoting
+test({
+  xml: '<root attr1=value />',
+  expect: [
+    ['warn', 'missing attribute value quotes' ],
+    ['openTag', 'root', false, true],
     ['closeTag', 'root', true],
   ],
 });
@@ -234,11 +351,11 @@ test({
 });
 
 test({
-  xml: '<r><![CDATA[ this is ]]><![CDATA[ this is ]]></r>',
+  xml: '<r><![CDATA[ this is ]]><![CDATA[ this is [] ]]></r>',
   expect: [
     ['openTag', 'r'],
     ['cdata', ' this is '],
-    ['cdata', ' this is '],
+    ['cdata', ' this is [] '],
     ['closeTag', 'r'],
   ],
 });
@@ -258,6 +375,20 @@ test({
     ['openTag', 'r'],
     ['error', 'unclosed cdata'],
   ],
+});
+
+test({
+  xml: '<html><head><script>\'<div>foo</div></\'</script></head></html>',
+  expect: [
+    ['openTag', 'html'],
+    ['openTag', 'head'],
+    ['openTag', 'script'],
+    ['text', '\''],
+    ['openTag', 'div'],
+    ['text', 'foo'],
+    ['closeTag', 'div'],
+    ['error', 'closing tag mismatch'],
+  ]
 });
 
 test({
@@ -553,7 +684,7 @@ test({
   ],
 });
 
-// test missing namespace
+// test missing namespace / element
 test({
   xml: (
     '<foo xmlns="http://xxx">' +
@@ -690,19 +821,71 @@ test({
   ],
 });
 
-// unmapped prefix
+// attributes / missing namespace for prefixed
 test({
   xml: (
     '<foo:foo xmlns:foo="http://foo" bar:no-ns="BAR" />'
   ),
   ns: true,
   expect: [
-    ['warn', 'unmapped prefix <bar>', {
+    ['warn', 'missing namespace for prefix <bar>', {
       column: 0,
       line: 0,
       data: '<foo:foo xmlns:foo="http://foo" bar:no-ns="BAR" />'
     }],
     ['openTag', 'foo:foo'],
     ['closeTag', 'foo:foo']
+  ],
+});
+
+// attributes / missing namespace for prefixed / default ns
+test({
+  xml: (
+    '<foo xmlns="http://xxx" bar:no-ns="BAR" />'
+  ),
+  ns: true,
+  expect: [
+    ['warn', 'missing namespace for prefix <bar>'],
+    ['openTag', 'ns0:foo' ],
+    ['closeTag', 'ns0:foo' ]
+  ],
+});
+
+// whitespace / BOM at start
+test({
+  xml: '\uFEFF<div />',
+  expect: [
+    ['text', '\uFEFF'],
+    ['openTag', 'div'],
+    ['closeTag', 'div'],
+  ],
+});
+
+// whitespace / _ at start
+test({
+  xml: ' \uFEFF<div />',
+  expect: [
+    ['text', ' \uFEFF'],
+    ['openTag', 'div'],
+    ['closeTag', 'div'],
+  ],
+});
+
+// cyrillic in text
+test({
+  xml: '<P>тест</P>',
+  expect: [
+    ['openTag', 'P'],
+    ['text', 'тест'],
+    ['closeTag', 'P'],
+  ],
+});
+
+// kanji in attribute value
+test({
+  xml: '<P foo="误" />',
+  expect: [
+    ['openTag', 'P', { foo: '误' }, true],
+    ['closeTag', 'P'],
   ],
 });

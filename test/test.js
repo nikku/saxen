@@ -48,14 +48,14 @@ function test(options) {
   function verifyRecord(actual, actualIdx, expected) {
 
     function prefix(columnIdx) {
-      return 'record ' + actualIdx + (typeof columnIdx !== undefined ? ',' + columnIdx : '') + ' ';
+      return 'record ' + actualIdx + (typeof columnIdx !== 'undefined' ? ',' + columnIdx : '') + ' ';
     }
 
-    if (!expected) {
-      assert(expected, prefix() + util.inspect(actual));
-    }
+    assert.ok(expected, prefix() + 'unexpected: ' + util.inspect(actual));
 
     var name = actual[0];
+
+    var obj;
 
     for (var idx = 0, l = expected.length; idx < l; idx++) {
       var expectedValue = expected[idx];
@@ -68,13 +68,19 @@ function test(options) {
 
         } else {
 
+          obj = {};
+
           // validate individual, expected attrs
           for (var key in expectedValue) {
-            assert.equal(
-              actualValue[key],
-              expectedValue[key],
-              prefix(idx) + ' attrs[' + key + '] equal ' + expectedValue[key]);
+            if (Object.prototype.hasOwnProperty.call(expectedValue, key)) {
+              obj[key] = actualValue[key];
+            }
           }
+
+          assert.deepEqual(
+            obj,
+            expectedValue,
+            prefix(idx) + ' attrs should equal');
         }
 
         continue;
@@ -102,15 +108,15 @@ function test(options) {
       return;
     }
 
-    for (var idx = 0; idx < recordedEntries.length; idx++) {
-      verifyRecord(recordedEntries[idx], idx, expectedEntries[idx]);
-    }
-
     assert.equal(
       recordedEntries.length,
       expectedEntries.length,
-      'expected ' + expectedEntries.length + ' records, got ' + recordedEntries.length
+      'expected ' + expectedEntries.length + ' records, got ' + recordedEntries.length + ': \n' + util.inspect(recordedEntries)
     );
+
+    for (var idx = 0; idx < recordedEntries.length; idx++) {
+      verifyRecord(recordedEntries[idx], idx, expectedEntries[idx]);
+    }
   }
 
   parser.on('error', function(err, getContext) {

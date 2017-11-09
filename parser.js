@@ -24,8 +24,8 @@ function error(msg) {
   return new Error(msg);
 }
 
-function unmappedPrefix(prefix) {
-  return 'unmapped prefix <' + prefix + '>';
+function missingNamespaceForPrefix(prefix) {
+  return 'missing namespace for prefix <' + prefix + '>';
 }
 
 function getter(getFn) {
@@ -364,7 +364,8 @@ function Saxen(options) {
         // wait for non whitespace character
         if (w < 65 || w > 122 || (w > 90 && w < 97) ) {
           if (w !== 95 && w !== 58) { // char 95"_" 58":"
-            return cachedAttrs = false; // error. invalid first char
+            handleWarning('illegal first char attribute name');
+            return cachedAttrs = false;
           }
         }
 
@@ -377,7 +378,9 @@ function Saxen(options) {
           }
 
           if (w !== 61) { // "=" == 61
-            return cachedAttrs = false; // error. invalid char "="
+            // expected "="
+            handleWarning('missing attribute value');
+            return cachedAttrs = false;
           }
 
           break;
@@ -387,6 +390,7 @@ function Saxen(options) {
         ok = true;
 
         if (name === 'xmlns:xmlns') {
+          handleWarning('illegal declaration of xmlns');
           return cachedAttrs = false; // error. invalid name
         }
 
@@ -397,6 +401,7 @@ function Saxen(options) {
 
         } else {
           if (w !== 39) { // "'"
+            handleWarning('missing attribute value quotes');
             return cachedAttrs = false; // error. invalid char
           }
 
@@ -404,6 +409,7 @@ function Saxen(options) {
         }
 
         if (j === -1) {
+          handleWarning('attribute value quote missmatch');
           return cachedAttrs = false; // error. invalid char
         }
 
@@ -412,6 +418,7 @@ function Saxen(options) {
 
           if (w > 32 || w < 9 || (w < 32 && w > 13)) {
             // error. invalid char
+            handleWarning('illegal character after attribute end');
             return cachedAttrs = false;
           }
         }
@@ -498,7 +505,7 @@ function Saxen(options) {
 
         // normalize ns attribute name
         if (!(nsName = nsMatrix[name.substring(0, w)])) {
-          handleWarning(unmappedPrefix(name.substring(0, w)));
+          handleWarning(missingNamespaceForPrefix(name.substring(0, w)));
           continue;
         }
 
@@ -545,7 +552,7 @@ function Saxen(options) {
           if (w !== -1) {
             // normalize ns attribute name
             if (!(nsName = nsMatrix[name.substring(0, w)])) {
-              handleWarning(unmappedPrefix(name.substring(0, w)));
+              handleWarning(missingNamespaceForPrefix(name.substring(0, w)));
               continue;
             }
 
