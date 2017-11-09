@@ -51,6 +51,21 @@ describe('#parse', function() {
     assert.throws(parse, /required args <xml=string>/);
   });
 
+
+  it('should throw on XML parse error', function() {
+
+    // given
+    var parser = new Parser();
+
+    // when
+    function parse() {
+      parser.parse('<not<quite<xml');
+    }
+
+    // then
+    assert.throws(parse, /unclosed tag/);
+  });
+
 });
 
 
