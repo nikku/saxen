@@ -4,23 +4,6 @@ var util = require('util');
 
 var inspect = util.inspect;
 
-/*
-describe('test-01', function() {
-    it('создание корневого элемента', function() {
-        assert.equal('MyBlock', b(''));
-    });
-});
-
-
-test({
-    xml: '<div/>',
-    ns: false, // 'rss',
-    to: [
-        ['openTag', 'div', {}, true],
-    ],
-});
-*/
-
 module.exports = function(op) {
   it(op.xml.substr(0, 275), function() {
     test(op || {});
@@ -41,7 +24,7 @@ module.exports = function(op) {
 function test(options) {
   var parser = options.parser;
   var error = false;
-  var list = options.to;
+  var expectedEntries = options.expect;
 
   if (!parser) {
     parser = new Parser();
@@ -56,10 +39,10 @@ function test(options) {
     }
   }
 
-  var results = [];
+  var recordedEntries = [];
 
   function record() {
-    results.push(arguments);
+    recordedEntries.push(arguments);
   }
 
   function verifyRecord(actual, actualIdx, expected) {
@@ -119,11 +102,15 @@ function test(options) {
       return;
     }
 
-    for (var idx = 0; idx < results.length; idx++) {
-      verifyRecord(results[idx], idx, list[idx]);
+    for (var idx = 0; idx < recordedEntries.length; idx++) {
+      verifyRecord(recordedEntries[idx], idx, expectedEntries[idx]);
     }
 
-    assert.equal(results.length, list.length, 'expected ' + list.length + ' records, got ' + results.length);
+    assert.equal(
+      recordedEntries.length,
+      expectedEntries.length,
+      'expected ' + expectedEntries.length + ' records, got ' + recordedEntries.length
+    );
   }
 
   parser.on('error', function(err, getContext) {

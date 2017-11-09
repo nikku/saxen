@@ -10,7 +10,7 @@ var test = require('./test');
 
 test({
   xml: '<div/>',
-  to: [
+  expect: [
     ['openTag', 'div', true, true],
     ['closeTag', 'div', true],
   ],
@@ -18,7 +18,7 @@ test({
 
 test({
   xml: '<DIVa="B"></DIV>',
-  to: [
+  expect: [
     ['openTag', 'DIV'],
     ['closeTag', 'DIV'],
   ],
@@ -26,7 +26,7 @@ test({
 
 test({
   xml: '<div></div >',
-  to: [
+  expect: [
     ['openTag', 'div'],
     ['error', 'close tag'],
   ]
@@ -34,56 +34,56 @@ test({
 
 test({
   xml: '\n\x01asdasd',
-  to: [
+  expect: [
     ['error', 'missing start tag']
   ]
 });
 
 test({
   xml: '<!XXXXX zzzz="eeee">',
-  to: [
+  expect: [
     ['attention', '<!XXXXX zzzz="eeee">'],
   ],
 });
 
 test({
   xml: '<!-- HELLO -->',
-  to: [
+  expect: [
     ['comment', ' HELLO '],
   ],
 });
 
 test({
   xml: '<!-- HELLO',
-  to: [
+  expect: [
     ['error', 'unclosed comment'],
   ],
 });
 
 test({
   xml: '<!- HELLO',
-  to: [
+  expect: [
     ['error', 'unclosed tag'],
   ],
 });
 
 test({
   xml: '<? QUESTION ?>',
-  to: [
+  expect: [
     ['question', '<? QUESTION ?>'],
   ],
 });
 
 test({
   xml: '<? QUESTION',
-  to: [
+  expect: [
     ['error', 'unclosed question'],
   ],
 });
 
 test({
   xml: '<a><b/></a>',
-  to: [
+  expect: [
     ['openTag', 'a', true, false],
     ['openTag', 'b', true, true],
     ['closeTag', 'b', true],
@@ -93,35 +93,35 @@ test({
 
 test({
   xml: '<open',
-  to: [
+  expect: [
     ['error', 'unclosed tag'],
   ],
 });
 
 test({
   xml: '<open /',
-  to: [
+  expect: [
     ['error', 'unclosed tag'],
   ],
 });
 
 test({
   xml: '<=div></=div>',
-  to: [
+  expect: [
     ['error', 'illegal first char nodeName'],
   ],
 });
 
 test({
   xml: '<div=></div=>',
-  to: [
+  expect: [
     ['error', 'invalid nodeName'],
   ],
 });
 
 test({
   xml: '<a><b></c></b></a>',
-  to: [
+  expect: [
     ['openTag', 'a', true, false],
     ['openTag', 'b', true, false],
     ['error', 'closing tag mismatch', { data: '</c>', line: 0, column: 6 } ],
@@ -130,7 +130,7 @@ test({
 
 test({
   xml: '<_a><:b></:b></_a>',
-  to: [
+  expect: [
     ['openTag', '_a', true, false],
     ['openTag', ':b', true, false],
     ['closeTag', ':b', false],
@@ -140,7 +140,7 @@ test({
 
 test({
   xml: '<a><!--comment text--></a>',
-  to: [
+  expect: [
     ['openTag', 'a', true, false],
     ['comment', 'comment text'],
     ['closeTag', 'a', false],
@@ -149,7 +149,7 @@ test({
 
 test({
   xml: '<root><foo>',
-  to: [
+  expect: [
     ['openTag', 'root'],
     ['openTag', 'foo'],
     ['error', 'unexpected end of file', { data: '', line: 0, column: 11 } ],
@@ -158,7 +158,7 @@ test({
 
 test({
   xml: '<root/><f',
-  to: [
+  expect: [
     ['openTag', 'root', true, true],
     ['closeTag', 'root', true],
     ['error', 'unclosed tag', { data: '<f', line: 0, column: 7 } ],
@@ -167,7 +167,7 @@ test({
 
 test({
   xml: '<root></rof',
-  to: [
+  expect: [
     ['openTag', 'root', true, false],
     ['error', 'unclosed tag', { data: '</rof', line: 0, column: 6 } ]
   ],
@@ -175,7 +175,7 @@ test({
 
 test({
   xml: '<root></rof</root>',
-  to: [
+  expect: [
     ['openTag', 'root', true, false],
     ['error', 'closing tag mismatch', { data: '</rof</root>', line: 0, column: 6 } ]
   ],
@@ -183,7 +183,7 @@ test({
 
 test({
   xml: '<root>text</root>',
-  to: [
+  expect: [
     ['openTag', 'root'],
     ['text', 'text'],
     ['closeTag', 'root'],
@@ -192,7 +192,7 @@ test({
 
 test({
   xml: '<root LENGTH="abc=ABC"></root>',
-  to: [
+  expect: [
     ['openTag', 'root', { LENGTH: 'abc=ABC' }, false],
     ['closeTag', 'root', false],
   ],
@@ -200,7 +200,7 @@ test({
 
 test({
   xml: '<root length=\'abc=abc\'></root>',
-  to: [
+  expect: [
     ['openTag', 'root', { length: 'abc=abc' }, false],
     ['closeTag', 'root', false],
   ],
@@ -208,7 +208,7 @@ test({
 
 test({
   xml: '<root _abc="abc=abc" :abc="abc"></root>',
-  to: [
+  expect: [
     ['openTag', 'root', { _abc: 'abc=abc', ':abc': 'abc' }, false],
     ['closeTag', 'root', false],
   ],
@@ -217,7 +217,7 @@ test({
 
 test({
   xml: '<root attr1="first"\t attr2="second"/>',
-  to: [
+  expect: [
     ['openTag', 'root', { attr1: 'first', attr2: 'second' }, true],
     ['closeTag', 'root', true],
   ],
@@ -225,7 +225,7 @@ test({
 
 test({
   xml: '<root length=\'12345\'><item/></root>',
-  to: [
+  expect: [
     ['openTag', 'root', { length: '12345' }, false],
     ['openTag', 'item', true, true],
     ['closeTag', 'item', true],
@@ -235,7 +235,7 @@ test({
 
 test({
   xml: '<r><![CDATA[ this is ]]><![CDATA[ this is ]]></r>',
-  to: [
+  expect: [
     ['openTag', 'r'],
     ['cdata', ' this is '],
     ['cdata', ' this is '],
@@ -245,7 +245,7 @@ test({
 
 test({
   xml: '<r><![CDATA[[[[[[[[[]]]]]]]]]]></r>',
-  to: [
+  expect: [
     ['openTag', 'r'],
     ['cdata', '[[[[[[[[]]]]]]]]'],
     ['closeTag', 'r'],
@@ -254,7 +254,7 @@ test({
 
 test({
   xml: '<r><![CDATA[</r>',
-  to: [
+  expect: [
     ['openTag', 'r'],
     ['error', 'unclosed cdata'],
   ],
@@ -263,7 +263,7 @@ test({
 test({
   xml: '<feed xmlns="http://www.w3.org/2005/Atom" xmlns:media="http://search.yahoo.com/mrss/" id="aa" media:title="bb"/>',
   ns: true,
-  to: [
+  expect: [
     ['openTag', 'atom:feed', { id: 'aa', 'media:title': 'bb' }],
     ['closeTag', 'atom:feed'],
   ],
@@ -272,7 +272,7 @@ test({
 test({
   xml: '<feed xmlns="http://www.w3.org/2005/Atom" xmlns:media="http://search.yahoo.com/mrss/" id="aa" media:title="bb"></feed>',
   ns: true,
-  to: [
+  expect: [
     ['openTag', 'atom:feed', { id: 'aa', 'media:title': 'bb' }],
     ['closeTag', 'atom:feed'],
   ],
@@ -281,7 +281,7 @@ test({
 test({
   xml: '<feed xmlns="http://www.w3.org/2005/Atom" xmlns:m="http://search.yahoo.com/mrss/" id="aa" m:title="bb"/>',
   ns: true,
-  to: [
+  expect: [
     ['openTag', 'atom:feed', { id: 'aa', 'media:title': 'bb' }],
     ['closeTag', 'atom:feed'],
   ],
@@ -290,7 +290,7 @@ test({
 test({
   xml: '<feed xmlns="http://www.w3.org/2005/Atom" xmlns:a="http://www.w3.org/2005/Atom" id="aa" a:title="bb"/>',
   ns: true,
-  to: [
+  expect: [
     ['openTag', 'atom:feed', { id: 'aa', 'title': 'bb' }],
     ['closeTag', 'atom:feed'],
   ],
@@ -299,7 +299,7 @@ test({
 test({
   xml: '<feed xmlns="http://www.w3.org/2005/Atom" xmlns:media="http://search.yahoo.com/mrss/"><media:title>text</media:title></feed>',
   ns: true,
-  to: [
+  expect: [
     ['openTag', 'atom:feed'],
     ['openTag', 'media:title'],
     ['text', 'text'],
@@ -311,7 +311,7 @@ test({
 test({
   xml: '<feed xmlns="http://www.w3.org/2005/Atom" xmlns:m="http://search.yahoo.com/mrss/"><m:title>text</m:title></feed>',
   ns: true,
-  to: [
+  expect: [
     ['openTag', 'atom:feed'],
     ['openTag', 'media:title'],
     ['text', 'text'],
@@ -323,7 +323,7 @@ test({
 test({
   xml: '<feed xmlns="http://www.w3.org/2005/Atom" xmlns:a="http://www.w3.org/2005/Atom"><a:title>text</a:title></feed>',
   ns: true,
-  to: [
+  expect: [
     ['openTag', 'atom:feed'],
     ['openTag', 'atom:title'],
     ['text', 'text'],
@@ -335,7 +335,7 @@ test({
 test({
   xml: '<feed xmlns="http://www.w3.org/2005/Atom" xmlns:="http://search.yahoo.com/mrss/" id="aa" :title="bb"><:text/></feed>',
   ns: true,
-  to: [
+  expect: [
     ['openTag', 'atom:feed', { id: 'aa', 'media:title': 'bb' }],
     ['openTag', 'media:text'],
     ['closeTag', 'media:text'],
@@ -347,7 +347,7 @@ test({
 test({
   xml: '<root xmlns="http://foo" xmlns:bar="http://bar" id="aa" bar:title="bb"><bar:child /></root>',
   ns: true,
-  to: [
+  expect: [
     ['openTag', 'ns0:root', { id: 'aa', 'bar:title': 'bb' }],
     ['openTag', 'bar:child'],
     ['closeTag', 'bar:child'],
@@ -364,7 +364,7 @@ test({
     '</feed>'
   ),
   ns: true,
-  to: [
+  expect: [
     ['openTag', 'atom:feed', { id: 'aa', 'media:title': 'bb' }, false, {
       line: 0,
       column: 0,
@@ -390,7 +390,7 @@ test({
     '</feed>'
   ),
   ns: true,
-  to: [
+  expect: [
     ['openTag', 'atom:feed', { id: 'aa', 'media:title': 'bb' }, false, {
       line: 0,
       column: 0,
@@ -412,7 +412,7 @@ test({
     '<foo xmlns="http://this" xmlns:that="http://that" id="aa" that:title="bb" />'
   ),
   ns: true,
-  to: [
+  expect: [
     ['openTag', 'ns0:foo', { id: 'aa', 'that:title': 'bb' }, true, {
       line: 0,
       column: 0,
@@ -434,7 +434,7 @@ test({
     '</foo>'
   ),
   ns: true,
-  to: [
+  expect: [
     ['openTag', 'ns0:foo', true, false],
     ['openTag', 'ns1:t', { id: 'aa', 'bar:title': 'bb' }, true],
     ['closeTag', 'ns1:t', true],
@@ -453,7 +453,7 @@ test({
     '</foo>'
   ),
   ns: true,
-  to: [
+  expect: [
     ['openTag', 'ns0:foo'],
     ['openTag', 'ns1:t'],
     ['openTag', 'ns1:n'],
@@ -475,7 +475,7 @@ test({
     '</foo>'
   ),
   ns: true,
-  to: [
+  expect: [
     ['openTag', 'ns0:foo'],
     ['openTag', 'ns1:t' ],
     ['openTag', 'ns1:n', { id: 'b', 'bar:title': 'BAR' }],
@@ -495,7 +495,7 @@ test({
     '</foo:root>'
   ),
   ns: true,
-  to: [
+  expect: [
     ['openTag', 'foo:root'],
     ['openTag', 'bar:outer'],
     ['openTag', 'bar:nested'],
@@ -515,7 +515,7 @@ test({
     '</foo>'
   ),
   ns: true,
-  to: [
+  expect: [
     ['openTag', 'ns0:foo'],
     ['openTag', 'ns1:t'],
     ['openTag', 'bar:other', { 'bar:attr': 'BAR' }],
@@ -531,7 +531,7 @@ test({
     '<foo xmlns="http://xxx"></foo>'
   ),
   ns: true,
-  to: [
+  expect: [
     ['openTag', 'ns0:foo', { xmlns: 'http://xxx' } ],
     ['closeTag', 'ns0:foo', false],
   ],
@@ -543,7 +543,7 @@ test({
     '<foo xmlns="http://xxx" xmlns:a="http://www.w3.org/2005/Atom" a:xx="foo"></foo>'
   ),
   ns: true,
-  to: [
+  expect: [
     ['openTag', 'ns0:foo', {
       'xmlns:a': 'http://www.w3.org/2005/Atom',
       'xmlns': 'http://xxx',
@@ -561,7 +561,7 @@ test({
     '</foo>'
   ),
   ns: true,
-  to: [
+  expect: [
     ['openTag', 'ns0:foo' ],
     ['error', 'missing namespace on <bar:unknown>', {
       data: '<bar:unknown />',
@@ -577,7 +577,7 @@ test({
     '<a$uri:foo xmlns:a$uri="http://not-atom" />'
   ),
   ns: true,
-  to: [
+  expect: [
     ['error', 'invalid nodeName'],
   ],
 });
@@ -588,7 +588,7 @@ test({
     '<atom:foo xmlns:atom="http://not-atom" />'
   ),
   ns: true,
-  to: [
+  expect: [
     ['openTag', 'ns0:foo'],
     ['closeTag', 'ns0:foo'],
   ],
@@ -600,7 +600,7 @@ test({
     '<foo xmlns="http://not-ns0" xmlns:ns0="http://ns0" ns0:bar="BAR" />'
   ),
   ns: true,
-  to: [
+  expect: [
     ['openTag', 'ns0:foo', { 'ns1:bar': 'BAR' } ],
     ['closeTag', 'ns0:foo'],
   ],
@@ -612,7 +612,7 @@ test({
     '<foo xmlns="http://foo" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="Foo" />'
   ),
   ns: true,
-  to: [
+  expect: [
     ['openTag', 'ns0:foo', { 'xsi:type': 'ns0:Foo' } ],
     ['closeTag', 'ns0:foo'],
   ],
@@ -624,7 +624,7 @@ test({
     '<foo xmlns="http://foo" xmlns:bar="http://bar" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="bar:Bar" />'
   ),
   ns: true,
-  to: [
+  expect: [
     ['openTag', 'ns0:foo', { 'xsi:type': 'bar:Bar' } ],
     ['closeTag', 'ns0:foo'],
   ],
@@ -636,7 +636,7 @@ test({
     '<foo xmlns="http://foo" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="xs:string" />'
   ),
   ns: true,
-  to: [
+  expect: [
     ['openTag', 'ns0:foo', { 'xsi:type': 'xs:string' } ],
     ['closeTag', 'ns0:foo'],
   ],
@@ -650,7 +650,7 @@ test({
     '</foo>'
   ),
   ns: true,
-  to: [
+  expect: [
     ['openTag', 'ns0:foo' ],
     ['openTag', 'ns0:bar', { 'xsi:type': 'ns0:Bar' } ],
     ['closeTag', 'ns0:bar'],
@@ -666,7 +666,7 @@ test({
     '</foo>'
   ),
   ns: true,
-  to: [
+  expect: [
     ['openTag', 'ns0:foo' ],
     ['openTag', 'ns0:bar', { 'xsi:type': 'bar:Bar' } ],
     ['closeTag', 'ns0:bar'],
@@ -682,7 +682,7 @@ test({
     '</foo>'
   ),
   ns: true,
-  to: [
+  expect: [
     ['openTag', 'ns0:foo' ],
     ['openTag', 'ns0:bar', { 'xsi:type': 'xs:string' } ],
     ['closeTag', 'ns0:bar'],
@@ -696,7 +696,7 @@ test({
     '<foo:foo xmlns:foo="http://foo" bar:no-ns="BAR" />'
   ),
   ns: true,
-  to: [
+  expect: [
     ['warn', 'unmapped prefix <bar>', {
       column: 0,
       line: 0,
