@@ -20,38 +20,79 @@ var Parser = require('saxen');
 
 var parser = new Parser();
 
-// enable namespace parsing
-// element prefixes will automatically adjusted
-// to the ones configured here
+// enable namespace parsing: element prefixes will
+// automatically adjusted to the ones configured here
+// elements in other namespaces will still be processed
 parser.ns({
   'http://foo': 'foo',
   'http://bar': 'bar'
 });
 
-parser.on('openTag', function(elementName, getAttrs, decodeEntity, selfClosing, getContext) {
+parser.on('openTag', function(elementName, attrGetter, decodeEntity, selfClosing, getContext) {
 
   elementName;
   // with prefix, i.e. foo:blub
 
-  var attrs = getAttrs();
+  var attrs = attrGetter();
   // { 'bar:aa': 'A', ... }
-});
-
-parser.on('closeTag', function(elementName, decodeEntity, selfClosing, getContext) {
-  ...
-});
-
-parser.on('error', function(err, getContext) {
-  // rethrow or compensate for err
 });
 
 parser.parse('<blub xmlns="http://foo" xmlns:bar="http://bar" bar:aa="A" />');
 ```
 
 
+## Supported Hooks
+
+Saxen supports the following parse hooks:
+
+* `openTag(elementName, attrGetter, decodeEntities, selfClosing, contextGetter)`
+* `closeTag(elementName, selfClosing, contextGetter)`
+* `error(err, contextGetter)`
+* `warn(warning, contextGetter)`
+* `text(value, decodeEntities)`
+* `cdata(value)`
+* `comment(value, decodeEntities)`
+* `attention(str, decodeEntities)`
+* `question(str)`
+
+In contrast to `error`, `warn` receives recoverable errors, such as malformed attributes.
+
+
+## Namespace Handling
+
+In namespace mode, the parser will adjust tag and attribute namespace prefixes before
+passing the elements name to `openTag` or `closeTag`. To do that, you need to
+configure default prefixes for wellknown namespaces:
+
+```javascript
+parser.ns({
+  'http://foo': 'foo',
+  'http://bar': 'bar'
+});
+```
+
+To skip the adjustment and still process namespace information:
+
+```javascript
+parser.ns();
+```
+
+
+## Non-Features
+
+This library lacks some features known in other XML parsers such as [sax-js](https://github.com/isaacs/sax-js):
+
+* no support for parsing loose documents, such as arbitrary HTML snippets
+* no support for text trimming
+* no automatic entity decoding
+* no automatic attribute parsing
+
+...and that is ok ❤.
+
+
 ## Credits
 
-This library builds on the awesome work done by [easysax](https://github.com/vflash/easysax) and adds anonymous namespace handling and an object mode.
+This library builds on the awesome work done by [easysax](https://github.com/vflash/easysax).
 
 It is named after [Sachsen](https://en.wikipedia.org/wiki/Saxony), a federal state of Germany. So geht sächsisch!
 
