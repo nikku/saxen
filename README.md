@@ -57,6 +57,11 @@ We support the following parse hooks:
 
 In contrast to `error`, `warn` receives recoverable errors, such as malformed attributes.
 
+In [proxy mode](#proxy-mode), `openTag` and `closeTag` a view of the current element replaces the raw element name. In addition element attributes are not passed as a getter to `openTag`. Instead, they get exposed via the `element.attrs`:
+
+* `openTag(element, decodeEntities, selfClosing, contextGetter)`
+* `closeTag(element, selfClosing, contextGetter)`
+
 
 ## Namespace Handling
 
@@ -75,6 +80,40 @@ To skip the adjustment and still process namespace information:
 
 ```javascript
 parser.ns();
+```
+
+
+## Proxy Mode
+
+In this mode, the first argument passed to `openTag` and `closeTag` is an object that exposes more internal XML parse state. This needs to be explicity enabled by instantiating the parser with `{ proxy: true }`.
+
+```javascript
+// instantiate parser with proxy=true
+var parser = new Parser({ proxy: true });
+
+parser.ns({
+  'http://foo-ns': 'foo'
+});
+
+parser.on('openTag', function(el, decodeEntities, selfClosing, getContext) {
+  el.originalName; // root
+  el.name; // foo:root
+  el.attrs; // { 'xmlns:foo': ..., id: '1' }
+  el.ns; // { xmlns: 'foo', foo: 'foo', foo$uri: 'http://foo-ns' }
+});
+
+parser.parse('<root xmlns:foo="http://foo-ns" id="1" />')
+```
+
+Proxy mode comes with a performance penelty of roughly five percent.
+
+__Caution!__ For performance reasons the exposed element is a simple view into the current parser state. Because of that, it will change with the parser advancing and cannot be cached. If you would like to retain a persistent copy of the values, create a shallow clone:
+
+```javascript
+parser.on('openTag', function(el) {
+  var copy = Object.assign({}, el);
+  // copy, ready to keep around
+});
 ```
 
 
