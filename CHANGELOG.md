@@ -6,6 +6,10 @@ All notable changes to [saxen](https://github.com/nikku/saxen) are documented he
 
 ___Note:__ Yet to be released changes appear here._
 
+# 5.1.0
+
+* `FEAT`: proxy mode exposes clonable view [`73c6c44a`](https://github.com/nikku/saxen/commit/73c6c44ade3127f3819ceb825e241bb39d74fd93)
+
 # 5.0.1
 
 * `FIX`: return `{}` on non-existing attributes, too
