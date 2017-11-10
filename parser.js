@@ -324,7 +324,7 @@ function Saxen(options) {
      * Parse attributes on demand and returns the parsed attributes.
      *
      * Return semantics: (1) `false` on attribute parse error,
-     * (2) true on no attributes, (3) object hash on extracted attrs.
+     * (2) object hash on extracted attrs.
      *
      * @return {boolean|Object}
      */
@@ -347,7 +347,6 @@ function Saxen(options) {
           alias,
           name,
           attrs = {},
-          ok,
           w,
           j;
 
@@ -385,7 +384,6 @@ function Saxen(options) {
         }
 
         name = s.substring(i, j);
-        ok = true;
 
         if (name === 'xmlns:xmlns') {
           handleWarning('illegal declaration of xmlns');
@@ -530,11 +528,6 @@ function Saxen(options) {
         attrs[name] = value;
       }
 
-
-      if (!ok) {
-        // could not parse attributes, skipping
-        return cachedAttrs = true;
-      }
 
       // handle deferred, possibly namespaced attributes
       if (maybeNS)  {

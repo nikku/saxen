@@ -11,7 +11,7 @@ var test = require('./test');
 test({
   xml: '<div/>',
   expect: [
-    ['openTag', 'div', true, true],
+    ['openTag', 'div', {}, true],
     ['closeTag', 'div', true],
   ],
 });
@@ -19,7 +19,7 @@ test({
 test({
   xml: '<div />',
   expect: [
-    ['openTag', 'div', true, true],
+    ['openTag', 'div', {}, true],
     ['closeTag', 'div', true],
   ],
 });
@@ -27,7 +27,7 @@ test({
 test({
   xml: '<div></div>',
   expect: [
-    ['openTag', 'div', true, false ],
+    ['openTag', 'div', {}, false ],
     ['closeTag', 'div', false ],
   ]
 });
@@ -35,7 +35,7 @@ test({
 test({
   xml: '<DIV/>',
   expect: [
-    ['openTag', 'DIV', true, true],
+    ['openTag', 'DIV', {}, true],
     ['closeTag', 'DIV', true],
   ],
 });
@@ -43,7 +43,7 @@ test({
 test({
   xml: '<DIV />',
   expect: [
-    ['openTag', 'DIV', true, true],
+    ['openTag', 'DIV', {}, true],
     ['closeTag', 'DIV', true],
   ],
 });
@@ -51,7 +51,7 @@ test({
 test({
   xml: '<DIV></DIV>',
   expect: [
-    ['openTag', 'DIV', true, false ],
+    ['openTag', 'DIV', {}, false ],
     ['closeTag', 'DIV', false ],
   ]
 });
@@ -128,8 +128,8 @@ test({
 test({
   xml: '<a><b/></a>',
   expect: [
-    ['openTag', 'a', true, false],
-    ['openTag', 'b', true, true],
+    ['openTag', 'a', {}, false],
+    ['openTag', 'b', {}, true],
     ['closeTag', 'b', true],
     ['closeTag', 'a', false],
   ],
@@ -166,8 +166,8 @@ test({
 test({
   xml: '<a><b></c></b></a>',
   expect: [
-    ['openTag', 'a', true, false],
-    ['openTag', 'b', true, false],
+    ['openTag', 'a', {}, false],
+    ['openTag', 'b', {}, false],
     ['error', 'closing tag mismatch', { data: '</c>', line: 0, column: 6 } ],
   ],
 });
@@ -175,8 +175,8 @@ test({
 test({
   xml: '<_a><:b></:b></_a>',
   expect: [
-    ['openTag', '_a', true, false],
-    ['openTag', ':b', true, false],
+    ['openTag', '_a', {}, false],
+    ['openTag', ':b', {}, false],
     ['closeTag', ':b', false],
     ['closeTag', '_a', false],
   ],
@@ -185,7 +185,7 @@ test({
 test({
   xml: '<a><!--comment text--></a>',
   expect: [
-    ['openTag', 'a', true, false],
+    ['openTag', 'a', {}, false],
     ['comment', 'comment text'],
     ['closeTag', 'a', false],
   ],
@@ -203,7 +203,7 @@ test({
 test({
   xml: '<root/><f',
   expect: [
-    ['openTag', 'root', true, true],
+    ['openTag', 'root', {}, true],
     ['closeTag', 'root', true],
     ['error', 'unclosed tag', { data: '<f', line: 0, column: 7 } ],
   ],
@@ -212,7 +212,7 @@ test({
 test({
   xml: '<root></rof',
   expect: [
-    ['openTag', 'root', true, false],
+    ['openTag', 'root', {}, false],
     ['error', 'unclosed tag', { data: '</rof', line: 0, column: 6 } ]
   ],
 });
@@ -220,7 +220,7 @@ test({
 test({
   xml: '<root></rof</root>',
   expect: [
-    ['openTag', 'root', true, false],
+    ['openTag', 'root', {}, false],
     ['error', 'closing tag mismatch', { data: '</rof</root>', line: 0, column: 6 } ]
   ],
 });
@@ -344,7 +344,7 @@ test({
   xml: '<root length=\'12345\'><item/></root>',
   expect: [
     ['openTag', 'root', { length: '12345' }, false],
-    ['openTag', 'item', true, true],
+    ['openTag', 'item', {}, true],
     ['closeTag', 'item', true],
     ['closeTag', 'root', false]
   ],
@@ -512,7 +512,7 @@ test({
       data: '<feed xmlns="http://www.w3.org/2005/Atom" \r\n      xmlns:="http://search.yahoo.com/mrss/" id="aa" :title="bb">'
     }],
     ['text', '\r  '],
-    ['openTag', 'media:text', true, true, { line: 2, column: 2, data: '<:text/>' }],
+    ['openTag', 'media:text', {}, true, { line: 2, column: 2, data: '<:text/>' }],
     ['closeTag', 'media:text', true, { line: 2, column: 2, data: '<:text/>' }],
     ['text', '\n'],
     ['closeTag', 'atom:feed', false, {
@@ -537,7 +537,7 @@ test({
       column: 0,
       data: '<feed xmlns="http://www.w3.org/2005/Atom" xmlns:="http://search.yahoo.com/mrss/" id="aa" :title="bb">'
     }],
-    ['openTag', 'media:text', true, true, { line: 0, column: 101, data: '<:text/>' }],
+    ['openTag', 'media:text', {}, true, { line: 0, column: 101, data: '<:text/>' }],
     ['closeTag', 'media:text', true, { line: 0, column: 101, data: '<:text/>' }],
     ['closeTag', 'atom:feed', false, {
       line: 0,
@@ -576,7 +576,7 @@ test({
   ),
   ns: true,
   expect: [
-    ['openTag', 'ns0:foo', true, false],
+    ['openTag', 'ns0:foo', {}, false],
     ['openTag', 'ns1:t', { id: 'aa', 'bar:title': 'bb' }, true],
     ['closeTag', 'ns1:t', true],
     ['closeTag', 'ns0:foo', false],

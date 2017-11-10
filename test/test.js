@@ -51,7 +51,7 @@ function test(options) {
       return 'record ' + actualIdx + (typeof columnIdx !== 'undefined' ? ',' + columnIdx : '') + ' ';
     }
 
-    assert.ok(expected, prefix() + 'unexpected: ' + util.inspect(actual));
+    assert.ok(expected, prefix() + 'unexpected: ' + inspect(actual));
 
     var name = actual[0];
 
@@ -63,9 +63,8 @@ function test(options) {
 
       if (name === 'openTag' && idx === 2) {
         // be able to skip attrs check
-        if (!expectedValue || expectedValue === true) {
-          assert.equal(!!actualValue, expectedValue, prefix(idx) + ' attrs equal ' + expectedValue);
-
+        if (expectedValue === false) {
+          assert.equal(actualValue, expectedValue, prefix(idx) + ' attrs to equal ' + expectedValue);
         } else {
 
           obj = {};
@@ -111,7 +110,7 @@ function test(options) {
     assert.equal(
       recordedEntries.length,
       expectedEntries.length,
-      'expected ' + expectedEntries.length + ' records, got ' + recordedEntries.length + ': \n' + util.inspect(recordedEntries)
+      'expected ' + expectedEntries.length + ' records, got ' + recordedEntries.length + ': \n' + inspect(recordedEntries)
     );
 
     for (var idx = 0; idx < recordedEntries.length; idx++) {
