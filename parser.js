@@ -754,7 +754,9 @@ function Saxen(options) {
         return handleError('unclosed tag');
       }
 
-      cachedAttrs = true; // stop attribute processing
+      // don't process attributes;
+      // there are none
+      cachedAttrs = {};
 
       //if (xml.charCodeAt(i+1) === 47) { // </...
       if (w === 47) { // </...
@@ -831,7 +833,7 @@ function Saxen(options) {
             nsMatrixStack.push(_nsMatrix);
           }
 
-          if (cachedAttrs !== true) {
+          if (cachedAttrs === null) {
             // quick check, whether there may be namespace
             // declarations on the node; if that is the case
             // we need to eagerly parse the node attributes
@@ -890,7 +892,6 @@ function Saxen(options) {
           return;
         }
 
-        cachedAttrs = true;
       }
 
       if (tagEnd) {

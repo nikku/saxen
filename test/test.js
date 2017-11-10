@@ -66,6 +66,7 @@ function test(options) {
         if (expectedValue === false) {
           assert.equal(actualValue, expectedValue, prefix(idx) + ' attrs to equal ' + expectedValue);
         } else {
+          assert.ok(typeof actualValue === 'object', prefix(idx) + ' attrs is an object');
 
           obj = {};
 
