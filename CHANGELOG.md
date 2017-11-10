@@ -6,6 +6,10 @@ All notable changes to [saxen](https://github.com/nikku/saxen) are documented he
 
 ___Note:__ Yet to be released changes appear here._
 
+# 5.2.0
+
+* `CHORE`: properly compile with [Google Closure compiler](https://github.com/google/closure-compiler)
+
 # 5.1.0
 
 * `FEAT`: proxy mode exposes clonable view [`73c6c44a`](https://github.com/nikku/saxen/commit/73c6c44ade3127f3819ceb825e241bb39d74fd93)
