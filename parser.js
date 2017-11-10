@@ -30,7 +30,8 @@ function missingNamespaceForPrefix(prefix) {
 
 function getter(getFn) {
   return {
-    get: getFn
+    get: getFn,
+    enumerable: true
   };
 }
 
