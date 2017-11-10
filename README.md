@@ -11,6 +11,7 @@ A tiny, super fast, namespace aware [sax-style](https://en.wikipedia.org/wiki/Si
 * (optional) namespace aware
 * element / attribute normalization in namespaced mode
 * tiny (`2.6Kb` minified + gzipped)
+* [pretty damn fast](https://github.com/nikku/js-sax-parser-tests)
 
 
 ## Usage
