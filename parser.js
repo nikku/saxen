@@ -1,6 +1,6 @@
 'use strict';
 
-module.exports = Saxen;
+module['exports'] = Saxen;
 
 function hasProperty(o, prop) {
   return Object.prototype.hasOwnProperty.call(o, prop);
@@ -13,11 +13,11 @@ var XSI_PREFIX = 'xsi';
 var XSI_TYPE = 'xsi:type';
 
 var SPECIAL_CHARS_MAPPING = {
-  amp: '&',
-  apos: '\'',
-  gt: '>',
-  lt: '<',
-  quot: '"'
+  'amp': '&',
+  'apos': '\'',
+  'gt': '>',
+  'lt': '<',
+  'quot': '"'
 };
 
 function error(msg) {
@@ -30,8 +30,8 @@ function missingNamespaceForPrefix(prefix) {
 
 function getter(getFn) {
   return {
-    get: getFn,
-    enumerable: true
+    'get': getFn,
+    'enumerable': true
   };
 }
 
@@ -103,7 +103,7 @@ function buildNsMatrix(nsUriToPrefix) {
   return nsMatrix;
 }
 
-function noopGetContext() {  return { line: 0, column: 0 }; }
+function noopGetContext() {  return { 'line': 0, 'column': 0 }; }
 
 function nullFunc() {}
 
@@ -116,7 +116,7 @@ function throwFunc(err) {
  *
  * @constructor
  *
- * @param  {!Object<string, ?>} options
+ * @param  {!Object<string, ?>=} options
  */
 function Saxen(options) {
 
@@ -124,7 +124,7 @@ function Saxen(options) {
     return new Saxen(options);
   }
 
-  var proxy = options && options.proxy;
+  var proxy = options && options['proxy'];
 
   var onText = nullFunc,
       onOpenTag = nullFunc,
@@ -176,6 +176,11 @@ function Saxen(options) {
    */
   var nsUriToPrefix;
 
+  /**
+   * Handle parse error.
+   *
+   * @param  {string|Error} err
+   */
   function handleError(err) {
     if (!(err instanceof Error)) {
       err = error(err);
@@ -186,6 +191,11 @@ function Saxen(options) {
     onError(err, getContext);
   }
 
+  /**
+   * Handle parse error.
+   *
+   * @param  {string|Error} err
+   */
   function handleWarning(err) {
     if (!(err instanceof Error)) {
       err = error(err);
@@ -202,7 +212,7 @@ function Saxen(options) {
    *
    * @return {Saxen}
    */
-  this.on = function(name, cb) {
+  this['on'] = function(name, cb) {
 
     if (typeof cb !== 'function') {
       throw error('required args <name, cb>');
@@ -240,7 +250,7 @@ function Saxen(options) {
    *
    * @return {Saxen}
    */
-  this.ns = function(nsMap) {
+  this['ns'] = function(nsMap) {
 
     if (typeof nsMap === 'undefined') {
       nsMap = {};
@@ -272,7 +282,7 @@ function Saxen(options) {
    *
    * @return {Error} returnError, if not thrown
    */
-  this.parse = function(xml) {
+  this['parse'] = function(xml) {
     if (typeof xml !== 'string') {
       throw error('required args <xml=string>');
     }
@@ -290,7 +300,7 @@ function Saxen(options) {
   /**
    * Stop parsing.
    */
-  this.stop = function() {
+  this['stop'] = function() {
     parseStop = true;
   };
 
@@ -624,9 +634,9 @@ function Saxen(options) {
       }
 
       return {
-        data: data,
-        line: line,
-        column: column
+        'data': data,
+        'line': line,
+        'column': column
       };
     }
 
@@ -635,14 +645,14 @@ function Saxen(options) {
 
     if (proxy) {
       elementProxy = Object.create({}, {
-        name: getter(function() {
+        'name': getter(function() {
           return elementName;
         }),
-        originalName: getter(function() {
+        'originalName': getter(function() {
           return _elementName;
         }),
-        attrs: getter(getAttrs),
-        ns: getter(function() {
+        'attrs': getter(getAttrs),
+        'ns': getter(function() {
           return nsMatrix;
         })
       });
