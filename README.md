@@ -10,7 +10,7 @@ A tiny, super fast, namespace aware [sax-style](https://en.wikipedia.org/wiki/Si
 * (optional) entity decoding and attribute parsing
 * (optional) namespace aware
 * element / attribute normalization in namespaced mode
-* tiny (`4Kb` minified + gzipped)
+* tiny (`2.6Kb` minified + gzipped)
 
 
 ## Usage
