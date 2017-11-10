@@ -6,6 +6,14 @@ All notable changes to [saxen](https://github.com/nikku/saxen) are documented he
 
 ___Note:__ Yet to be released changes appear here._
 
+# 5.0.0
+
+* `CHORE`: don't return `true` on empty attrs [`f7360b11`](https://github.com/nikku/saxen/commit/f7360b115b651b9eb9ca3488a48e827d974deae1)
+
+## 4.0.1
+
+* `DOCS`: improve readme
+
 ## 4.0.0
 
 * `FEAT`: fully support anonymous elements in namespace mode [`2f48744a`](https://github.com/nikku/saxen/commit/2f48744a077ec096a411d60f3f948903fa53bfc2)
