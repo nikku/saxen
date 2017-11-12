@@ -160,7 +160,7 @@ function Saxen(options) {
    *
    * @type {boolean}
    */
-  var parseStop = false; // прервать парсер
+  var parseStop = false;
 
   /**
    * A map of { uri: prefix } used by the parser.
@@ -778,7 +778,7 @@ function Saxen(options) {
           return handleError('closing tag mismatch');
         }
 
-        // проверим что в закрываюшем теге нет лишнего
+        // verify chars in close tag
         for (; q < j; q++) {
           w = xml.charCodeAt(q);
 
