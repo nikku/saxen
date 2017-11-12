@@ -103,6 +103,7 @@ describe('performance', function() {
       });
 
       console.log('diff: %s%s% ', (difference > 0 ? '+' : ''), difference);
+      console.log('avg: %s (PLAIN), %s (PROXY)', average1, average);
 
       // then
       assert.ok(average < 12, average + ' < 5');

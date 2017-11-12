@@ -6,7 +6,7 @@
    <error id="sid-a32ea17d-db66-4f8a-ba2c-57881eaaaefd"/>
    <globalTask id="sid-a6db8ec0-8738-47b5-9c19-ad610f2b3caf" name="make other stuff"/>
    <collaboration id="sid-d52144f1-edce-4b44-b306-77a541bb34d4">
-      <participant id="sid-BF7F278F-4621-4554-84DE-DC5724574B79" name="Abrechnungsprozess" processRef="sid-2f771307-e940-4ca3-8efe-18c3c97b374a">
+      <participant id="sid-BF7F278F-4621-4554-84DE-DC5724574B79" name="Abrechnungs&amp;prozess&amp;" processRef="sid-2f771307-e940-4ca3-8efe-18c3c97b374a">
          <extensionElements>
             <signavio:signavioMetaData metaKey="bgcolor" metaValue="#ffffff"/>
             <signavio:signavioMetaData metaKey="rolle" metaValue="[]"/>
@@ -47,7 +47,7 @@
             <signavio:signavioMetaData metaKey="userstory" metaValue="[]"/>
          </extensionElements>
       </participant>
-      <participant id="sid-4403FE56-308E-47B2-871D-908E67CA8FDF" name="Windows Domäne (File/AD)">
+      <participant id="sid-4403FE56-308E-47B2-871D-908E67CA8FDF" name="Windows Domäne &amp; (File/AD)">
          <extensionElements>
             <signavio:signavioMetaData metaKey="bgcolor" metaValue="#ffffff"/>
             <signavio:signavioMetaData metaKey="userstory" metaValue="[]"/>
@@ -235,7 +235,7 @@
             <condition id="sid-292d1d8d-aaa9-4b4e-a2f6-e80ee25e87ce" xsi:type="tFormalExpression"/>
          </conditionalEventDefinition>
       </startEvent>
-      <task completionQuantity="1" id="sid-03636AE7-827F-43B5-AF4F-CA85726D10FF" isForCompensation="false" name="Antrag stellen" startQuantity="1">
+      <task completionQuantity="1" id="sid-03636AE7-827F-43B5-AF4F-CA85726D10FF" isForCompensation="false" name="Antrag &nbsp; stellen" startQuantity="1">
          <extensionElements>
             <signavio:signavioMetaData metaKey="bgcolor" metaValue="#ffffcc"/>
             <signavio:signavioMetaData metaKey="adaptereventtype" metaValue=""/>
@@ -645,7 +645,7 @@
             <flowNodeRef>sid-F0F90B0A-C3E6-4F42-BEB9-72735562BB38</flowNodeRef>
          </lane>
       </laneSet>
-      <userTask completionQuantity="1" id="sid-1E9BC8B0-4EDC-4455-B5C0-35B629CB043C" implementation="webService" isForCompensation="false" name="Antrag genehmigen" startQuantity="1">
+      <userTask completionQuantity="1" id="sid-1E9BC8B0-4EDC-4455-B5C0-35B629CB043C" implementation="webService" isForCompensation="false" name="Antrag&nbsp;genehmigen" startQuantity="1">
          <extensionElements>
             <signavio:signavioMetaData metaKey="bgcolor" metaValue="#ffffcc"/>
             <signavio:signavioMetaData metaKey="adaptereventtype" metaValue=""/>

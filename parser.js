@@ -20,6 +20,11 @@ var SPECIAL_CHARS_MAPPING = {
   'quot': '"'
 };
 
+// map UPPERCASE variants of supported special chars
+Object.keys(SPECIAL_CHARS_MAPPING).forEach(function(k) {
+  SPECIAL_CHARS_MAPPING[k.toUpperCase()] = SPECIAL_CHARS_MAPPING[k];
+});
+
 function error(msg) {
   return new Error(msg);
 }
@@ -37,23 +42,14 @@ function getter(getFn) {
 
 function replaceEntities(_, d, x, z) {
 
-  var _z;
-
   // reserved names, i.e. &nbsp;
   if (z) {
     if (hasProperty(SPECIAL_CHARS_MAPPING, z)) {
       return SPECIAL_CHARS_MAPPING[z];
+    } else {
+      // fall back to original value
+      return '&' + z + ';';
     }
-
-    _z = z.toLowerCase();
-
-    if (hasProperty(SPECIAL_CHARS_MAPPING, _z)) {
-      return SPECIAL_CHARS_MAPPING[_z];
-    }
-
-    // return original char, as we don't understand the
-    // user input
-    return '&' + z + ';';
   }
 
   // decimal encoded char
@@ -69,9 +65,7 @@ function decodeEntities(s) {
   s = ('' + s);
 
   if (s.length > 3 && s.indexOf('&') !== -1) {
-    if (s.indexOf('&') !== -1) {
-      return s.replace(/&#(\d+);|&#x([0-9a-f]+);|&(\w+);/ig, replaceEntities);
-    }
+    return s.replace(/&#(\d+);|&#x([0-9a-f]+);|&(\w+);/ig, replaceEntities);
   }
 
   return s;
@@ -103,7 +97,9 @@ function buildNsMatrix(nsUriToPrefix) {
   return nsMatrix;
 }
 
-function noopGetContext() {  return { 'line': 0, 'column': 0 }; }
+function noopGetContext() {
+  return { 'line': 0, 'column': 0 };
+}
 
 function nullFunc() {}
 
