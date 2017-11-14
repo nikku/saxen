@@ -101,6 +101,13 @@ test({
 });
 
 test({
+  xml: '</a>',
+  expect: [
+    ['error', 'missing open tag'],
+  ],
+});
+
+test({
   xml: '<!- HELLO',
   expect: [
     ['error', 'unclosed tag', {

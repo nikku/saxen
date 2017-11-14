@@ -770,6 +770,10 @@ function Saxen(options) {
         tagStart = false;
         tagEnd = true;
 
+        if (!nodeStack.length) {
+          return handleError('missing open tag');
+        }
+
         // verify open <-> close tag match
         x = elementName = nodeStack.pop();
         q = i + 2 + x.length;
