@@ -408,6 +408,20 @@ test({
   ]
 });
 
+// no root namespace (broken rss?)
+test({
+  xml: '<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">' +
+         '<channel></channel>' +
+       '</rss>',
+  ns: true,
+  expect: [
+    ['openTag', 'rss', { 'xmlns:atom': 'http://www.w3.org/2005/Atom', version: '2.0' }],
+    ['openTag', 'channel'],
+    ['closeTag', 'channel'],
+    ['closeTag', 'rss' ]
+  ]
+});
+
 test({
   xml: '<feed xmlns="http://www.w3.org/2005/Atom" xmlns:media="http://search.yahoo.com/mrss/" id="aa" media:title="bb"/>',
   ns: true,
