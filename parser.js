@@ -62,8 +62,6 @@ function replaceEntities(_, d, x, z) {
 }
 
 function decodeEntities(s) {
-  s = ('' + s);
-
   if (s.length > 3 && s.indexOf('&') !== -1) {
     return s.replace(/&#(\d+);|&#x([0-9a-f]+);|&(\w+);/ig, replaceEntities);
   }
@@ -303,11 +301,10 @@ function Saxen(options) {
   /**
    * Parse string, invoking configured listeners on element.
    *
-   * @param  {string} str
+   * @param  {string} xml
    */
-  function parse(str) {
-    var xml = ('' + str),
-        nsMatrixStack = isNamespace ? [] : null,
+  function parse(xml) {
+    var nsMatrixStack = isNamespace ? [] : null,
         nsMatrix = isNamespace ? buildNsMatrix(nsUriToPrefix) : null,
         _nsMatrix,
         nodeStack = [],
