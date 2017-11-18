@@ -2,61 +2,11 @@
 
 module['exports'] = Saxen;
 
-var hasOwnProperty = Object.prototype.hasOwnProperty;
-
-function hasProperty(o, prop) {
-  return hasOwnProperty.call(o, prop);
-}
-
-var fromCharCode = String.fromCharCode;
+var decodeEntities = require('./decode');
 
 var XSI_URI = 'http://www.w3.org/2001/XMLSchema-instance';
 var XSI_PREFIX = 'xsi';
 var XSI_TYPE = 'xsi:type';
-
-var ENTITY_PATTERN = /&#(\d+);|&#x([0-9a-f]+);|&(\w+);/ig;
-
-var SPECIAL_CHARS_MAPPING = {
-  'amp': '&',
-  'apos': '\'',
-  'gt': '>',
-  'lt': '<',
-  'quot': '"'
-};
-
-// map UPPERCASE variants of supported special chars
-Object.keys(SPECIAL_CHARS_MAPPING).forEach(function(k) {
-  SPECIAL_CHARS_MAPPING[k.toUpperCase()] = SPECIAL_CHARS_MAPPING[k];
-});
-
-function replaceEntities(_, d, x, z) {
-
-  // reserved names, i.e. &nbsp;
-  if (z) {
-    if (hasProperty(SPECIAL_CHARS_MAPPING, z)) {
-      return SPECIAL_CHARS_MAPPING[z];
-    } else {
-      // fall back to original value
-      return '&' + z + ';';
-    }
-  }
-
-  // decimal encoded char
-  if (d) {
-    return fromCharCode(d);
-  }
-
-  // hex encoded char
-  return fromCharCode(parseInt(x, 16));
-}
-
-function decodeEntities(s) {
-  if (s.length > 3 && s.indexOf('&') !== -1) {
-    return s.replace(ENTITY_PATTERN, replaceEntities);
-  }
-
-  return s;
-}
 
 function error(msg) {
   return new Error(msg);
@@ -700,7 +650,7 @@ function Saxen(options) {
           }
 
           if (onCDATA) {
-            onCDATA(xml.substring(i + 9, j), false);
+            onCDATA(xml.substring(i + 9, j));
             if (parseStop) {
               return;
             }
