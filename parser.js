@@ -2,8 +2,10 @@
 
 module['exports'] = Saxen;
 
+var hasOwnProperty = Object.prototype.hasOwnProperty;
+
 function hasProperty(o, prop) {
-  return Object.prototype.hasOwnProperty.call(o, prop);
+  return hasOwnProperty.call(o, prop);
 }
 
 var fromCharCode = String.fromCharCode;
@@ -11,6 +13,8 @@ var fromCharCode = String.fromCharCode;
 var XSI_URI = 'http://www.w3.org/2001/XMLSchema-instance';
 var XSI_PREFIX = 'xsi';
 var XSI_TYPE = 'xsi:type';
+
+var ENTITY_PATTERN = /&#(\d+);|&#x([0-9a-f]+);|&(\w+);/ig;
 
 var SPECIAL_CHARS_MAPPING = {
   'amp': '&',
@@ -48,7 +52,7 @@ function replaceEntities(_, d, x, z) {
 
 function decodeEntities(s) {
   if (s.length > 3 && s.indexOf('&') !== -1) {
-    return s.replace(/&#(\d+);|&#x([0-9a-f]+);|&(\w+);/ig, replaceEntities);
+    return s.replace(ENTITY_PATTERN, replaceEntities);
   }
 
   return s;
