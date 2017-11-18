@@ -6,6 +6,10 @@ All notable changes to [saxen](https://github.com/nikku/saxen) are documented he
 
 ___Note:__ Yet to be released changes appear here._
 
+# 5.4.0
+
+* `CHORE`: configure hooks only if actually used [5ab3e2ee](https://github.com/nikku/saxen/commit/066e712dd89f15f913387b40f0198575e1083d2f)
+
 # 5.3.1
 
 * `FIX`: properly handle missing open tags `</a>`
