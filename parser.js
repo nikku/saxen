@@ -25,21 +25,6 @@ Object.keys(SPECIAL_CHARS_MAPPING).forEach(function(k) {
   SPECIAL_CHARS_MAPPING[k.toUpperCase()] = SPECIAL_CHARS_MAPPING[k];
 });
 
-function error(msg) {
-  return new Error(msg);
-}
-
-function missingNamespaceForPrefix(prefix) {
-  return 'missing namespace for prefix <' + prefix + '>';
-}
-
-function getter(getFn) {
-  return {
-    'get': getFn,
-    'enumerable': true
-  };
-}
-
 function replaceEntities(_, d, x, z) {
 
   // reserved names, i.e. &nbsp;
@@ -67,6 +52,21 @@ function decodeEntities(s) {
   }
 
   return s;
+}
+
+function error(msg) {
+  return new Error(msg);
+}
+
+function missingNamespaceForPrefix(prefix) {
+  return 'missing namespace for prefix <' + prefix + '>';
+}
+
+function getter(getFn) {
+  return {
+    'get': getFn,
+    'enumerable': true
+  };
 }
 
 function cloneNsMatrix(nsMatrix) {
@@ -99,8 +99,6 @@ function noopGetContext() {
   return { 'line': 0, 'column': 0 };
 }
 
-function nullFunc() {}
-
 function throwFunc(err) {
   throw err;
 }
@@ -120,12 +118,12 @@ function Saxen(options) {
 
   var proxy = options && options['proxy'];
 
-  var onText = nullFunc,
-      onOpenTag = nullFunc,
-      onCloseTag = nullFunc,
-      onCDATA = nullFunc,
+  var onText,
+      onOpenTag,
+      onCloseTag,
+      onCDATA,
       onError = throwFunc,
-      onWarning = nullFunc,
+      onWarning,
       onComment,
       onQuestion,
       onAttention;
@@ -191,6 +189,11 @@ function Saxen(options) {
    * @param  {string|Error} err
    */
   function handleWarning(err) {
+
+    if (!onWarning) {
+      return;
+    }
+
     if (!(err instanceof Error)) {
       err = error(err);
     }
@@ -219,7 +222,6 @@ function Saxen(options) {
     case 'error': onError = cb; break;
     case 'warn': onWarning = cb; break;
     case 'cdata': onCDATA = cb; break;
-
     case 'attention': onAttention = cb; break; // <!XXXXX zzzz="eeee">
     case 'question': onQuestion = cb; break; // <? ....  ?>
     case 'comment': onComment = cb; break;
@@ -674,9 +676,11 @@ function Saxen(options) {
       }
 
       if (j !== i) {
-        onText(xml.substring(j, i), decodeEntities);
-        if (parseStop) {
-          return;
+        if (onText) {
+          onText(xml.substring(j, i), decodeEntities);
+          if (parseStop) {
+            return;
+          }
         }
       }
 
@@ -691,9 +695,11 @@ function Saxen(options) {
             return handleError('unclosed cdata');
           }
 
-          onCDATA(xml.substring(i + 9, j), false);
-          if (parseStop) {
-            return;
+          if (onCDATA) {
+            onCDATA(xml.substring(i + 9, j), false);
+            if (parseStop) {
+              return;
+            }
           }
 
           j += 3;
@@ -890,23 +896,28 @@ function Saxen(options) {
         attrsStart = q;
         attrsString = x;
 
-        if (proxy) {
-          onOpenTag(elementProxy, decodeEntities, tagEnd, getContext);
-        } else {
-          onOpenTag(elementName, getAttrs, decodeEntities, tagEnd, getContext);
-        }
+        if (onOpenTag) {
+          if (proxy) {
+            onOpenTag(elementProxy, decodeEntities, tagEnd, getContext);
+          } else {
+            onOpenTag(elementName, getAttrs, decodeEntities, tagEnd, getContext);
+          }
 
-        if (parseStop) {
-          return;
+          if (parseStop) {
+            return;
+          }
         }
 
       }
 
       if (tagEnd) {
-        onCloseTag(proxy ? elementProxy : elementName, decodeEntities, tagStart, getContext);
 
-        if (parseStop) {
-          return;
+        if (onCloseTag) {
+          onCloseTag(proxy ? elementProxy : elementName, decodeEntities, tagStart, getContext);
+
+          if (parseStop) {
+            return;
+          }
         }
 
         // restore old namespace

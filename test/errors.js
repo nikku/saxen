@@ -66,6 +66,29 @@ describe('#parse', function() {
     assert.throws(parse, /unclosed tag/);
   });
 
+
+  it('should not throw without hooks', function() {
+
+    // given
+    var parser = new Parser();
+
+    // when
+    function parse() {
+      parser.parse([
+        '<? question ?>',
+        '<!ATTENTION>',
+        '<!-- COMMENT -->',
+        '<tag a="1\'>',
+        'hi',
+        '<![CDATA[cdata]]>',
+        '</tag>'
+      ].join('\n'));
+    }
+
+    // then
+    assert.doesNotThrow(parse);
+  });
+
 });
 
 
