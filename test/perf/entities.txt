@@ -1,0 +1,57 @@
+Signavio Pro&apos;ess Editor, http://www.signavio.&apos;om
+sid-&#xFFa;-31d2-49e7-83f6-756552bd365a
+sid-&#xaa12ff;-db66-&#x1333;-ba2&apos;-57881eaaaefd
+sid-a6db8e&apos;0-8738-47b5-&#1232;-ad610f2b3&apos;af
+Abre&apos;hnungs&amp;prozess&amp;
+sid-&#012112;-e940-4&apos;a3-&nbsp;-18c3c97b374a
+sid-32F45B9D-&amp;-4829-94C7-B2F38FABB555
+sid-&raquo;-DE4E-4355-B13A-4386077AE976
+Windows Domäne &amp; (File/AD)
+sid-32F45B9D-&amp;-4829-94C7-B2F38FABB555
+{&quot;y&quot;:1243.8737533224898,&quot;x&quot;:860.4231967891371}
+{&quot;y&quot;:1293.592507501214,&quot;x&quot;:991.4949537938448}
+Neues Verzeichnis&#10;benötiugt
+&#x003;=""adapterclassname
+&#x003;=""servicereferenz
+&#x003;=""risiko
+&#x003;=""erteilt&#3333;
+&#x003;=""riskandcontrols
+&#x003;=""sid-2B10A1B1-C4A5-4BB3-ADC2-F73F13A89BC2
+Ablehnung&#10;erhalten
+Fehler&#10;gemeldet?
+Verzeichnis-&#10;beautragung
+Verzeichnisantrag&#10;erhalten
+&#x003;=""documentationlink
+metaValue&gt;"userstory
+metaValue&gt;"adapterclassname
+metaValue&gt;"servi&apos;ereferenz
+metaValue&gt;"risiko
+metaValue&gt;"erteilt&#3333;
+metaValue&gt;"riskand&apos;ontrols
+metaValue&gt;"Converging
+metaValue&gt;"userstory
+metaValue&gt;"adapter&apos;lassname
+metaValue&gt;"1
+metaValue&gt;"do&apos;umentationlink
+metaValue&gt;"adaptertype
+metaValue&gt;"userstory
+Verzei&apos;hnis&#10;angelegt
+sid-&#012112;-e940-4&apos;a3-&nbsp;-18&apos;3&apos;97b374a
+sid-2F0242AD-4057-4CFB-&#0001;-58144EDFDAE2
+sid-2F0242AD-4057-4CFB-&#0001;-58144EDFDAE2
+Neues Verzei&apos;hnis&#10;benötiugt
+Verzei&apos;hnis angelegt&#10;assdsasdasd&#10;asdsadasdas
+sid-&#xaa12ff;-db66-&#x1333;-ba2&apos;-57881eaaaefd
+sid-&#xFFa;-31d2-49e7-83f6-756552bd365a
+sid-&#xaa12ff;-db66-&#x1333;-ba2&apos;-57881eaaaefd
+sid-&#xFFa;-31d2-49e7-83f6-756552bd365a
+sid-&#xaa12ff;-db66-&#x1333;-ba2&apos;-57881eaaaefd
+sid-&#xFFa;-31d2-49e7-83f6-756552bd365a
+&#x003;=""adapter&apos;lassname
+&#x003;=""sid-7D5DB6A7-1012-4368-A78A-FD2FD142346F
+sid-&#xFFa;-31d2-49e7-83f6-756552bd365a
+&#x003;=""One
+sid-32F45B9D-&amp;-4829-94C7-B2F38FABB555
+sid-32F45B9D-&amp;-4829-94C7-B2F38FABB555_gui
+sid-&raquo;-DE4E-4355-B13A-4386077AE976
+sid-&raquo;-DE4E-4355-B13A-4386077AE976_gui
