@@ -6,31 +6,31 @@ All notable changes to [saxen](https://github.com/nikku/saxen) are documented he
 
 ___Note:__ Yet to be released changes appear here._
 
-# 5.4.0
+## 5.4.0
 
 * `CHORE`: configure hooks only if actually used [5ab3e2ee](https://github.com/nikku/saxen/commit/066e712dd89f15f913387b40f0198575e1083d2f)
 
-# 5.3.1
+## 5.3.1
 
 * `FIX`: properly handle missing open tags `</a>`
 
-# 5.3.0
+## 5.3.0
 
 * `CHORE`: simplify and speed up entity decoding [`066e712d`](https://github.com/nikku/saxen/commit/066e712dd89f15f913387b40f0198575e1083d2f)
 
-# 5.2.0
+## 5.2.0
 
 * `CHORE`: properly compile with [Google Closure compiler](https://github.com/google/closure-compiler)
 
-# 5.1.0
+## 5.1.0
 
 * `FEAT`: proxy mode exposes clonable view [`73c6c44a`](https://github.com/nikku/saxen/commit/73c6c44ade3127f3819ceb825e241bb39d74fd93)
 
-# 5.0.1
+## 5.0.1
 
 * `FIX`: return `{}` on non-existing attributes, too
 
-# 5.0.0
+## 5.0.0
 
 * `CHORE`: don't return `true` on empty attrs [`f7360b11`](https://github.com/nikku/saxen/commit/f7360b115b651b9eb9ca3488a48e827d974deae1)
 
