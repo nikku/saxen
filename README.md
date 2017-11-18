@@ -47,7 +47,7 @@ parser.parse('<blub xmlns="http://foo" xmlns:bar="http://bar" bar:aa="A" />');
 We support the following parse hooks:
 
 * `openTag(elementName, attrGetter, decodeEntities, selfClosing, contextGetter)`
-* `closeTag(elementName, selfClosing, contextGetter)`
+* `closeTag(elementName, decodeEntities, selfClosing, contextGetter)`
 * `error(err, contextGetter)`
 * `warn(warning, contextGetter)`
 * `text(value, decodeEntities)`
