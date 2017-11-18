@@ -29,7 +29,7 @@ parser.ns({
   'http://bar': 'bar'
 });
 
-parser.on('openTag', function(elementName, attrGetter, decodeEntity, selfClosing, getContext) {
+parser.on('openTag', function(elementName, attrGetter, decodeEntities, selfClosing, getContext) {
 
   elementName;
   // with prefix, i.e. foo:blub
