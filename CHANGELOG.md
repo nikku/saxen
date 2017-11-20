@@ -6,6 +6,10 @@ All notable changes to [saxen](https://github.com/nikku/saxen) are documented he
 
 ___Note:__ Yet to be released changes appear here._
 
+## 5.4.1
+
+* `FIX`: bundle `decode.js` with published package [`528cd1c0`](https://github.com/nikku/saxen/commit/528cd1c0bbc1f2a76812b626cce87b3362ab1bb3)
+
 ## 5.4.0
 
 * `CHORE`: configure hooks only if actually used [`5ab3e2ee`](https://github.com/nikku/saxen/commit/066e712dd89f15f913387b40f0198575e1083d2f)

@@ -33,6 +33,7 @@
   "license": "MIT",
   "files": [
     "parser.js",
+    "decode.js",
     "LICENSE",
     "README.md"
   ],
