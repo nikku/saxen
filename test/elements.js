@@ -920,3 +920,29 @@ test({
     ['closeTag', 'P'],
   ],
 });
+
+
+// nested namespace re-declaration
+test({
+  xml: '<e:root xmlns:e="http://extensions">' +
+          '<bar:bar xmlns:bar="http://bar">' +
+            '<other:child b="B" xmlns:other="http://other" />' +
+          '</bar:bar>' +
+          '<foo xmlns="http://foo">' +
+            '<child a="A" />' +
+          '</foo>' +
+        '</e:root>',
+  ns: true,
+  expect: [
+    ['openTag', 'e:root', { 'xmlns:e': 'http://extensions' }],
+    ['openTag', 'bar:bar', { 'xmlns:bar': 'http://bar' }],
+    ['openTag', 'other:child', { b: 'B', 'xmlns:other': 'http://other' }],
+    ['closeTag', 'other:child'],
+    ['closeTag', 'bar:bar'],
+    ['openTag', 'ns0:foo', { xmlns: 'http://foo' }],
+    ['openTag', 'ns0:child', { a: 'A' }],
+    ['closeTag', 'ns0:child'],
+    ['closeTag', 'ns0:foo'],
+    ['closeTag', 'e:root' ]
+  ],
+});
