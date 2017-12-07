@@ -8,8 +8,7 @@ ___Note:__ Yet to be released changes appear here._
 
 ## 5.5.0
 
-* `FEAT`: expose `getContext` on all hooks [`528cd1c0`](https://github.com/nikku/saxen/commit/528cd1c0bbc1f2a76812b626cce87b3362ab1bb3)
-
+* `FEAT`: expose `getContext` on all hooks [`634857b0`](https://github.com/nikku/saxen/commit/634857b0db8ac91d87520dfa6314cb67a4d05e5f)
 
 ## 5.4.1
 
