@@ -135,24 +135,24 @@ function test(options) {
     record('closeTag', elem, tagstart, getContext());
   });
 
-  parser.on('text', function(s, uq) {
-    record('text', s);
+  parser.on('text', function(s, uq, getContext) {
+    record('text', s, getContext());
   });
 
-  parser.on('cdata', function(data) {
-    record('cdata', data);
+  parser.on('cdata', function(data, getContext) {
+    record('cdata', data, getContext());
   });
 
-  parser.on('comment', function(text) {
-    record('comment', text);
+  parser.on('comment', function(text, uq, getContext) {
+    record('comment', text, getContext());
   });
 
-  parser.on('attention', function(data) {
-    record('attention', data);
+  parser.on('attention', function(data, uq, getContext) {
+    record('attention', data, getContext());
   });
 
-  parser.on('question', function(data) {
-    record('question', data);
+  parser.on('question', function(data, getContext) {
+    record('question', data, getContext());
   });
 
   parser.parse(options.xml);

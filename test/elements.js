@@ -82,21 +82,33 @@ test({
 test({
   xml: '<!XXXXX zzzz="eeee">',
   expect: [
-    ['attention', '<!XXXXX zzzz="eeee">'],
+    ['attention', '<!XXXXX zzzz="eeee">',  {
+      data: '<!XXXXX zzzz="eeee">',
+      line: 0,
+      column: 0
+    }],
   ],
 });
 
 test({
   xml: '<!-- HELLO -->',
   expect: [
-    ['comment', ' HELLO '],
+    ['comment', ' HELLO ', {
+      data: '<!-- HELLO -',
+      line: 0,
+      column: 0
+    }],
   ],
 });
 
 test({
   xml: '<!-- HELLO',
   expect: [
-    ['error', 'unclosed comment'],
+    ['error', 'unclosed comment', {
+      data: '<!-- HELLO',
+      line: 0,
+      column: 0
+    }],
   ],
 });
 
@@ -121,14 +133,22 @@ test({
 test({
   xml: '<? QUESTION ?>',
   expect: [
-    ['question', '<? QUESTION ?>'],
+    ['question', '<? QUESTION ?>', {
+      data: '<? QUESTION ?',
+      line: 0,
+      column: 0
+    }],
   ],
 });
 
 test({
   xml: '<? QUESTION',
   expect: [
-    ['error', 'unclosed question'],
+    ['error', 'unclosed question', {
+      data: '<? QUESTION',
+      line: 0,
+      column: 0
+    }],
   ],
 });
 
@@ -159,7 +179,11 @@ test({
 test({
   xml: '<=div></=div>',
   expect: [
-    ['error', 'illegal first char nodeName'],
+    ['error', 'illegal first char nodeName', {
+      data: '<=div>',
+      line: 0,
+      column: 0
+    }],
   ],
 });
 
@@ -236,7 +260,11 @@ test({
   xml: '<root>text</root>',
   expect: [
     ['openTag', 'root'],
-    ['text', 'text'],
+    ['text', 'text', {
+      data: 'ext',
+      line: 0,
+      column: 10
+    }],
     ['closeTag', 'root'],
   ],
 });

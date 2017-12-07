@@ -50,11 +50,11 @@ We support the following parse hooks:
 * `closeTag(elementName, decodeEntities, selfClosing, contextGetter)`
 * `error(err, contextGetter)`
 * `warn(warning, contextGetter)`
-* `text(value, decodeEntities)`
-* `cdata(value)`
-* `comment(value, decodeEntities)`
-* `attention(str, decodeEntities)`
-* `question(str)`
+* `text(value, decodeEntities, contextGetter)`
+* `cdata(value, contextGetter)`
+* `comment(value, decodeEntities, contextGetter)`
+* `attention(str, decodeEntities, contextGetter)`
+* `question(str, contextGetter)`
 
 In contrast to `error`, `warn` receives recoverable errors, such as malformed attributes.
 

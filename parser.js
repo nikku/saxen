@@ -631,7 +631,7 @@ function Saxen(options) {
 
       if (j !== i) {
         if (onText) {
-          onText(xml.substring(j, i), decodeEntities);
+          onText(xml.substring(j, i), decodeEntities, getContext);
           if (parseStop) {
             return;
           }
@@ -650,7 +650,7 @@ function Saxen(options) {
           }
 
           if (onCDATA) {
-            onCDATA(xml.substring(i + 9, j));
+            onCDATA(xml.substring(i + 9, j), getContext);
             if (parseStop) {
               return;
             }
@@ -669,7 +669,7 @@ function Saxen(options) {
 
 
           if (onComment) {
-            onComment(xml.substring(i + 4, j), decodeEntities);
+            onComment(xml.substring(i + 4, j), decodeEntities, getContext);
             if (parseStop) {
               return;
             }
@@ -685,7 +685,7 @@ function Saxen(options) {
         }
 
         if (onAttention) {
-          onAttention(xml.substring(i, j + 1), decodeEntities);
+          onAttention(xml.substring(i, j + 1), decodeEntities, getContext);
           if (parseStop) {
             return;
           }
@@ -702,7 +702,7 @@ function Saxen(options) {
         }
 
         if (onQuestion) {
-          onQuestion(xml.substring(i, j + 2));
+          onQuestion(xml.substring(i, j + 2), getContext);
           if (parseStop) {
             return;
           }
