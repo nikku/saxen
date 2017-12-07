@@ -6,6 +6,11 @@ All notable changes to [saxen](https://github.com/nikku/saxen) are documented he
 
 ___Note:__ Yet to be released changes appear here._
 
+## 5.5.0
+
+* `FEAT`: expose `getContext` on all hooks [`528cd1c0`](https://github.com/nikku/saxen/commit/528cd1c0bbc1f2a76812b626cce87b3362ab1bb3)
+
+
 ## 5.4.1
 
 * `FIX`: bundle `decode.js` with published package [`528cd1c0`](https://github.com/nikku/saxen/commit/528cd1c0bbc1f2a76812b626cce87b3362ab1bb3)
