@@ -6,6 +6,14 @@ All notable changes to [saxen](https://github.com/nikku/saxen) are documented he
 
 ___Note:__ Yet to be released changes appear here._
 
+## 5.7.0
+
+* `FEAT`: detect and gracefully handle local attribute re-declarations that are forbidden via the XML spec: We'll now emit a warning and ignore the offending attribute [`7d0c8629`](https://github.com/nikku/saxen/commit/7d0c8629c6b7afe82953e86b7351ae30be41730c)
+
+## 5.6.0
+
+_This release accidently introduced backwards incompatible changes; use `>= 5.7.0` instead._
+
 ## 5.5.0
 
 * `FEAT`: expose `getContext` on all hooks [`634857b0`](https://github.com/nikku/saxen/commit/634857b0db8ac91d87520dfa6314cb67a4d05e5f)
