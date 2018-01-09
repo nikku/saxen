@@ -389,7 +389,7 @@ function Saxen(options) {
         // check attribute re-declaration
         if (name in seenAttrs) {
           handleWarning('attribute <' + name + '> already defined');
-          return cachedAttrs = false;
+          continue;
         }
 
         seenAttrs[name] = true;
