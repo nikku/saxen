@@ -979,7 +979,7 @@ test({
   xml: '<e:root xmlns:e="http://extensions" xmlns:e="http://other" />',
   ns: true,
   expect: [
-    ['error', 'attribute <xmlns:e> already defined'],
+    ['warn', 'attribute <xmlns:e> already defined'],
     ['openTag', 'e:root', false],
     ['closeTag', 'e:root']
   ],
@@ -990,18 +990,40 @@ test({
   xml: '<root xmlns="http://extensions" xmlns="http://other" />',
   ns: true,
   expect: [
-    ['error', 'attribute <xmlns> already defined'],
+    ['warn', 'attribute <xmlns> already defined'],
     ['openTag', 'ns0:root', false],
     ['closeTag', 'ns0:root']
   ],
 });
 
-// local attribute re-declaration / default namespace
+// local attribute re-declaration / no ns
 test({
   xml: '<root a="A" a="B" />',
   expect: [
-    ['error', 'attribute <a> already defined'],
+    ['warn', 'attribute <a> already defined'],
     ['openTag', 'root', false],
     ['closeTag', 'root']
+  ],
+});
+
+// local attribute re-declaration / with namespace
+test({
+  xml: '<root xmlns="http://extensions" a="A" a="B" />',
+  ns: true,
+  expect: [
+    ['warn', 'attribute <a> already defined'],
+    ['openTag', 'ns0:root', false],
+    ['closeTag', 'ns0:root']
+  ],
+});
+
+// local attribute re-declaration / with other namespace
+test({
+  xml: '<root xmlns="http://extensions" xmlns:bar="http://extensions" bar:a="A" bar:a="B" />',
+  ns: true,
+  expect: [
+    ['warn', 'attribute <bar:a> already defined'],
+    ['openTag', 'ns0:root', false],
+    ['closeTag', 'ns0:root']
   ],
 });

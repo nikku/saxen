@@ -307,6 +307,7 @@ function Saxen(options) {
           alias,
           name,
           attrs = {},
+          seenAttrs = {},
           w,
           j;
 
@@ -385,10 +386,13 @@ function Saxen(options) {
         // advance cursor to next attribute
         i = j + 1;
 
-        if (attrs[name]) {
-          handleError('attribute <' + name + '> already defined');
+        // check attribute re-declaration
+        if (name in seenAttrs) {
+          handleWarning('attribute <' + name + '> already defined');
           return cachedAttrs = false;
         }
+
+        seenAttrs[name] = true;
 
         if (!isNamespace) {
           attrs[name] = value;
