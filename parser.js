@@ -385,6 +385,11 @@ function Saxen(options) {
         // advance cursor to next attribute
         i = j + 1;
 
+        if (attrs[name]) {
+          handleError('attribute <' + name + '> already defined');
+          return cachedAttrs = false;
+        }
+
         if (!isNamespace) {
           attrs[name] = value;
           continue;

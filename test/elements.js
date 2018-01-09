@@ -949,7 +949,6 @@ test({
   ],
 });
 
-
 // nested namespace re-declaration
 test({
   xml: '<e:root xmlns:e="http://extensions">' +
@@ -972,5 +971,37 @@ test({
     ['closeTag', 'ns0:child'],
     ['closeTag', 'ns0:foo'],
     ['closeTag', 'e:root' ]
+  ],
+});
+
+// local namespace re-declaration
+test({
+  xml: '<e:root xmlns:e="http://extensions" xmlns:e="http://other" />',
+  ns: true,
+  expect: [
+    ['error', 'attribute <xmlns:e> already defined'],
+    ['openTag', 'e:root', false],
+    ['closeTag', 'e:root']
+  ],
+});
+
+// local namespace re-declaration / default namespace
+test({
+  xml: '<root xmlns="http://extensions" xmlns="http://other" />',
+  ns: true,
+  expect: [
+    ['error', 'attribute <xmlns> already defined'],
+    ['openTag', 'ns0:root', false],
+    ['closeTag', 'ns0:root']
+  ],
+});
+
+// local attribute re-declaration / default namespace
+test({
+  xml: '<root a="A" a="B" />',
+  expect: [
+    ['error', 'attribute <a> already defined'],
+    ['openTag', 'root', false],
+    ['closeTag', 'root']
   ],
 });
