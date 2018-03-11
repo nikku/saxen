@@ -315,12 +315,12 @@ function Saxen(options) {
       for (; i < l; i++) {
         w = s.charCodeAt(i);
 
-        if (w === 32 || (w < 14 && w > 8) ) { // \f\n\r\t\v
+        if (w === 32 || (w < 14 && w > 8)) { // \f\n\r\t\v
           continue;
         }
 
         // wait for non whitespace character
-        if (w < 65 || w > 122 || (w > 90 && w < 97) ) {
+        if (w < 65 || w > 122 || (w > 90 && w < 97)) {
           if (w !== 95 && w !== 58) { // char 95"_" 58":"
             handleWarning('illegal first char attribute name');
             return cachedAttrs = false;
@@ -331,7 +331,7 @@ function Saxen(options) {
         for (j = i + 1; j < l; j++) {
           w = s.charCodeAt(j);
 
-          if ( w > 96 && w < 123 || w > 64 && w < 91 || w > 47 && w < 59 || w === 45 || w === 95) {
+          if (w > 96 && w < 123 || w > 64 && w < 91 || w > 47 && w < 59 || w === 45 || w === 95) {
             continue;
           }
 
@@ -353,8 +353,8 @@ function Saxen(options) {
 
         w = s.charCodeAt(j + 1);
 
-        if (w === 34) {  // '"'
-          j = s.indexOf('"', i = j + 2 );
+        if (w === 34) { // '"'
+          j = s.indexOf('"', i = j + 2);
 
         } else {
           if (w !== 39) { // "'"
@@ -362,7 +362,7 @@ function Saxen(options) {
             return cachedAttrs = false; // error. invalid char
           }
 
-          j = s.indexOf('\'', i = j + 2 );
+          j = s.indexOf('\'', i = j + 2);
         }
 
         if (j === -1) {
@@ -499,7 +499,7 @@ function Saxen(options) {
 
 
       // handle deferred, possibly namespaced attributes
-      if (maybeNS)  {
+      if (maybeNS) {
 
         // normalize captured attributes
         for (i = 0, l = attrList.length; i < l; i++) {
@@ -731,7 +731,7 @@ function Saxen(options) {
       // there are none
       cachedAttrs = {};
 
-      //if (xml.charCodeAt(i+1) === 47) { // </...
+      // if (xml.charCodeAt(i+1) === 47) { // </...
       if (w === 47) { // </...
         tagStart = false;
         tagEnd = true;
@@ -752,7 +752,7 @@ function Saxen(options) {
         for (; q < j; q++) {
           w = xml.charCodeAt(q);
 
-          if (w === 32 || (w > 8 && w < 14)) {  // \f\n\r\t\v space
+          if (w === 32 || (w > 8 && w < 14)) { // \f\n\r\t\v space
             continue;
           }
 
@@ -760,7 +760,7 @@ function Saxen(options) {
         }
 
       } else {
-        if (xml.charCodeAt(j - 1) ===  47) { // .../>
+        if (xml.charCodeAt(j - 1) === 47) { // .../>
           x = elementName = xml.substring(i + 1, j - 1);
 
           tagStart = true;
@@ -773,7 +773,7 @@ function Saxen(options) {
           tagEnd = false;
         }
 
-        if (!(w > 96  && w < 123 || w > 64 && w < 91 || w === 95 || w === 58)) { // char 95"_" 58":"
+        if (!(w > 96 && w < 123 || w > 64 && w < 91 || w === 95 || w === 58)) { // char 95"_" 58":"
           return handleError('illegal first char nodeName');
         }
 

@@ -82,7 +82,7 @@ test({
 test({
   xml: '<!XXXXX zzzz="eeee">',
   expect: [
-    ['attention', '<!XXXXX zzzz="eeee">',  {
+    ['attention', '<!XXXXX zzzz="eeee">', {
       data: '<!XXXXX zzzz="eeee">',
       line: 0,
       column: 0

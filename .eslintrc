@@ -1,37 +1,3 @@
 {
-  "rules": {
-    "keyword-spacing": [ "error" ],
-    "object-curly-spacing": [ "error", "always"],
-    "space-before-blocks": [ "error", "always"],
-    "indent": [ "error", 2, {
-      "VariableDeclarator": { "var": 2, "let": 2, "const": 3 } }
-    ],
-    "comma-style": [ "error", "last" ],
-    "no-unused-vars": [ "error", { "args": "none" } ],
-    "space-before-function-paren": [ "error", "never" ],
-    "quotes": [ "error", "single" ],
-    "semi": [ "error", "always" ],
-    "no-console": 0,
-    "mocha/no-exclusive-tests": 2
-  },
-  "env": {
-    "node": true,
-    "browser": false
-  },
-  "extends": "eslint:recommended",
-  "parserOptions": {
-    "sourceType": "module"
-  },
-  "plugins": [
-    "mocha"
-  ],
-  "globals": {
-    "expect": false,
-    "it": false,
-    "describe": false,
-    "beforeEach": true,
-    "afterEach": true,
-    "before": true,
-    "after": true
-  }
+  "extends": "plugin:bpmn-io/es5"
 }
