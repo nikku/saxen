@@ -355,12 +355,22 @@ test({
   ],
 });
 
+// attributes / warnings / illegal attribute start
+test.only({
+  xml: '<root $attr1="first" attr2="second"/>',
+  expect: [
+    ['warn', 'illegal first char attribute name' ],
+    ['openTag', 'root', { attr2: 'second' }, true],
+    ['closeTag', 'root', true],
+  ],
+});
+
 // attributes / warnings / attribute without value
 test({
   xml: '<root attr1 attr2="second"/>',
   expect: [
     ['warn', 'missing attribute value' ],
-    ['openTag', 'root', false, true],
+    ['openTag', 'root', { attr2: 'second' }, true],
     ['closeTag', 'root', true],
   ],
 });
