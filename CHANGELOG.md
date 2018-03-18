@@ -6,6 +6,22 @@ All notable changes to [saxen](https://github.com/nikku/saxen) are documented he
 
 ___Note:__ Yet to be released changes appear here._
 
+## 7.0.0
+
+### Breaking Changes
+
+* `FEAT`: expose `Parser` and `decode` via single export only. Use `import` or destructuring to access it:
+
+  ```javascript
+  var { Parser } = require('saxen');
+  ```
+
+### Other Improvements
+
+* `FEAT`: generate pre-built distributions for CommonJS and Browser targets
+* `FEAT`: generate UMD bundle
+* `CHORE`: Migrate code base to ES6
+
 ## 6.0.1
 
 _This is a re-publish of the broken `v6.0.0` version._
