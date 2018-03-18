@@ -1,5 +1,8 @@
+!dist
 .nyc_output
 coverage
+lib
 test
 .eslintrc
 .travis.yml
+rollup.config.js

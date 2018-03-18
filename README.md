@@ -17,7 +17,9 @@ A tiny, super fast, namespace aware [sax-style](https://en.wikipedia.org/wiki/Si
 ## Usage
 
 ```javascript
-var Parser = require('saxen');
+var {
+  Parser
+} = require('saxen');
 
 var parser = new Parser();
 
