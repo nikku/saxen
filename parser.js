@@ -308,14 +308,16 @@ function Saxen(options) {
           name,
           attrs = {},
           seenAttrs = {},
+          skipAttr,
           w,
           j;
 
-
+      parseAttr:
       for (; i < l; i++) {
+        skipAttr = false;
         w = s.charCodeAt(i);
 
-        if (w === 32 || (w < 14 && w > 8)) { // \f\n\r\t\v
+        if (w === 32 || (w < 14 && w > 8)) { // WHITESPACE={ \f\n\r\t\v}
           continue;
         }
 
@@ -323,7 +325,7 @@ function Saxen(options) {
         if (w < 65 || w > 122 || (w > 90 && w < 97)) {
           if (w !== 95 && w !== 58) { // char 95"_" 58":"
             handleWarning('illegal first char attribute name');
-            return cachedAttrs = false;
+            skipAttr = true;
           }
         }
 
@@ -335,20 +337,28 @@ function Saxen(options) {
             continue;
           }
 
-          if (w !== 61) { // "=" == 61
-            // expected "="
+          // unexpected whitespace
+          if (w === 32 || (w < 14 && w > 8)) { // WHITESPACE
             handleWarning('missing attribute value');
-            return cachedAttrs = false;
+            i = j;
+
+            continue parseAttr;
           }
 
-          break;
+          // expected "="
+          if (w === 61) { // "=" == 61
+            break;
+          }
+
+          handleWarning('illegal attribute name char');
+          skipAttr = true;
         }
 
         name = s.substring(i, j);
 
         if (name === 'xmlns:xmlns') {
           handleWarning('illegal declaration of xmlns');
-          return cachedAttrs = false; // error. invalid name
+          skipAttr = true;
         }
 
         w = s.charCodeAt(j + 1);
@@ -356,35 +366,78 @@ function Saxen(options) {
         if (w === 34) { // '"'
           j = s.indexOf('"', i = j + 2);
 
-        } else {
-          if (w !== 39) { // "'"
-            handleWarning('missing attribute value quotes');
-            return cachedAttrs = false; // error. invalid char
+          if (j === -1) {
+            j = s.indexOf('\'', i);
+
+            if (j !== -1) {
+              handleWarning('attribute value quote missmatch');
+              skipAttr = true;
+            }
           }
 
+        } else if (w === 39) { // "'"
           j = s.indexOf('\'', i = j + 2);
+
+          if (j === -1) {
+            j = s.indexOf('"', i);
+
+            if (j !== -1) {
+              handleWarning('attribute value quote missmatch');
+              skipAttr = true;
+            }
+          }
+
+        } else {
+          handleWarning('missing attribute value quotes');
+          skipAttr = true;
+
+          // skip to next space
+          for (j = j + 1; j < l; j++) {
+            w = s.charCodeAt(j + 1);
+
+            if (w === 32 || (w < 14 && w > 8)) { // WHITESPACE
+              break;
+            }
+          }
+
         }
 
         if (j === -1) {
-          handleWarning('attribute value quote missmatch');
-          return cachedAttrs = false; // error. invalid char
+          handleWarning('missing closing quotes');
+
+          j = l;
+          skipAttr = true;
         }
 
-        if (j + 1 < l) {
+        if (!skipAttr) {
+          value = s.substring(i, j);
+        }
+
+        i = j;
+
+        // ensure SPACE follows attribute
+        // skip illegal content otherwise
+        // example a="b"c
+        for (; j + 1 < l; j++) {
           w = s.charCodeAt(j + 1);
 
-          if (w > 32 || w < 9 || (w < 32 && w > 13)) {
-            // error. invalid char
+          if (w === 32 || (w < 14 && w > 8)) { // WHITESPACE
+            break;
+          }
+
+          // FIRST ILLEGAL CHAR
+          if (i === j) {
             handleWarning('illegal character after attribute end');
-            return cachedAttrs = false;
+            skipAttr = true;
           }
         }
 
-
-        value = s.substring(i, j);
-
         // advance cursor to next attribute
         i = j + 1;
+
+        if (skipAttr) {
+          continue parseAttr;
+        }
 
         // check attribute re-declaration
         if (name in seenAttrs) {
@@ -706,7 +759,7 @@ function Saxen(options) {
 
       if (w === 63) { // "?"
         j = xml.indexOf('?>', i);
-        if (j === -1) { // error
+        if (j === -1) {
           return handleError('unclosed question');
         }
 
@@ -723,7 +776,7 @@ function Saxen(options) {
 
       j = xml.indexOf('>', i + 1);
 
-      if (j == -1) { // error
+      if (j == -1) {
         return handleError('unclosed tag');
       }
 
