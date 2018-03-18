@@ -3,6 +3,7 @@
 coverage
 lib
 test
+.eslintignore
 .eslintrc
 .travis.yml
 rollup.config.js

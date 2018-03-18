@@ -3,7 +3,7 @@
   "description": "A tiny, super fast, namespace aware sax-style XML parser written in plain JavaScript",
   "scripts": {
     "all": "run-s lint test-coverage test-perf",
-    "lint": "eslint parser.js test/*.js",
+    "lint": "eslint .",
     "pretest": "rollup -c",
     "test": "mocha test/index.js",
     "test-coverage": "NO_PERF=1 nyc --check-coverage --statements 95 npm test",
