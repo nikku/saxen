@@ -280,10 +280,10 @@ test({
 
 // attributes / no xmlns assignment
 test({
-  xml: '<root xmlns:xmlns="http://foo"></root>',
+  xml: '<root xmlns:xmlns="http://foo" a="B"></root>',
   expect: [
     ['warn', 'illegal declaration of xmlns'],
-    ['openTag', 'root'],
+    ['openTag', 'root', { a: 'B' }],
     ['closeTag', 'root'],
   ],
 });
@@ -317,47 +317,68 @@ test({
 
 // attributes / warnings / no space between attributes
 test({
-  xml: '<root attr1="first"attr2="second"/>',
+  xml: '<root attr1="first"attr2="second" attr1="a"b a="B" />',
   expect: [
     ['warn', 'illegal character after attribute end' ],
-    ['openTag', 'root', false, true],
+    ['warn', 'illegal character after attribute end' ],
+    ['openTag', 'root', { a: 'B' }, true],
     ['closeTag', 'root', true],
   ],
 });
 
 // attributes / warnings / illegal first char
 test({
-  xml: '<root =attr1="first"/>',
+  xml: '<root =attr1="first" a="B" />',
   expect: [
     ['warn', 'illegal first char attribute name'],
-    ['openTag', 'root', false, true],
+    ['openTag', 'root', { a: 'B' }, true],
     ['closeTag', 'root', true],
   ],
 });
 
 // attributes / warnings / open - close missmatch
 test({
-  xml: '<root attr1="first\'/>',
+  xml: '<root a="B" attr1="first\' />',
   expect: [
     ['warn', 'attribute value quote missmatch'],
-    ['openTag', 'root', false, true],
+    ['openTag', 'root', { a: 'B' }, true],
     ['closeTag', 'root', true],
   ],
 });
 
 // attributes / warnings / open - close missmatch
 test({
-  xml: '<root attr1=\'first"/>',
+  xml: '<root attr1=\'first" a="B" />',
   expect: [
     ['warn', 'attribute value quote missmatch'],
-    ['openTag', 'root', false, true],
+    ['openTag', 'root', { a: 'B' }, true],
     ['closeTag', 'root', true],
   ],
 });
 
 // attributes / warnings / illegal attribute start
-test.only({
-  xml: '<root $attr1="first" attr2="second"/>',
+test({
+  xml: '<root $attr1="first" ☂attr1="first" attr2="second"/>',
+  expect: [
+    ['warn', 'illegal first char attribute name' ],
+    ['warn', 'illegal first char attribute name' ],
+    ['openTag', 'root', { attr2: 'second' }, true],
+    ['closeTag', 'root', true],
+  ],
+});
+
+// attributes / unicode attr value
+test({
+  xml: '<root rain="☂"/>',
+  expect: [
+    ['openTag', 'root', { rain: '☂' }, true],
+    ['closeTag', 'root', true],
+  ],
+});
+
+// attributes / warnings / illegal attribute start
+test({
+  xml: '<root <attr1="first" attr2="second"/>',
   expect: [
     ['warn', 'illegal first char attribute name' ],
     ['openTag', 'root', { attr2: 'second' }, true],
@@ -365,22 +386,32 @@ test.only({
   ],
 });
 
+// attributes / warnings / illegal attribute name part
+test({
+  xml: '<root attr1☂="first" attr2="second"/>',
+  expect: [
+    ['warn', 'illegal attribute name char' ],
+    ['openTag', 'root', { attr2: 'second' }, true],
+    ['closeTag', 'root', true],
+  ],
+});
+
 // attributes / warnings / attribute without value
 test({
-  xml: '<root attr1 attr2="second"/>',
+  xml: '<root attr1 a="B"/>',
   expect: [
     ['warn', 'missing attribute value' ],
-    ['openTag', 'root', { attr2: 'second' }, true],
+    ['openTag', 'root', { a: 'B' }, true],
     ['closeTag', 'root', true],
   ],
 });
 
 // attributes / warnings / missing quoting
 test({
-  xml: '<root attr1=value />',
+  xml: '<root attr1=value a="B" />',
   expect: [
     ['warn', 'missing attribute value quotes' ],
-    ['openTag', 'root', false, true],
+    ['openTag', 'root', { a: 'B' }, true],
     ['closeTag', 'root', true],
   ],
 });
