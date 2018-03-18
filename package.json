@@ -14,7 +14,7 @@
     "parser",
     "pure"
   ],
-  "version": "5.7.0",
+  "version": "6.0.0",
   "main": "./parser.js",
   "bugs": {
     "url": "https://github.com/nikku/saxen/issues"
