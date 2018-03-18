@@ -6,6 +6,10 @@ All notable changes to [saxen](https://github.com/nikku/saxen) are documented he
 
 ___Note:__ Yet to be released changes appear here._
 
+## 6.0.0
+
+* `FEAT`: recover from attribute parse errors; instead of skipping attributes all together attempt to parse what's possible [#13](https://github.com/nikku/saxen/issues/13)
+
 ## 5.7.0
 
 * `FEAT`: detect and gracefully handle local attribute re-declarations that are forbidden via the XML spec: We'll now emit a warning and ignore the offending attribute [`7d0c8629`](https://github.com/nikku/saxen/commit/7d0c8629c6b7afe82953e86b7351ae30be41730c)
