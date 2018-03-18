@@ -8,9 +8,9 @@ ___Note:__ Yet to be released changes appear here._
 
 ## 6.0.1
 
-_This is a re-publish of the broken `v6.0.0` version_
+_This is a re-publish of the broken `v6.0.0` version._
 
-* `FEAT`: recover from attribute parse errors; instead of skipping attributes all together attempt to parse what's possible [#13](https://github.com/nikku/saxen/issues/13)
+* `FEAT`: recover from attribute parse errors [#13](https://github.com/nikku/saxen/issues/13)
 
 ## 6.0.0
 
