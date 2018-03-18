@@ -6,9 +6,15 @@ All notable changes to [saxen](https://github.com/nikku/saxen) are documented he
 
 ___Note:__ Yet to be released changes appear here._
 
-## 6.0.0
+## 6.0.1
+
+_This is a re-publish of the broken `v6.0.0` version_
 
 * `FEAT`: recover from attribute parse errors; instead of skipping attributes all together attempt to parse what's possible [#13](https://github.com/nikku/saxen/issues/13)
+
+## 6.0.0
+
+_Unpublished; Use `v6.0.1` instead._
 
 ## 5.7.0
 
