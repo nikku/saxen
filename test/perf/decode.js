@@ -2,7 +2,9 @@ var fs = require('fs');
 
 var entities = fs.readFileSync(__dirname + '/entities.txt', 'utf-8').split(/\n/g);
 
-var decodeEntities = require('../../decode');
+var {
+  decode
+} = require('../..');
 
 var exec = require('./exec');
 
@@ -14,7 +16,7 @@ exec('decode', [
   } ],
 
   [ 'decodeEntities original', () => () => {
-    entities.map(decodeEntities);
+    entities.map(decode);
   } ]
 
 ], 500);

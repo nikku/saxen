@@ -1,8 +1,9 @@
-var Parser = require('../');
-var assert = require('assert');
-var util = require('util');
+var {
+  Parser
+} = require('..');
 
-var inspect = util.inspect;
+var assert = require('assert');
+var { inspect } = require('util');
 
 module.exports = function(op) {
   it(op.xml.substr(0, 275), function() {

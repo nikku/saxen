@@ -1,8 +1,9 @@
 var assert = require('assert');
 
-var Parser = require('../');
-
-var exportedDecode = require('../decode');
+var {
+  decode,
+  Parser
+} = require('..');
 
 
 describe('decode', function() {
@@ -20,7 +21,7 @@ describe('decode', function() {
 
       var attrs = getAttrs();
 
-      assert.strictEqual(decodeEntities, exportedDecode);
+      assert.strictEqual(decodeEntities, decode);
 
       assert.equal(decodeEntities(attrs.encoded), '&\'><"&Quot;"\'&{İ&raquo;&constructor;&#NaN;');
     });

@@ -1,4 +1,7 @@
-var Parser = require('../');
+var {
+  Parser
+} = require('..');
+
 var assert = require('assert');
 
 

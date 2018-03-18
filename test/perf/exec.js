@@ -1,4 +1,6 @@
-var table = require('table').table;
+var {
+  table
+} = require('table');
 
 var now = Date.now;
 

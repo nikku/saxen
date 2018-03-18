@@ -1,6 +1,8 @@
 var assert = require('assert');
 
-var Parser = require('../');
+var {
+  Parser
+} = require('..');
 
 
 describe('modes', function() {

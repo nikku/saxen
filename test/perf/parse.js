@@ -2,7 +2,9 @@ var fs = require('fs');
 
 var xml = fs.readFileSync(__dirname + '/sample.xml', 'utf-8');
 
-var Parser = require('../../');
+var {
+  Parser
+} = require('../..');
 
 var exec = require('./exec');
 
