@@ -336,6 +336,15 @@ test({
   ],
 });
 
+test({
+  xml: '<root .attr1="first" a="B" />',
+  expect: [
+    ['warn', 'illegal first char attribute name'],
+    ['openTag', 'root', { a: 'B' }, true],
+    ['closeTag', 'root', true],
+  ],
+});
+
 // attributes / warnings / open - close missmatch
 test({
   xml: '<root a="B" attr1="first\' />',
@@ -386,12 +395,28 @@ test({
   ],
 });
 
-// attributes / warnings / illegal attribute name part
+// attributes / warnings / illegal attribute name char
 test({
   xml: '<root attr1☂="first" attr2="second"/>',
   expect: [
     ['warn', 'illegal attribute name char' ],
     ['openTag', 'root', { attr2: 'second' }, true],
+    ['closeTag', 'root', true],
+  ],
+});
+
+test({
+  xml: '<root xmlns:color_1-.0="http://color" />',
+  expect: [
+    ['openTag', 'root', { 'xmlns:color_1-.0': 'http://color' }, true],
+    ['closeTag', 'root', true],
+  ],
+});
+
+test({
+  xml: '<root color_1-.0="green" />',
+  expect: [
+    ['openTag', 'root', { 'color_1-.0': 'green' }, true],
     ['closeTag', 'root', true],
   ],
 });
