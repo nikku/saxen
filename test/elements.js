@@ -214,6 +214,18 @@ test({
 });
 
 test({
+  xml: '<root a:::="A" :b="B" ::c="C"/>',
+  expect: [
+    ['openTag', 'root', {
+      'a:::': 'A',
+      ':b': 'B',
+      '::c': 'C'
+    }, true],
+    ['closeTag', 'root', true],
+  ],
+});
+
+test({
   xml: '<a><!--comment text--></a>',
   expect: [
     ['openTag', 'a', {}, false],
@@ -355,6 +367,16 @@ test({
   ],
 });
 
+// attributes / warnings / missing closing quotes
+test({
+  xml: '<root a="B" attr1="first />',
+  expect: [
+    ['warn', 'missing closing quotes'],
+    ['openTag', 'root', { a: 'B' }, true],
+    ['closeTag', 'root', true],
+  ],
+});
+
 // attributes / warnings / open - close missmatch
 test({
   xml: '<root attr1=\'first" a="B" />',
@@ -372,19 +394,6 @@ test({
     ['warn', 'illegal first char attribute name' ],
     ['warn', 'illegal first char attribute name' ],
     ['openTag', 'root', { attr2: 'second' }, true],
-    ['closeTag', 'root', true],
-  ],
-});
-
-// attributes / ::
-test({
-  xml: '<root xmlns:::="http://foo" :attr1="first" ::attr2="second"/>',
-  expect: [
-    ['openTag', 'root', {
-      'xmlns:::': 'http://foo',
-      ':attr1': 'first',
-      '::attr2': 'second'
-    }, true],
     ['closeTag', 'root', true],
   ],
 });
@@ -452,9 +461,28 @@ test({
   ],
 });
 
+test({
+  xml: '<root attr1\na="B"/>',
+  expect: [
+    ['warn', 'missing attribute value' ],
+    ['openTag', 'root', { a: 'B' }, true],
+    ['closeTag', 'root', true],
+  ],
+});
+
 // attributes / warnings / missing quoting
 test({
   xml: '<root attr1=value a="B" />',
+  expect: [
+    ['warn', 'missing attribute value quotes' ],
+    ['openTag', 'root', { a: 'B' }, true],
+    ['closeTag', 'root', true],
+  ],
+});
+
+// attributes / warnings / missing quoting
+test({
+  xml: '<root attr1=value\na="B" />',
   expect: [
     ['warn', 'missing attribute value quotes' ],
     ['openTag', 'root', { a: 'B' }, true],
@@ -981,6 +1009,22 @@ test({
     }],
     ['openTag', 'foo:foo'],
     ['closeTag', 'foo:foo']
+  ],
+});
+
+test({
+  xml: (
+    '<foo xmlns="http://foo">' +
+      '<bar xx:bar="BAR" />' +
+    '</foo>'
+  ),
+  ns: true,
+  expect: [
+    ['openTag', 'ns0:foo'],
+    ['warn', 'missing namespace for prefix <xx>'],
+    ['openTag', 'ns0:bar'],
+    ['closeTag', 'ns0:bar'],
+    ['closeTag', 'ns0:foo']
   ],
 });
 
