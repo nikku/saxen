@@ -365,13 +365,26 @@ test({
   ],
 });
 
-// attributes / warnings / illegal attribute start
+// attributes / warnings / illegal first char attribute name
 test({
   xml: '<root $attr1="first" ☂attr1="first" attr2="second"/>',
   expect: [
     ['warn', 'illegal first char attribute name' ],
     ['warn', 'illegal first char attribute name' ],
     ['openTag', 'root', { attr2: 'second' }, true],
+    ['closeTag', 'root', true],
+  ],
+});
+
+// attributes / ::
+test({
+  xml: '<root xmlns:::="http://foo" :attr1="first" ::attr2="second"/>',
+  expect: [
+    ['openTag', 'root', {
+      'xmlns:::': 'http://foo',
+      ':attr1': 'first',
+      '::attr2': 'second'
+    }, true],
     ['closeTag', 'root', true],
   ],
 });
@@ -385,7 +398,7 @@ test({
   ],
 });
 
-// attributes / warnings / illegal attribute start
+// attributes / warnings / illegal first char attribute name
 test({
   xml: '<root <attr1="first" attr2="second"/>',
   expect: [
@@ -409,6 +422,14 @@ test({
   xml: '<root xmlns:color_1-.0="http://color" />',
   expect: [
     ['openTag', 'root', { 'xmlns:color_1-.0': 'http://color' }, true],
+    ['closeTag', 'root', true],
+  ],
+});
+
+test({
+  xml: '<root a:b:c="B" xmlns:b:c="http://color" />',
+  expect: [
+    ['openTag', 'root', { 'xmlns:b:c': 'http://color' }, true],
     ['closeTag', 'root', true],
   ],
 });
