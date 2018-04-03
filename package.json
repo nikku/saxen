@@ -17,7 +17,7 @@
   ],
   "version": "7.0.1",
   "main": "./dist/index.js",
-  "module": "./dist/index.mjs",
+  "module": "./dist/index.esm.js",
   "bugs": {
     "url": "https://github.com/nikku/saxen/issues"
   },
