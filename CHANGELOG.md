@@ -6,6 +6,13 @@ All notable changes to [saxen](https://github.com/nikku/saxen) are documented he
 
 ___Note:__ Yet to be released changes appear here._
 
+## 8.0.0
+
+### Breaking Changes
+
+* `CHORE`: rename ES module to `dist/index.esm.js` for improved bundler compatibility
+* `FIX`: drop `browser` field for better interoperability with module bundlers
+
 ## 7.0.1
 
 * `FIX`: allow `.` in attribute name part
