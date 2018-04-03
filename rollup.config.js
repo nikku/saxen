@@ -8,7 +8,7 @@ export default [
     input: 'lib/index.js',
     output: {
       name: 'Saxen',
-      file: pkg.browser,
+      file: 'dist/saxen.umd.js',
       format: 'umd'
     }
   },
@@ -16,7 +16,7 @@ export default [
     input: 'lib/index.js',
     output: {
       name: 'Saxen',
-      file: pkg.browser.replace(/\.js$/, '.min.js'),
+      file: 'dist/saxen.umd.min.js',
       format: 'umd'
     },
     plugins: [
