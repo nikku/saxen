@@ -6,6 +6,8 @@ All notable changes to [saxen](https://github.com/nikku/saxen) are documented he
 
 ___Note:__ Yet to be released changes appear here._
 
+* `FEAT`: allow dots in tag names
+
 ## 8.0.0
 
 ### Breaking Changes
