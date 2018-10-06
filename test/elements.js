@@ -41,6 +41,14 @@ test({
 });
 
 test({
+  xml: '<dateTime.iso8601 />',
+  expect: [
+    ['openTag', 'dateTime.iso8601', {}, true],
+    ['closeTag', 'dateTime.iso8601', true],
+  ],
+});
+
+test({
   xml: '<DIV />',
   expect: [
     ['openTag', 'DIV', {}, true],
