@@ -719,7 +719,7 @@ test({
   ],
 });
 
-// context with annonymous namespace
+// context with anonymous namespace
 test({
   xml: (
     '<foo xmlns="http://this" xmlns:that="http://that" id="aa" that:title="bb" />'
