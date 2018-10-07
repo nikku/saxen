@@ -289,6 +289,60 @@ test({
   ],
 });
 
+// text / before first tag
+test({
+  xml: 'a<root />',
+  expect: [
+    ['warn', 'non-whitespace outside of root node', { data: 'a', line: 0, column: 0 }],
+    ['openTag', 'root'],
+    ['closeTag', 'root'],
+  ],
+});
+
+// text / after last tag
+test({
+  xml: '<root />a',
+  expect: [
+    ['openTag', 'root'],
+    ['closeTag', 'root'],
+    ['warn', 'non-whitespace outside of root node', { data: 'a', line: 0, column: 8 }],
+  ],
+});
+
+// text / around child element
+test({
+  xml: '<root>a<child />b</root>',
+  expect: [
+    ['openTag', 'root'],
+    ['text', 'a'],
+    ['openTag', 'child'],
+    ['closeTag', 'child'],
+    ['text', 'b'],
+    ['closeTag', 'root'],
+  ],
+});
+
+// processing instruction + whitespace outside of root node
+test({
+  xml: '<?xml version="1.0" encoding="UTF-8"?>\n\t <root/>',
+  expect: [
+    ['question', '<?xml version="1.0" encoding="UTF-8"?>'],
+    ['openTag', 'root'],
+    ['closeTag', 'root']
+  ],
+});
+
+// processing instruction + non-whitespace outside of root node
+test({
+  xml: '<?xml version="1.0" encoding="UTF-8"?>\na\n<root/>\n',
+  expect: [
+    ['question', '<?xml version="1.0" encoding="UTF-8"?>'],
+    ['warn', 'non-whitespace outside of root node'],
+    ['openTag', 'root'],
+    ['closeTag', 'root']
+  ],
+});
+
 // attributes / ""
 test({
   xml: '<root LENGTH="abc=ABC"></root>',
@@ -1051,10 +1105,10 @@ test({
 
 // whitespace / BOM at start
 test({
-  xml: '\uFEFF<div />',
+  xml: '\uFEFF<div>\uFEFF</div>',
   expect: [
-    ['text', '\uFEFF'],
     ['openTag', 'div'],
+    ['text', '\uFEFF' ],
     ['closeTag', 'div'],
   ],
 });
@@ -1063,7 +1117,6 @@ test({
 test({
   xml: ' \uFEFF<div />',
   expect: [
-    ['text', ' \uFEFF'],
     ['openTag', 'div'],
     ['closeTag', 'div'],
   ],
