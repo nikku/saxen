@@ -343,6 +343,31 @@ test({
   ],
 });
 
+// multiple-root elements
+test({
+  xml: '<root /><otherRoot />\n',
+  expect: [
+    ['openTag', 'root'],
+    ['closeTag', 'root'],
+    ['openTag', 'otherRoot'],
+    ['closeTag', 'otherRoot']
+  ],
+});
+
+// multiple-root elements / xmlns
+test({
+  xml:
+    '<root xmlns="http://www.w3.org/2005/Atom" />' +
+    '<atom:otherRoot xmlns:atom="http://not-atom" />',
+  ns: true,
+  expect: [
+    ['openTag', 'atom:root' ],
+    ['closeTag', 'atom:root'],
+    ['openTag', 'ns0:otherRoot'],
+    ['closeTag', 'ns0:otherRoot']
+  ],
+});
+
 // attributes / ""
 test({
   xml: '<root LENGTH="abc=ABC"></root>',
