@@ -112,7 +112,9 @@ function test(options) {
     assert.equal(
       recordedEntries.length,
       expectedEntries.length,
-      'expected ' + expectedEntries.length + ' records, got ' + recordedEntries.length + ': \n' + inspect(recordedEntries)
+      'expected ' + expectedEntries.length + ' records, got ' + recordedEntries.length + ': \n\n' +
+      indent(inspect(recordedEntries), '  ') + '\n\n---\n\n' +
+      indent(inspect(expectedEntries), '  ') + '\n'
     );
 
     for (var idx = 0; idx < recordedEntries.length; idx++) {
@@ -162,3 +164,7 @@ function test(options) {
 }
 
 
+
+function indent(text, str) {
+  return str + text.split(/\n/g).join('\n' + str);
+}
