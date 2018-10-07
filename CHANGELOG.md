@@ -6,6 +6,8 @@ All notable changes to [saxen](https://github.com/nikku/saxen) are documented he
 
 ___Note:__ Yet to be released changes appear here._
 
+## 8.1.0
+
 * `FEAT`: warn on non-whitespace outside root node ([#11](https://github.com/nikku/saxen/issues/11), [#12](https://github.com/nikku/saxen/issues/12))
 * `FEAT`: allow dots in tag names
 
