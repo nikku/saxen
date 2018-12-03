@@ -6,7 +6,7 @@
     "lint": "eslint .",
     "pretest": "rollup -c",
     "test": "mocha test/index.js",
-    "test-coverage": "NO_PERF=1 nyc --check-coverage --branches 95 -r text -r html npm test",
+    "test-coverage": "NO_PERF=1 nyc --reporter=lcov --reporter=html npm test",
     "test-perf": "node test/perf"
   },
   "keywords": [
