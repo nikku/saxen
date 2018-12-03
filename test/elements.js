@@ -615,6 +615,15 @@ test({
 });
 
 test({
+  xml: '<r>&lt;![CDATA[ this is ]]&gt;</r>',
+  expect: [
+    ['openTag', 'r'],
+    ['text', '&lt;![CDATA[ this is ]]&gt;'],
+    ['closeTag', 'r'],
+  ],
+});
+
+test({
   xml: '<html><head><script>\'<div>foo</div></\'</script></head></html>',
   expect: [
     ['openTag', 'html'],
