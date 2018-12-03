@@ -1,11 +1,11 @@
-var {
+import {
   Parser
-} = require('..');
+} from '../lib';
 
-var assert = require('assert');
-var { inspect } = require('util');
+import assert from 'assert';
+import { inspect } from 'util';
 
-module.exports = function(op) {
+module.exports.default = function(op) {
   it(op.xml.substr(0, 275), function() {
     test(op || {});
   });

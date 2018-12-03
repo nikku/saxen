@@ -1,8 +1,8 @@
-var assert = require('assert');
+import assert from 'assert';
 
-var {
+import {
   Parser
-} = require('..');
+} from '../lib';
 
 
 describe('modes', function() {

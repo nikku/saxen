@@ -1,8 +1,8 @@
-var {
+import {
   Parser
-} = require('..');
+} from '../lib';
 
-var assert = require('assert');
+import assert from 'assert';
 
 
 describe('handler errors', function() {

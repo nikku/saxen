@@ -1,9 +1,9 @@
-var assert = require('assert');
+import assert from 'assert';
 
-var {
+import {
   decode,
   Parser
-} = require('..');
+} from '../lib';
 
 
 describe('decode', function() {

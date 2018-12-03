@@ -1,4 +1,4 @@
-var test = require('./test');
+import test from './test';
 
 // // default ns:
 // // {
