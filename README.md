@@ -1,6 +1,7 @@
-# `/saxen/` parser <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/5f/Coat_of_arms_of_Saxony.svg/220px-Coat_of_arms_of_Saxony.svg.png" align="right" />
+# `/saxen/` parser
 
 [![Build Status](https://travis-ci.org/nikku/saxen.svg?branch=master)](https://travis-ci.org/nikku/saxen)
+[![codecov](https://codecov.io/gh/nikku/saxen/branch/master/graph/badge.svg)](https://codecov.io/gh/nikku/saxen)
 
 A tiny, super fast, namespace aware [sax-style](https://en.wikipedia.org/wiki/Simple_API_for_XML) XML parser written in plain JavaScript.
 
@@ -137,7 +138,6 @@ parser.on('openTag', function(el) {
 We build on the awesome work done by [easysax](https://github.com/vflash/easysax).
 
 `/saxen/` is named after [Sachsen](https://en.wikipedia.org/wiki/Saxony), a federal state of Germany. So geht sächsisch!
-
 
 ## LICENSE
 
