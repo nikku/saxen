@@ -1,7 +1,8 @@
 # `/saxen/` parser
 
 [![Build Status](https://travis-ci.org/nikku/saxen.svg?branch=master)](https://travis-ci.org/nikku/saxen)
-[![codecov](https://codecov.io/gh/nikku/saxen/branch/master/graph/badge.svg)](https://codecov.io/gh/nikku/saxen)
+[![Codecov](https://img.shields.io/codecov/c/github/nikku/saxen.svg)](https://codecov.io/gh/nikku/saxen)
+
 
 A tiny, super fast, namespace aware [sax-style](https://en.wikipedia.org/wiki/Simple_API_for_XML) XML parser written in plain JavaScript.
 
