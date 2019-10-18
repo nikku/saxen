@@ -1,6 +1,6 @@
 # `/saxen/` parser
 
-[![Build Status](https://travis-ci.org/nikku/saxen.svg?branch=master)](https://travis-ci.org/nikku/saxen)
+[![Build Status](https://travis-ci.com/nikku/saxen.svg?branch=master)](https://travis-ci.com/nikku/saxen)
 [![Codecov](https://img.shields.io/codecov/c/github/nikku/saxen.svg)](https://codecov.io/gh/nikku/saxen)
 
 
