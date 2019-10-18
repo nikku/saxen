@@ -5,16 +5,15 @@ import {
 import assert from 'assert';
 import { inspect } from 'util';
 
-module.exports.default = function(op) {
+export default function test(op) {
   it(op.xml.substr(0, 275), function() {
-    test(op || {});
+    _test(op || {});
   });
-};
-
+}
 
 // allow .only and .skip on test helper
 [ 'only', 'skip' ].forEach(function(key) {
-  module.exports[key] = function(op) {
+  test[key] = function(op) {
     it[key](op.xml.substr(0, 275), function() {
       test(op || {});
     });
@@ -22,7 +21,7 @@ module.exports.default = function(op) {
 });
 
 
-function test(options) {
+function _test(options) {
   var parser = options.parser;
   var error = false;
   var expectedEntries = options.expect;
