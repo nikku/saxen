@@ -1270,6 +1270,19 @@ test({
   ],
 });
 
+test({
+  xml: '<doc> \n<element id="sample>error" > \n </element></doc>',
+  ns: true,
+  expect: [
+    ['openTag', 'doc', {}, false],
+    ['text', ' \n'],
+    ['openTag', 'element', { id: 'sample>error' }, false],
+    ['text', ' \n '],
+    ['closeTag', 'element', false],
+    ['closeTag', 'doc', false],
+  ],
+});
+
 // Should not throw with '>' in attribute value of self-closing element (#17)
 test({
   xml: '<doc><element id="sample>error" /></doc>',
@@ -1278,6 +1291,19 @@ test({
     ['openTag', 'doc', {}, false],
     ['openTag', 'element', { id: 'sample>error' }, true],
     ['closeTag', 'element', true],
+    ['closeTag', 'doc', false],
+  ],
+});
+
+test({
+  xml: '<doc> \n<element id="sample>error"\n /> </doc>',
+  ns: true,
+  expect: [
+    ['openTag', 'doc', {}, false],
+    ['text', ' \n'],
+    ['openTag', 'element', { id: 'sample>error' }, true],
+    ['closeTag', 'element', true],
+    ['text', ' '],
     ['closeTag', 'doc', false],
   ],
 });
@@ -1294,9 +1320,32 @@ test({
   ],
 });
 
+test({
+  xml: '<doc></doc><element id="sample>error" />\n ',
+  ns: true,
+  expect: [
+    ['openTag', 'doc', {}, false],
+    ['closeTag', 'doc', false],
+    ['openTag', 'element', { id: 'sample>error' }, true],
+    ['closeTag', 'element', true],
+  ],
+});
+
 // Should not throw with '>' in attribute value of self-closing element at the end of the document
 test({
   xml: '<doc></doc><!-- !>>> --><element id="sample>error" />',
+  ns: true,
+  expect: [
+    ['openTag', 'doc', {}, false],
+    ['closeTag', 'doc', false],
+    ['comment', ' !>>> '],
+    ['openTag', 'element', { id: 'sample>error' }, true],
+    ['closeTag', 'element', true],
+  ]
+});
+
+test({
+  xml: '<doc></doc><!-- !>>> --> <element id="sample>error" />',
   ns: true,
   expect: [
     ['openTag', 'doc', {}, false],
