@@ -43,6 +43,7 @@ exec('parse', [
 
     parser.on('openTag', function(el) {
       el.name;
+
       // el.originalName;
       // el.ns;
       el.attrs;

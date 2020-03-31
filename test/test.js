@@ -62,6 +62,7 @@ function _test(options) {
       var actualValue = actual[idx];
 
       if (name === 'openTag' && idx === 2) {
+
         // be able to skip attrs check
         if (expectedValue === false) {
           assert.equal(actualValue, expectedValue, prefix(idx) + ' attrs to equal ' + expectedValue);
