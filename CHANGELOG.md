@@ -6,6 +6,11 @@ All notable changes to [saxen](https://github.com/nikku/saxen) are documented he
 
 ___Note:__ Yet to be released changes appear here._
 
+## 8.1.1
+
+* `FIX`: parse `>` in attribute names ([#17](https://github.com/nikku/saxen/issues/17), [#20](https://github.com/nikku/saxen/pull/20))
+* `CHORE`: drop leftover `console.log` statement
+
 ## 8.1.0
 
 * `FEAT`: warn on non-whitespace outside root node ([#11](https://github.com/nikku/saxen/issues/11), [#12](https://github.com/nikku/saxen/issues/12))
