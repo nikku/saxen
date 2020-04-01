@@ -1283,7 +1283,58 @@ test({
   ],
 });
 
-// Should not throw with '>' in attribute value of self-closing element (#17)
+// should handle > in attribute name
+test({
+  xml: '<doc><element fo>o="FOO" bar="BAR" /></doc>',
+  ns: true,
+  expect: [
+    ['openTag', 'doc', {}, false],
+    ['warn', 'illegal attribute name char'],
+    ['openTag', 'element', { bar: 'BAR' }],
+    ['closeTag', 'element'],
+    ['closeTag', 'doc'],
+  ],
+});
+
+// should handle > between attributes
+test({
+  xml: '<doc><element foo="FOO" >> bar="BAR" /></doc>',
+  ns: true,
+  expect: [
+    ['openTag', 'doc', {}, false],
+    ['warn', 'illegal first char attribute name'],
+    ['warn', 'illegal attribute name char'],
+    ['warn', 'missing attribute value'],
+    ['openTag', 'element', { foo: 'FOO', bar: 'BAR' }],
+    ['closeTag', 'element'],
+    ['closeTag', 'doc'],
+  ],
+});
+
+// should handle > after attribute
+test({
+  xml: '<doc><element foo="FOO"> bar="BAR" /></doc>',
+  ns: true,
+  expect: [
+    ['openTag', 'doc', {}, false],
+    ['warn', 'illegal character after attribute end'],
+    ['openTag', 'element', { bar: 'BAR' }],
+    ['closeTag', 'element'],
+    ['closeTag', 'doc'],
+  ],
+});
+
+// should handle > in tag name
+test({
+  xml: '<doc><element>/></doc>',
+  ns: true,
+  expect: [
+    ['openTag', 'doc', {}, false],
+    ['error', 'invalid nodeName']
+  ],
+});
+
+// should not throw with '>' in attribute value of self-closing element (#17)
 test({
   xml: '<doc><element id="sample>error" /></doc>',
   ns: true,
@@ -1308,7 +1359,7 @@ test({
   ],
 });
 
-// Should not throw with '>' in attribute value of self-closing element at the end of the document
+// should not throw with '>' in attribute value of self-closing element at the end of the document
 test({
   xml: '<doc></doc><element id="sample>error" />',
   ns: true,
@@ -1331,7 +1382,7 @@ test({
   ],
 });
 
-// Should not throw with '>' in attribute value of self-closing element at the end of the document
+// should not throw with '>' in attribute value of self-closing element at the end of the document
 test({
   xml: '<doc></doc><!-- !>>> --><element id="sample>error" />',
   ns: true,
