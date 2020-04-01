@@ -1311,6 +1311,7 @@ test({
   ],
 });
 
+
 // should handle > after attribute
 test({
   xml: '<doc><element foo="FOO"> bar="BAR" /></doc>',
@@ -1321,6 +1322,20 @@ test({
     ['openTag', 'element', { bar: 'BAR' }],
     ['closeTag', 'element'],
     ['closeTag', 'doc'],
+  ],
+});
+
+// should handle > after tag name
+test({
+  xml: '<doc><element />></doc>',
+  ns: true,
+  expect: [
+    ['openTag', 'doc', {}, false],
+    ['warn', 'illegal first char attribute name'],
+    ['warn', 'illegal attribute name char'],
+    ['warn', 'missing attribute value quotes'],
+    ['openTag', 'element', {}, false],
+    ['error', 'closing tag mismatch']
   ],
 });
 
