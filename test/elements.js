@@ -1302,7 +1302,7 @@ test({
   ns: true,
   expect: [
     ['openTag', 'doc', {}, false],
-    ['openTag', 'element', { foo: 'FOO'}, false],
+    ['openTag', 'element', { foo: 'FOO' }, false],
     ['text', '> bar="BAR" />'],
     ['error', 'closing tag mismatch']
   ],
