@@ -1421,6 +1421,41 @@ test({
 
 // should handle > in content
 test({
+  xml: '<doc><element foo=\'FO"O\'> bar="BAR" /></element></doc>',
+  ns: true,
+  expect: [
+    ['openTag', 'doc', {}, false],
+    ['openTag', 'element', { foo: 'FO"O' }, false],
+    ['text', ' bar="BAR" />'],
+    ['closeTag', 'element', false],
+    ['closeTag', 'doc', false]
+  ],
+});
+
+test({
+  xml: '<doc><element foo=\'FO"O\'> bar="BAR" /></element></doc>',
+  ns: true,
+  expect: [
+    ['openTag', 'doc', {}, false],
+    ['openTag', 'element', { foo: 'FO"O' }, false],
+    ['text', ' bar="BAR" />'],
+    ['closeTag', 'element', false],
+    ['closeTag', 'doc', false]
+  ],
+});
+
+test({
+  xml: '<doc><element foo="FO\'O"> bar="BAR" /></doc>',
+  ns: true,
+  expect: [
+    ['openTag', 'doc', {}, false],
+    ['openTag', 'element', { foo: "FO'O" }, false],
+    ['text', ' bar="BAR" />'],
+    ['error', 'closing tag mismatch']
+  ],
+});
+
+test({
   xml: '<doc><element foo=\'FO"O\'> bar="BAR" /></doc>',
   ns: true,
   expect: [
@@ -1443,6 +1478,28 @@ test({
 });
 
 test({
+  xml: '<doc><!-- foo=\'FO"O\' --> bar="BAR" ></doc>',
+  ns: true,
+  expect: [
+    ['openTag', 'doc', {}, false],
+    ['comment', ' foo=\'FO"O\' '],
+    ['text', ' bar="BAR" >'],
+    ['closeTag', 'doc', false]
+  ],
+});
+
+test({
+  xml: '<doc><!-- foo="FO\'O" --> bar="BAR" ></doc>',
+  ns: true,
+  expect: [
+    ['openTag', 'doc', {}, false],
+    ['comment', ' foo="FO\'O" '],
+    ['text', ' bar="BAR" >'],
+    ['closeTag', 'doc', false]
+  ],
+});
+
+test({
   xml: '<doc><element foo=\'FOO>',
   ns: true,
   expect: [
@@ -1461,5 +1518,24 @@ test({
     ['warn', 'missing closing quotes'],
     ['openTag', 'element', {}, false],
     ['error', 'unexpected end of file']
+  ],
+});
+
+test({
+  xml: '<doc><!-- element foo=\'FOO -->',
+  ns: true,
+  expect: [
+    ['openTag', 'doc', {}, false],
+    ['comment', ' element foo=\'FOO '],
+    ['error', 'unexpected end of file']
+  ],
+});
+
+test({
+  xml: '<doc><!-- element foo="FOO>',
+  ns: true,
+  expect: [
+    ['openTag', 'doc', {}, false],
+    ['error', 'unclosed comment']
   ],
 });
