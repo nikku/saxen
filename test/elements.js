@@ -1489,22 +1489,22 @@ test({
 });
 
 test({
-  xml: '<doc><!-- foo="FO\'O" --> bar="BAR" ></doc>',
+  xml: '<doc><! foo="FO\'O" > bar="BAR" ></doc>',
   ns: true,
   expect: [
     ['openTag', 'doc', {}, false],
-    ['comment', ' foo="FO\'O" '],
+    ['attention', '<! foo="FO\'O" >'],
     ['text', ' bar="BAR" >'],
     ['closeTag', 'doc', false]
   ],
 });
 
 test({
-  xml: '<doc><!-- foo=\'FO"O\' --> bar="BAR" ></doc>',
+  xml: '<doc><! foo=\'FO"O\' > bar="BAR" ></doc>',
   ns: true,
   expect: [
     ['openTag', 'doc', {}, false],
-    ['comment', ' foo=\'FO"O\' '],
+    ['attention', '<! foo=\'FO"O\' >'],
     ['text', ' bar="BAR" >'],
     ['closeTag', 'doc', false]
   ],
@@ -1533,39 +1533,22 @@ test({
 });
 
 test({
-  xml: '<doc><!-- element foo="FOO -->',
+  xml: '<doc><! element foo="FOO >',
   ns: true,
   expect: [
     ['openTag', 'doc', {}, false],
-    ['comment', ' element foo="FOO '],
+    ['attention', '<! element foo="FOO >'],
     ['error', 'unexpected end of file']
   ],
 });
 
 test({
-  xml: '<doc><!-- element foo=\'FOO -->',
+  xml: '<doc><! element foo=\'FOO >',
   ns: true,
   expect: [
     ['openTag', 'doc', {}, false],
-    ['comment', ' element foo=\'FOO '],
+    ['attention', '<! element foo=\'FOO >'],
     ['error', 'unexpected end of file']
   ],
 });
 
-test({
-  xml: '<doc><!-- element foo="FOO>',
-  ns: true,
-  expect: [
-    ['openTag', 'doc', {}, false],
-    ['error', 'unclosed comment']
-  ],
-});
-
-test({
-  xml: '<doc><!-- element foo=\'FOO>',
-  ns: true,
-  expect: [
-    ['openTag', 'doc', {}, false],
-    ['error', 'unclosed comment']
-  ],
-});
