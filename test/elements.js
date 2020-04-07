@@ -1289,10 +1289,10 @@ test({
   ns: true,
   expect: [
     ['openTag', 'doc', {}, false],
-    ['warn', 'illegal attribute name char'],
-    ['openTag', 'element', { bar: 'BAR' }],
-    ['closeTag', 'element'],
-    ['closeTag', 'doc'],
+    ['warn', 'missing attribute value quotes'],
+    ['openTag', 'element', {}, false],
+    ['text', 'o="FOO" bar="BAR" />'],
+    ['error', 'closing tag mismatch'],
   ],
 });
 
@@ -1302,12 +1302,9 @@ test({
   ns: true,
   expect: [
     ['openTag', 'doc', {}, false],
-    ['warn', 'illegal first char attribute name'],
-    ['warn', 'illegal attribute name char'],
-    ['warn', 'missing attribute value'],
-    ['openTag', 'element', { foo: 'FOO', bar: 'BAR' }],
-    ['closeTag', 'element'],
-    ['closeTag', 'doc'],
+    ['openTag', 'element', { foo: 'FOO'}, false],
+    ['text', '> bar="BAR" />'],
+    ['error', 'closing tag mismatch']
   ],
 });
 
@@ -1318,10 +1315,9 @@ test({
   ns: true,
   expect: [
     ['openTag', 'doc', {}, false],
-    ['warn', 'illegal character after attribute end'],
-    ['openTag', 'element', { bar: 'BAR' }],
-    ['closeTag', 'element'],
-    ['closeTag', 'doc'],
+    ['openTag', 'element', { foo: 'FOO' }, false],
+    ['text', ' bar="BAR" />'],
+    ['error', 'closing tag mismatch']
   ],
 });
 
@@ -1331,11 +1327,10 @@ test({
   ns: true,
   expect: [
     ['openTag', 'doc', {}, false],
-    ['warn', 'illegal first char attribute name'],
-    ['warn', 'illegal attribute name char'],
-    ['warn', 'missing attribute value quotes'],
-    ['openTag', 'element', {}, false],
-    ['error', 'closing tag mismatch']
+    ['openTag', 'element', {}, true],
+    ['closeTag', 'element', true],
+    ['text', '>'],
+    ['closeTag', 'doc', false]
   ],
 });
 
@@ -1345,7 +1340,9 @@ test({
   ns: true,
   expect: [
     ['openTag', 'doc', {}, false],
-    ['error', 'invalid nodeName']
+    ['openTag', 'element', {}, false],
+    ['text', '/>'],
+    ['error', 'closing tag mismatch']
   ],
 });
 
@@ -1420,4 +1417,28 @@ test({
     ['openTag', 'element', { id: 'sample>error' }, true],
     ['closeTag', 'element', true],
   ]
+});
+
+// should handle > in content
+test({
+  xml: '<doc><element foo=\'FO"O\'> bar="BAR" /></doc>',
+  ns: true,
+  expect: [
+    ['openTag', 'doc', {}, false],
+    ['openTag', 'element', { foo: 'FO"O' }, false],
+    ['text', ' bar="BAR" />'],
+    ['error', 'closing tag mismatch']
+  ],
+});
+
+// should handle > in content
+test({
+  xml: '<doc><element foo="FO\'O"> bar="BAR" /></doc>',
+  ns: true,
+  expect: [
+    ['openTag', 'doc', {}, false],
+    ['openTag', 'element', { foo: "FO'O" }, false],
+    ['text', ' bar="BAR" />'],
+    ['error', 'closing tag mismatch']
+  ],
 });
