@@ -1431,7 +1431,6 @@ test({
   ],
 });
 
-// should handle > in content
 test({
   xml: '<doc><element foo="FO\'O"> bar="BAR" /></doc>',
   ns: true,
@@ -1440,5 +1439,27 @@ test({
     ['openTag', 'element', { foo: "FO'O" }, false],
     ['text', ' bar="BAR" />'],
     ['error', 'closing tag mismatch']
+  ],
+});
+
+test({
+  xml: '<doc><element foo=\'FOO>',
+  ns: true,
+  expect: [
+    ['openTag', 'doc', {}, false],
+    ['warn', 'missing closing quotes'],
+    ['openTag', 'element', {}, false],
+    ['error', 'unexpected end of file']
+  ],
+});
+
+test({
+  xml: '<doc><element foo="FOO>',
+  ns: true,
+  expect: [
+    ['openTag', 'doc', {}, false],
+    ['warn', 'missing closing quotes'],
+    ['openTag', 'element', {}, false],
+    ['error', 'unexpected end of file']
   ],
 });
