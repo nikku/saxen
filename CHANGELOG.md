@@ -6,6 +6,10 @@ All notable changes to [saxen](https://github.com/nikku/saxen) are documented he
 
 ___Note:__ Yet to be released changes appear here._
 
+## 8.1.2
+
+* `FIX`: correct skipping of `>` in body tag ([#22](https://github.com/nikku/saxen/pull/22))
+
 ## 8.1.1
 
 * `FIX`: parse `>` in attribute names ([#17](https://github.com/nikku/saxen/issues/17), [#20](https://github.com/nikku/saxen/pull/20))
