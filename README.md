@@ -1,6 +1,6 @@
 # `/saxen/` parser
 
-[![Build Status](https://travis-ci.com/nikku/saxen.svg?branch=master)](https://travis-ci.com/nikku/saxen)
+[![CI](https://github.com/nikku/saxen/workflows/CI/badge.svg)](https://github.com/nikku/saxen/actions?query=workflow%3ACI)
 [![Codecov](https://img.shields.io/codecov/c/github/nikku/saxen.svg)](https://codecov.io/gh/nikku/saxen)
 
 
