@@ -1007,19 +1007,43 @@ test({
   ],
 });
 
-// normalize xsi:type
+// NOT normalize xsi:type
 test({
   xml: (
     '<foo xmlns="http://foo" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="Foo" />'
   ),
   ns: true,
   expect: [
-    [ 'openTag', 'ns0:foo', { 'xsi:type': 'ns0:Foo' } ],
+    [ 'openTag', 'ns0:foo', { 'xsi:type': 'Foo' } ],
     [ 'closeTag', 'ns0:foo' ],
   ],
 });
 
-// normalize prefixed xsi:type
+// NOT remap xsi:type
+test({
+  xml: (
+    '<foo xmlns="http://foo" xmlns:o="http://www.w3.org/2001/XMLSchema-instance" o:type="Foo" />'
+  ),
+  ns: true,
+  expect: [
+    [ 'openTag', 'ns0:foo', { 'o:type': 'Foo' } ],
+    [ 'closeTag', 'ns0:foo' ],
+  ],
+});
+
+// NOT normalize xsi:type
+test({
+  xml: (
+    '<foo xmlns="http://foo" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="Foo" />'
+  ),
+  ns: true,
+  expect: [
+    [ 'openTag', 'ns0:foo', { 'xsi:type': 'Foo' } ],
+    [ 'closeTag', 'ns0:foo' ],
+  ],
+});
+
+// NOT normalize prefixed xsi:type
 test({
   xml: (
     '<foo xmlns="http://foo" xmlns:bar="http://bar" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="bar:Bar" />'
@@ -1031,7 +1055,7 @@ test({
   ],
 });
 
-// normalize xsi:type / preserve unknown prefix in value
+// NOT normalize xsi:type / preserve unknown prefix in value
 test({
   xml: (
     '<foo xmlns="http://foo" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="xs:string" />'
@@ -1043,7 +1067,7 @@ test({
   ],
 });
 
-// normalize nested xsi:type
+// NOT normalize nested xsi:type
 test({
   xml: (
     '<foo xmlns="http://foo" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">' +
@@ -1053,7 +1077,7 @@ test({
   ns: true,
   expect: [
     [ 'openTag', 'ns0:foo' ],
-    [ 'openTag', 'ns0:bar', { 'xsi:type': 'ns0:Bar' } ],
+    [ 'openTag', 'ns0:bar', { 'xsi:type': 'Bar' } ],
     [ 'closeTag', 'ns0:bar' ],
     [ 'closeTag', 'ns0:foo' ],
   ],

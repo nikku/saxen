@@ -34,9 +34,7 @@ describe('modes', function() {
           'ns': 'ns',
           'ns$uri': 'http://ns',
           'xmlns': 'ns',
-          'xmlns$uri': 'http://ns',
-          'xsi': 'xsi',
-          'xsi$uri': 'http://www.w3.org/2001/XMLSchema-instance'
+          'xmlns$uri': 'http://ns'
         });
 
         assert.equal(decodeEntities(el.attrs.foo), '"');
@@ -78,9 +76,7 @@ describe('modes', function() {
           'ns': 'ns',
           'ns$uri': 'http://ns',
           'xmlns': 'ns',
-          'xmlns$uri': 'http://ns',
-          'xsi': 'xsi',
-          'xsi$uri': 'http://www.w3.org/2001/XMLSchema-instance'
+          'xmlns$uri': 'http://ns'
         });
       });
 
