@@ -1,6 +1,6 @@
 import {
   Parser
-} from '../lib';
+} from '..';
 
 import assert from 'assert';
 

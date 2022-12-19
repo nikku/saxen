@@ -2,7 +2,7 @@ import assert from 'assert';
 
 import {
   Parser
-} from '../lib';
+} from '..';
 
 
 describe('modes', function() {

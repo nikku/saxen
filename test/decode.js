@@ -3,7 +3,7 @@ import assert from 'assert';
 import {
   decode,
   Parser
-} from '../lib';
+} from '..';
 
 
 describe('decode', function() {
