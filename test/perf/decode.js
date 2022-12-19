@@ -11,7 +11,7 @@ var exec = require('./exec');
 
 exec('decode', [
 
-  ['noop', () => () => {
+  [ 'noop', () => () => {
     entities.map(function(s) { return s; });
   } ],
 

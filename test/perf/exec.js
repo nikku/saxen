@@ -38,9 +38,9 @@ module.exports = function(suite, tests, interations) {
 
   results = results.map(function(record) {
 
-    var diff = Math.round((1 - min/record[1]) * 10000) / 100;
+    var diff = Math.round((1 - min / record[1]) * 10000) / 100;
 
-    return [ ...record, diff >= 0 ? '+' + diff + '%' : '-' + diff + '%'];
+    return [ ...record, diff >= 0 ? '+' + diff + '%' : '-' + diff + '%' ];
   });
 
   console.log('perf results:', suite);
