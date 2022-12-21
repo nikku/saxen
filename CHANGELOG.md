@@ -6,6 +6,15 @@ All notable changes to [saxen](https://github.com/nikku/saxen) are documented he
 
 ___Note:__ Yet to be released changes appear here._
 
+## 9.0.0
+
+* `FEAT`: do not transform `xsi:type` attribute contents ([#23](https://github.com/nikku/saxen/pull/23))
+* `FEAT`: do not hardcode `xsi` namespace prefix ([#23](https://github.com/nikku/saxen/pull/23))
+
+### Breaking Changes
+
+* Moved `xsi:type` attribute manipulation by `saxen` and `xsi` prefix binding out of this library, to be handled by downstream libraries, this one is low-level ([#23](https://github.com/nikku/saxen/pull/23))
+
 ## 8.1.2
 
 * `FIX`: correct skipping of `>` in body tag ([#22](https://github.com/nikku/saxen/pull/22))
