@@ -5,7 +5,7 @@
     "all": "run-s lint bundle test-coverage test-perf",
     "lint": "eslint .",
     "bundle": "rollup -c",
-    "test": "mocha test/index.js",
+    "test": "mocha test/*.js",
     "test-coverage": "NO_PERF=1 nyc --reporter=lcov --reporter=html npm test",
     "test-perf": "node test/perf/index.cjs",
     "prepublishOnly": "run-s bundle test-perf"
