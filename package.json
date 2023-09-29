@@ -39,7 +39,6 @@
     "url": "https://github.com/nikku/saxen"
   },
   "devDependencies": {
-    "@rollup/plugin-terser": "^0.2.0",
     "eslint": "^8.30.0",
     "eslint-plugin-bpmn-io": "^0.16.0",
     "esm": "^3.0.84",
