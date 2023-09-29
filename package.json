@@ -23,6 +23,9 @@
   "bugs": {
     "url": "https://github.com/nikku/saxen/issues"
   },
+  "engines": {
+    "node": "*"
+  },
   "author": {
     "name": "Nico Rehwaldt",
     "url": "https://github.com/nikku"
