@@ -18,8 +18,8 @@
     "pure"
   ],
   "version": "9.0.0",
-  "main": "./dist/index.js",
-  "module": "./dist/index.esm.js",
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.js",
   "bugs": {
     "url": "https://github.com/nikku/saxen/issues"
   },
