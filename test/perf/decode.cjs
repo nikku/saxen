@@ -1,12 +1,12 @@
-var fs = require('fs');
+const fs = require('node:fs');
 
-var entities = fs.readFileSync(__dirname + '/entities.txt', 'utf-8').split(/\n/g);
+const entities = fs.readFileSync(__dirname + '/entities.txt', 'utf-8').split(/\n/g);
 
-var {
+const {
   decode
-} = require('../..');
+} = require('saxen');
 
-var exec = require('./exec');
+const exec = require('./exec.cjs');
 
 
 exec('decode', [

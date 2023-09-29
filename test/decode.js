@@ -1,9 +1,9 @@
-import assert from 'assert';
+import assert from 'node:assert';
 
 import {
   decode,
   Parser
-} from '..';
+} from 'saxen';
 
 
 describe('decode', function() {

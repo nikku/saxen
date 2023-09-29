@@ -1,9 +1,10 @@
 import {
   Parser
-} from '../lib';
+} from 'saxen';
 
-import assert from 'assert';
-import { inspect } from 'util';
+import assert from 'node:assert';
+import { inspect } from 'node:util';
+
 
 export default function test(op) {
   it(op.xml.substr(0, 275), function() {

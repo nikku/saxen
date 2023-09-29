@@ -1,8 +1,8 @@
-import assert from 'assert';
+import assert from 'node:assert';
 
 import {
   Parser
-} from '..';
+} from 'saxen';
 
 
 describe('modes', function() {
