@@ -23,14 +23,14 @@
     "url": "https://github.com/nikku/saxen/issues"
   },
   "author": {
-    "name": "Vopilovskiy Konstantin",
-    "email": "flash.vkv@gmail.com",
-    "url": "http://vflash.ru"
+    "name": "Nico Rehwaldt",
+    "url": "https://github.com/nikku"
   },
   "contributors": [
     {
-      "name": "Nico Rehwaldt",
-      "url": "https://github.com/nikku"
+      "name": "Vopilovskiy Konstantin",
+      "email": "flash.vkv@gmail.com",
+      "url": "http://vflash.ru"
     }
   ],
   "license": "MIT",
