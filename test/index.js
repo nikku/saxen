@@ -2,23 +2,23 @@
  * Test suite main.
  */
 
-describe('document parsing', function() {
+describe('document parsing', async function() {
 
-  describe('should parse', function() {
+  describe('should parse', async function() {
 
-    require('./elements');
+    return import('./elements.js');
 
   });
 
-  require('./modes');
+  await import('./modes.js');
 
-  require('./decode');
+  await import('./decode.js');
 
 });
 
 
-describe('errors', function() {
+describe('errors', async function() {
 
-  require('./errors');
+  await import('./errors.js');
 
 });

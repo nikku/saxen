@@ -5,11 +5,12 @@
     "all": "run-s lint bundle test-coverage test-perf",
     "lint": "eslint .",
     "bundle": "rollup -c",
-    "test": "mocha -r esm test/index.js",
+    "test": "mocha test/index.js",
     "test-coverage": "NO_PERF=1 nyc --reporter=lcov --reporter=html npm test",
-    "test-perf": "node test/perf",
+    "test-perf": "node test/perf/index.cjs",
     "prepublishOnly": "run-s bundle test-perf"
   },
+  "type": "module",
   "keywords": [
     "xml",
     "sax",
@@ -41,11 +42,11 @@
   "devDependencies": {
     "eslint": "^8.30.0",
     "eslint-plugin-bpmn-io": "^0.16.0",
-    "esm": "^3.0.84",
     "mocha": "^8.4.0",
     "npm-run-all": "^4.1.1",
     "nyc": "^15.1.0",
     "rollup": "^2.79.1",
+    "saxen": "file:",
     "table": "^6.7.1"
   },
   "files": [

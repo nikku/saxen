@@ -1,12 +1,12 @@
-var fs = require('fs');
+const fs = require('node:fs');
 
-var xml = fs.readFileSync(__dirname + '/sample.xml', 'utf-8');
+const xml = fs.readFileSync(__dirname + '/sample.xml', 'utf-8');
 
-var {
+const {
   Parser
-} = require('../..');
+} = require('saxen');
 
-var exec = require('./exec');
+const exec = require('./exec.cjs');
 
 
 exec('parse', [

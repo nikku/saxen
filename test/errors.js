@@ -1,8 +1,8 @@
 import {
   Parser
-} from '..';
+} from 'saxen';
 
-import assert from 'assert';
+import assert from 'node:assert';
 
 
 describe('handler errors', function() {

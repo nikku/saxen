@@ -1,8 +1,8 @@
-var {
+const {
   table
 } = require('table');
 
-var now = Date.now;
+const now = Date.now;
 
 module.exports = function(suite, tests, interations) {
 
