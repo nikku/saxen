@@ -5,159 +5,157 @@ import {
 import assert from 'node:assert';
 
 
-describe('handler errors', function() {
+describe('errors', function() {
 
-  var parser;
+  describe('error handler', () => {
 
-  beforeEach(function() {
+    it('should NOT pass to #onError', function() {
 
-    parser = new Parser();
-  });
+      // given
+      const parser = new Parser();
 
+      parser.on('error', function(err, getContext) {
+        assert.ok(false, 'error called');
+      });
 
-  it('should NOT pass to #onError', function() {
+      parser.on('openTag', function() {
+        throw new Error('foo');
+      });
 
-    // given
-    parser.on('error', function(err, getContext) {
-      assert.ok(false, 'error called');
+      // when
+      function parse() {
+        parser.parse('<xml />');
+      }
+
+      // then
+      assert.throws(parse, /foo/);
     });
 
-    parser.on('openTag', function() {
-      throw new Error('foo');
+  });
+
+
+  describe('#parse', function() {
+
+    it('should throw on invalid arg', function() {
+
+      // given
+      var parser = new Parser();
+
+      // when
+      function parse() {
+        parser.parse({});
+      }
+
+      // then
+      assert.throws(parse, /required args <xml=string>/);
     });
 
-    // when
-    function parse() {
-      parser.parse('<xml />');
-    }
 
-    // then
-    assert.throws(parse, /foo/);
-  });
+    it('should throw on XML parse error', function() {
 
-});
+      // given
+      var parser = new Parser();
 
+      // when
+      function parse() {
+        parser.parse('<not<quite<xml');
+      }
 
-describe('#parse', function() {
-
-  it('should throw on invalid arg', function() {
-
-    // given
-    var parser = new Parser();
-
-    // when
-    function parse() {
-      parser.parse({});
-    }
-
-    // then
-    assert.throws(parse, /required args <xml=string>/);
-  });
+      // then
+      assert.throws(parse, /unclosed tag/);
+    });
 
 
-  it('should throw on XML parse error', function() {
+    it('should not throw without hooks', function() {
 
-    // given
-    var parser = new Parser();
+      // given
+      var parser = new Parser();
 
-    // when
-    function parse() {
-      parser.parse('<not<quite<xml');
-    }
+      // when
+      function parse() {
+        parser.parse([
+          '<? question ?>',
+          '<!ATTENTION>',
+          '<!-- COMMENT -->',
+          '<tag a="1\'>',
+          'hi',
+          '<![CDATA[cdata]]>',
+          '</tag>'
+        ].join('\n'));
+      }
 
-    // then
-    assert.throws(parse, /unclosed tag/);
+      // then
+      assert.doesNotThrow(parse);
+    });
+
   });
 
 
-  it('should not throw without hooks', function() {
+  describe('#on', function() {
 
-    // given
-    var parser = new Parser();
+    it('should throw on invalid args', function() {
 
-    // when
-    function parse() {
-      parser.parse([
-        '<? question ?>',
-        '<!ATTENTION>',
-        '<!-- COMMENT -->',
-        '<tag a="1\'>',
-        'hi',
-        '<![CDATA[cdata]]>',
-        '</tag>'
-      ].join('\n'));
-    }
+      // given
+      var parser = new Parser();
 
-    // then
-    assert.doesNotThrow(parse);
-  });
+      // when
+      function configure() {
+        parser.on('openTag');
+      }
 
-});
+      // then
+      assert.throws(configure, /required args <name, cb>/);
+    });
 
 
-describe('#on', function() {
+    it('should throw on invalid event', function() {
 
-  it('should throw on invalid args', function() {
+      // given
+      var parser = new Parser();
 
-    // given
-    var parser = new Parser();
+      // when
+      function configure() {
+        parser.on('foo', function() { });
+      }
 
-    // when
-    function configure() {
-      parser.on('openTag');
-    }
+      // then
+      assert.throws(configure, /unsupported event: foo/);
+    });
 
-    // then
-    assert.throws(configure, /required args <name, cb>/);
   });
 
 
-  it('should throw on invalid event', function() {
+  describe('#ns', function() {
 
-    // given
-    var parser = new Parser();
+    it('should throw on invalid args', function() {
 
-    // when
-    function configure() {
-      parser.on('foo', function() { });
-    }
+      // given
+      var parser = new Parser();
 
-    // then
-    assert.throws(configure, /unsupported event: foo/);
-  });
+      // when
+      function configure() {
+        parser.ns('bar');
+      }
 
-});
-
-
-describe('#ns', function() {
-
-  it('should throw on invalid args', function() {
-
-    // given
-    var parser = new Parser();
-
-    // when
-    function configure() {
-      parser.ns('bar');
-    }
-
-    // then
-    assert.throws(configure, /required args <nsMap={}>/);
-  });
+      // then
+      assert.throws(configure, /required args <nsMap={}>/);
+    });
 
 
-  it('should NOT throw on no args', function() {
+    it('should NOT throw on no args', function() {
 
-    // given
-    var parser = new Parser();
+      // given
+      var parser = new Parser();
 
-    // when
-    function configure() {
-      parser.ns();
-    }
+      // when
+      function configure() {
+        parser.ns();
+      }
 
-    // then
-    assert.doesNotThrow(configure);
+      // then
+      assert.doesNotThrow(configure);
+    });
+
   });
 
 });
