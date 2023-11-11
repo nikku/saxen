@@ -50,7 +50,7 @@
     "nyc": "^15.1.0",
     "rollup": "^2.79.1",
     "saxen": "file:",
-    "table": "^6.7.1"
+    "table": "^6.8.1"
   },
   "files": [
     "dist"
