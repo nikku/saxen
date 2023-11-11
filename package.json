@@ -4,7 +4,7 @@
   "scripts": {
     "all": "run-s lint bundle test-coverage test-perf",
     "lint": "eslint .",
-    "bundle": "rollup -c",
+    "bundle": "rollup -c --bundleConfigAsCjs",
     "test": "mocha test/*.js",
     "test-coverage": "NO_PERF=1 nyc --reporter=lcov --reporter=html npm test",
     "test-perf": "node test/perf/index.cjs",
@@ -48,7 +48,7 @@
     "mocha": "^10.2.0",
     "npm-run-all": "^4.1.1",
     "nyc": "^15.1.0",
-    "rollup": "^2.79.1",
+    "rollup": "^4.3.1",
     "saxen": "file:",
     "table": "^6.8.1"
   },
