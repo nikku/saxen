@@ -19,11 +19,11 @@ A tiny, super fast, namespace aware [sax-style](https://en.wikipedia.org/wiki/Si
 ## Usage
 
 ```javascript
-var {
+import {
   Parser
-} = require('saxen');
+} from 'saxen';
 
-var parser = new Parser();
+const parser = new Parser();
 
 // enable namespace parsing: element prefixes will
 // automatically adjusted to the ones configured here
@@ -38,7 +38,7 @@ parser.on('openTag', function(elementName, attrGetter, decodeEntities, selfClosi
   elementName;
   // with prefix, i.e. foo:blub
 
-  var attrs = attrGetter();
+  const attrs = attrGetter();
   // { 'bar:aa': 'A', ... }
 });
 
@@ -94,7 +94,7 @@ In this mode, the first argument passed to `openTag` and `closeTag` is an object
 
 ```javascript
 // instantiate parser with proxy=true
-var parser = new Parser({ proxy: true });
+const parser = new Parser({ proxy: true });
 
 parser.ns({
   'http://foo-ns': 'foo'
@@ -116,7 +116,7 @@ __Caution!__ For performance reasons the exposed element is a simple view into t
 
 ```javascript
 parser.on('openTag', function(el) {
-  var copy = Object.assign({}, el);
+  const copy = Object.assign({}, el);
   // copy, ready to keep around
 });
 ```
