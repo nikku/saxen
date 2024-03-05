@@ -6,6 +6,17 @@ All notable changes to [saxen](https://github.com/nikku/saxen) are documented he
 
 ___Note:__ Yet to be released changes appear here._
 
+## 10.0.0
+
+* `FEAT`: turn into ES module
+* `CHORE`: require `Node >= 18`
+* `CHORE`: drop UMD distribution
+
+### Breaking Changes
+
+* No longer ships UMD distribution
+* Requires `Node >= 18`
+
 ## 9.0.0
 
 * `FEAT`: do not transform `xsi:type` attribute contents ([#23](https://github.com/nikku/saxen/pull/23))
