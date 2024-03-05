@@ -51,7 +51,7 @@
   "devDependencies": {
     "eslint": "^8.53.0",
     "eslint-plugin-bpmn-io": "^1.0.0",
-    "mocha": "^10.2.0",
+    "mocha": "^10.3.0",
     "npm-run-all": "^4.1.1",
     "nyc": "^15.1.0",
     "rollup": "^4.12.0",
