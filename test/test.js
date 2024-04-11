@@ -43,7 +43,7 @@ function _test(options) {
   var recordedEntries = [];
 
   function record() {
-    recordedEntries.push(arguments);
+    recordedEntries.push(Array.from(arguments));
   }
 
   function verifyRecord(actual, actualIdx, expected) {
