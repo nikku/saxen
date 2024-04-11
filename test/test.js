@@ -16,7 +16,7 @@ export default function test(op) {
 [ 'only', 'skip' ].forEach(function(key) {
   test[key] = function(op) {
     it[key](op.xml.substr(0, 275), function() {
-      test(op || {});
+      _test(op || {});
     });
   };
 });
