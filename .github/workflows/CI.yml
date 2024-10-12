@@ -22,5 +22,8 @@ jobs:
       run: npm ci
     - name: Build
       run: npm run all
-    - name: Upload coverage
-      run: npx codecov
+    - name: Upload Coverage
+      if: matrix.node-version == 20
+      uses: codecov/codecov-action@v4
+      with:
+        token: ${{ secrets.CODECOV_TOKEN }}
