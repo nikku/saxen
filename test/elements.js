@@ -1,4 +1,6 @@
-import test from './test.js';
+import { test } from './helper.js';
+
+/* eslint-disable mocha/no-empty-description */
 
 // // default ns:
 // // {
@@ -8,7 +10,7 @@ import test from './test.js';
 // //     'http://purl.org/rss/1.0/': 'rss',
 // // }
 
-describe('elements', () => {
+describe('elements', function() {
 
   test({
     xml: '<div/>',

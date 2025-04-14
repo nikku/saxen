@@ -7,7 +7,7 @@ import assert from 'node:assert';
 
 describe('errors', function() {
 
-  describe('error handler', () => {
+  describe('error handler', function() {
 
     it('should NOT pass to #onError', function() {
 

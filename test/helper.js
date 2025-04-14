@@ -5,8 +5,9 @@ import {
 import assert from 'node:assert';
 import { inspect } from 'node:util';
 
+/* eslint-disable mocha/no-exports */
 
-export default function test(op) {
+export function test(op) {
   it(op.xml.substr(0, 275), function() {
     _test(op || {});
   });
