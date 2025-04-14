@@ -54,7 +54,7 @@
     "eslint-plugin-bpmn-io": "^1.0.1",
     "mocha": "^10.8.2",
     "npm-run-all2": "^7.0.2",
-    "rollup": "^4.24.0",
+    "rollup": "^4.40.0",
     "table": "^6.9.0"
   },
   "files": [
