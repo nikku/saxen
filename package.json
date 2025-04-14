@@ -3,7 +3,7 @@
   "description": "A tiny, super fast, namespace aware sax-style XML parser written in plain JavaScript",
   "scripts": {
     "all": "run-s lint test-coverage test-perf",
-    "lint": "eslint . --ext js,cjs",
+    "lint": "eslint .",
     "pretest": "run-s bundle",
     "bundle": "rollup -c --bundleConfigAsCjs",
     "test": "mocha test/*.js",
@@ -50,8 +50,8 @@
   },
   "devDependencies": {
     "c8": "^10.1.3",
-    "eslint": "^8.57.1",
-    "eslint-plugin-bpmn-io": "^1.0.1",
+    "eslint": "^9.24.0",
+    "eslint-plugin-bpmn-io": "^2.2.0",
     "mocha": "^10.8.2",
     "npm-run-all2": "^7.0.2",
     "rollup": "^4.40.0",
