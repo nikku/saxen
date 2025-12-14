@@ -6,8 +6,7 @@ export default [
   {
     input: 'lib/index.js',
     output: [
-      { file: pkgExports.require, format: 'cjs', sourcemap: true },
-      { file: pkgExports.import, format: 'es', sourcemap: true }
+      { file: pkgExports, format: 'es', sourcemap: true }
     ]
   }
 ];
