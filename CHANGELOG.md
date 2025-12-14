@@ -6,6 +6,10 @@ All notable changes to [saxen](https://github.com/nikku/saxen) are documented he
 
 ___Note:__ Yet to be released changes appear here._
 
+## 11.0.1
+
+* `FIX`: restore `main` export, still used by some bundlers
+
 ## 11.0.0
 
 * `FEAT`: drop CJS distribution ([#26](https://github.com/nikku/saxen/pull/26))
