@@ -11,6 +11,7 @@
     "test-perf": "node test/perf/index.cjs",
     "prepare": "run-s bundle"
   },
+  "main": "./dist/index.js",
   "type": "module",
   "exports": {
     ".": "./dist/index.js",
