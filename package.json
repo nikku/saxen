@@ -49,7 +49,7 @@
     "c8": "^10.1.3",
     "eslint": "^9.39.2",
     "eslint-plugin-bpmn-io": "^2.2.0",
-    "mocha": "^10.8.2",
+    "mocha": "^11.7.5",
     "npm-run-all2": "^7.0.2",
     "rollup": "^4.40.0",
     "table": "^6.9.0"
