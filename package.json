@@ -30,7 +30,7 @@
     "url": "https://github.com/nikku/saxen/issues"
   },
   "engines": {
-    "node": ">= 18"
+    "node": ">= 20.12"
   },
   "author": {
     "name": "Nico Rehwaldt",
