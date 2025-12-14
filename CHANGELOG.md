@@ -6,6 +6,15 @@ All notable changes to [saxen](https://github.com/nikku/saxen) are documented he
 
 ___Note:__ Yet to be released changes appear here._
 
+## 11.0.0
+
+* `FEAT`: drop CJS distribution ([#26](https://github.com/nikku/saxen/pull/26))
+* `CHORE`: require `Node >= 20.12`
+
+### Breaking Changes
+
+* Require `Node >= 20.12` to consume ES module from CommonJS
+
 ## 10.0.0
 
 * `FEAT`: turn into ES module
