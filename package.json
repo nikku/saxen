@@ -52,7 +52,7 @@
     "eslint": "^9.39.2",
     "eslint-plugin-bpmn-io": "^2.2.0",
     "mocha": "^11.7.5",
-    "npm-run-all2": "^8.0.4",
+    "npm-run-all2": "^9.0.2",
     "rollup": "^4.53.3",
     "table": "^6.9.0"
   },
