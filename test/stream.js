@@ -104,4 +104,25 @@ describe('stream', function() {
     parser
       .end();
   });
+
+  it('report an error on incomplete XML when the stream ends', function() {
+    var parser = new Parser();
+
+    var error;
+
+    function onError(error_) {
+      error = error_;
+    }
+
+    parser.on('error', onError);
+
+    parser.write('<tag');
+
+    assert.equal(error, undefined, 'expected no error');
+
+    parser.end();
+
+    assert.ok(error !== undefined, 'error was reported');
+    assert.equal(error.message, 'unclosed tag', 'expected no error');
+  });
 });
