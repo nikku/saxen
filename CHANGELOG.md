@@ -6,6 +6,8 @@ All notable changes to [saxen](https://github.com/nikku/saxen) are documented he
 
 ___Note:__ Yet to be released changes appear here._
 
+* `FEAT`: support streaming XML in chunks via `Parser#write` and `Parser#end` ([#3](https://github.com/nikku/saxen/issues/3))
+
 ## 11.0.2
 
 * `CHORE`: mark as side-effect free
