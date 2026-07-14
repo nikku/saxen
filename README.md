@@ -122,6 +122,18 @@ parser.on('openTag', function(el) {
 ```
 
 
+## Streaming Mode
+
+```javascript
+const parser = new Parser(options)
+
+parser
+  .write(...)
+  .write(...)
+  .end()
+```
+
+
 ## Non-Features
 
 `/saxen/` lacks some features known in other XML parsers such as [sax-js](https://github.com/isaacs/sax-js):
