@@ -1,7 +1,5 @@
 import { test } from './helper.js';
 
-/* eslint-disable mocha/no-empty-description */
-
 // // default ns:
 // // {
 // //     'http://search.yahoo.com/mrss/': 'media',
