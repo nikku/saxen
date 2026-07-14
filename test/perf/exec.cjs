@@ -4,7 +4,6 @@ const {
 
 const now = Date.now;
 
-/* eslint-disable mocha/no-empty-description */
 
 module.exports = function(suite, tests, interations) {
 
