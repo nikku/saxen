@@ -122,6 +122,29 @@ parser.on('openTag', function(el) {
 ```
 
 
+## Streaming Mode
+
+Instead of parsing a complete document via `parse`, you may feed the parser XML in chunks via `write` and signal the end of the stream via `end`. This allows you to process huge documents in a memory efficient, step by step manner:
+
+```javascript
+const parser = new Parser();
+
+parser.on('openTag', function(name) { /* ... */ });
+
+parser
+  .write('<foo>')
+  .write('<bar />')
+  .write('</foo>')
+  .end();
+```
+
+Chunks may split anywhere, even in the middle of a tag, attribute, comment or CDATA section; the parser buffers the incomplete remainder until the next `write`. Parse events are emitted as soon as the corresponding token is complete. Calling `end` flushes the stream and reports an error (via the `error` hook and as the return value) if the buffered remainder is incomplete.
+
+The `write` / `end` pair mirrors Node's [writable stream](https://nodejs.org/api/stream.html#class-streamwritable) contract, making it straightforward to wire the parser up as a stream sink.
+
+__Note:__ In streaming mode the parse context (`line` / `column`) is relative to the currently buffered input rather than the whole document.
+
+
 ## Non-Features
 
 `/saxen/` lacks some features known in other XML parsers such as [sax-js](https://github.com/isaacs/sax-js):
