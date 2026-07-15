@@ -145,6 +145,22 @@ The `write` / `end` pair mirrors Node's [writable stream](https://nodejs.org/api
 __Note:__ In streaming mode the parse context (`line` / `column`) is relative to the currently buffered input rather than the whole document.
 
 
+## Lax Mode
+
+Instantiate the parser with `{ lax: true }` to trade strict well-formedness checking for parse speed:
+
+```javascript
+const parser = new Parser({ lax: true });
+
+parser.parse('<root a="A" a="B" />');
+// no `attribute <a> already defined` warning; last value wins (a="B")
+```
+
+Only the costly uniqueness check is dropped. Cheap, recoverable warnings — malformed attributes, non-whitespace outside the root node and the like — are still reported via the `warn` hook. Errors are always reported.
+
+__Note:__ Skipping the duplicate attribute check changes parsing behavior: For attributes, strict mode keeps the __first__ value and warns, whereas lax mode keeps the __last__ value silently. For well-formed documents there is no observable difference.
+
+
 ## Non-Features
 
 `/saxen/` lacks some features known in other XML parsers such as [sax-js](https://github.com/isaacs/sax-js):

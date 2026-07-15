@@ -66,6 +66,19 @@ exec('parse', [
   } ],
 
 
+  [ 'lax + attrs', () => () => {
+    var parser = new Parser({ lax: true });
+
+    parser.ns();
+
+    parser.on('openTag', function(elementName, attrs) {
+      attrs();
+    });
+
+    parser.parse(xml);
+  } ],
+
+
   [ 'proxy / cached parser', () => {
 
     var parser = new Parser({ proxy: true });

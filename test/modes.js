@@ -97,4 +97,97 @@ describe('modes', function() {
     assert.ok(parser instanceof Parser, 'Parser() instanceof Parser');
   });
 
+
+  describe('should parse in lax mode', function() {
+
+    function collect(xml, options) {
+      var parser = new Parser(options);
+
+      parser.ns();
+
+      var warnings = [];
+      var tags = [];
+
+      parser.on('warn', function(err) {
+        warnings.push(err.message);
+      });
+
+      parser.on('openTag', function(name, attrGetter) {
+        tags.push({ name: name, attrs: attrGetter() });
+      });
+
+      parser.parse(xml);
+
+      return { warnings: warnings, tags: tags };
+    }
+
+
+    it('should suppress duplicate attribute warning', function() {
+
+      // given
+      var xml = '<root a="A" a="B" />';
+
+      // when
+      var strict = collect(xml);
+      var result = collect(xml, { lax: true });
+
+      // then
+      // strict mode warns and keeps the first value
+      assert.deepEqual(strict.warnings, [ 'attribute <a> already defined' ]);
+      assert.deepEqual(strict.tags[0].attrs, { a: 'A' });
+
+      // lax mode is silent and keeps the last value
+      assert.deepEqual(result.warnings, []);
+      assert.deepEqual(result.tags[0].attrs, { a: 'B' });
+    });
+
+
+    it('should keep cheap malformed attribute warnings', function() {
+
+      // given
+      var xml = '<root a b="B" />';
+
+      // when
+      var result = collect(xml, { lax: true });
+
+      // then
+      // cheap recoverable warnings are still emitted in lax mode
+      assert.deepEqual(result.warnings, [ 'missing attribute value' ]);
+      assert.deepEqual(result.tags[0].attrs, { b: 'B' });
+    });
+
+
+    it('should keep non-whitespace outside root warning', function() {
+
+      // given
+      var xml = '<root />after';
+
+      // when
+      var result = collect(xml, { lax: true });
+
+      // then
+      assert.deepEqual(result.warnings, [ 'non-whitespace outside of root node' ]);
+    });
+
+
+    it('should still report errors', function() {
+
+      // given
+      var parser = new Parser({ lax: true });
+
+      var errors = [];
+
+      parser.on('error', function(err) {
+        errors.push(err.message);
+      });
+
+      // when
+      parser.parse('<root>');
+
+      // then
+      assert.deepEqual(errors, [ 'unexpected end of file' ]);
+    });
+
+  });
+
 });
