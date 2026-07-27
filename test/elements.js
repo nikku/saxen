@@ -974,6 +974,61 @@ describe('elements', function() {
     ],
   });
 
+  // missing namespace / element with prototype-member prefix
+  //
+  // prefixes equal to Object.prototype member names must be treated
+  // as missing namespaces, not silently accepted via prototype lookup
+  test({
+    xml: (
+      '<foo xmlns="http://xxx">' +
+        '<__proto__:unknown />' +
+      '</foo>'
+    ),
+    ns: true,
+    expect: [
+      [ 'openTag', 'ns0:foo' ],
+      [ 'error', 'missing namespace on <__proto__:unknown>' ]
+    ],
+  });
+
+  test({
+    xml: (
+      '<foo xmlns="http://xxx">' +
+        '<constructor:unknown />' +
+      '</foo>'
+    ),
+    ns: true,
+    expect: [
+      [ 'openTag', 'ns0:foo' ],
+      [ 'error', 'missing namespace on <constructor:unknown>' ]
+    ],
+  });
+
+  // attributes / missing namespace for prototype-member prefix
+  test({
+    xml: (
+      '<foo xmlns="http://xxx" __proto__:bar="BAR" />'
+    ),
+    ns: true,
+    expect: [
+      [ 'warn', 'missing namespace for prefix <__proto__>' ],
+      [ 'openTag', 'ns0:foo' ],
+      [ 'closeTag', 'ns0:foo' ]
+    ],
+  });
+
+  test({
+    xml: (
+      '<foo xmlns="http://xxx" hasOwnProperty:bar="BAR" />'
+    ),
+    ns: true,
+    expect: [
+      [ 'warn', 'missing namespace for prefix <hasOwnProperty>' ],
+      [ 'openTag', 'ns0:foo' ],
+      [ 'closeTag', 'ns0:foo' ]
+    ],
+  });
+
   // illegal namespace prefix
   test({
     xml: (
