@@ -389,6 +389,16 @@ describe('elements', function() {
     ],
   });
 
+  // attributes / xmlns:xml value
+  test({
+    xml: '<root xmlns:xml="http://foo" a="B"></root>',
+    expect: [
+      [ 'error', 'illegal value of xmlns:xml' ],
+      [ 'openTag', 'root', { a: 'B' } ],
+      [ 'closeTag', 'root' ],
+    ],
+  });
+
   // attributes / ''
   test({
     xml: '<root length=\'abc=abc\'></root>',
