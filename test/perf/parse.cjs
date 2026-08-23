@@ -1,6 +1,6 @@
 const fs = require('node:fs');
 
-const xml = fs.readFileSync(__dirname + '/sample.xml', 'utf-8');
+const xml = fs.readFileSync(`${__dirname}/sample.xml`, 'utf-8');
 
 const {
   Parser
@@ -11,12 +11,36 @@ const exec = require('./exec.cjs');
 
 exec('parse', [
 
-  [ 'proxy', () => () => {
-    var parser = new Parser({ proxy: true });
+  [ 'default', () => () => {
+    const parser = new Parser();
 
     parser.ns();
 
-    parser.on('openTag', function(el) {
+    parser.on('openTag', (elementName) => { });
+
+    parser.parse(xml);
+  } ],
+
+
+  [ 'default + attrs', () => () => {
+    const parser = new Parser();
+
+    parser.ns();
+
+    parser.on('openTag', (elementName, attrs) => {
+      attrs();
+    });
+
+    parser.parse(xml);
+  } ],
+
+
+  [ 'proxy', () => () => {
+    const parser = new Parser({ proxy: true });
+
+    parser.ns();
+
+    parser.on('openTag', el => {
       el.name;
     });
 
@@ -24,24 +48,13 @@ exec('parse', [
   } ],
 
 
-  [ 'default', () => () => {
-    var parser = new Parser();
-
-    parser.ns();
-
-    parser.on('openTag', function(elementName) { });
-
-    parser.parse(xml);
-  } ],
-
-
   [ 'proxy + attrs', () => () => {
 
-    var parser = new Parser({ proxy: true });
+    const parser = new Parser({ proxy: true });
 
     parser.ns();
 
-    parser.on('openTag', function(el) {
+    parser.on('openTag', el => {
       el.name;
 
       // el.originalName;
@@ -53,26 +66,13 @@ exec('parse', [
   } ],
 
 
-  [ 'default + attrs', () => () => {
-    var parser = new Parser();
-
-    parser.ns();
-
-    parser.on('openTag', function(elementName, attrs) {
-      attrs();
-    });
-
-    parser.parse(xml);
-  } ],
-
-
   [ 'proxy / cached parser', () => {
 
-    var parser = new Parser({ proxy: true });
+    const parser = new Parser({ proxy: true });
 
     parser.ns();
 
-    parser.on('openTag', function(el) {
+    parser.on('openTag', el => {
       el.name;
       el.originalName;
       el.ns;
@@ -86,11 +86,11 @@ exec('parse', [
 
 
   [ 'proxy / full', () => () => {
-    var parser = new Parser({ proxy: true });
+    const parser = new Parser({ proxy: true });
 
     parser.ns();
 
-    parser.on('openTag', function(el) {
+    parser.on('openTag', el => {
       el.name;
       el.originalName;
       el.ns;

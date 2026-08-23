@@ -5,29 +5,29 @@ const {
 const now = Date.now;
 
 
-module.exports = function(suite, tests, interations) {
+module.exports = function exec(suite, tests, interations) {
 
-  var results = [];
+  const results = [];
 
-  for (var i = 0; i < tests.length; i++) {
+  for (let i = 0; i < tests.length; i++) {
 
-    var [ name, test ] = tests[i];
+    const [ name, test ] = tests[i];
 
-    var start = now();
+    const start = now();
 
-    var run = test();
+    const run = test();
 
-    for (var j = 0; j < interations; j++) {
+    for (let j = 0; j < interations; j++) {
       run();
     }
 
-    var t = now() - start;
+    const t = now() - start;
 
     results.push([ name, t ]);
   }
 
 
-  var min = results.reduce(function(min, record) {
+  const min = results.reduce((min, record) => {
 
     if (min === -1 || record[1] < min) {
       return record[1];
@@ -37,13 +37,13 @@ module.exports = function(suite, tests, interations) {
   }, -1);
 
 
-  results = results.map(function(record) {
+  const resultsWithDiff = results.map(record => {
 
-    var diff = Math.round((1 - min / record[1]) * 10000) / 100;
+    const diff = Math.round((1 - min / record[1]) * 10000) / 100;
 
-    return [ ...record, diff >= 0 ? '+' + diff + '%' : '-' + diff + '%' ];
+    return [ ...record, `${diff >= 0 ? '+' : '-'}${diff}%` ];
   });
 
   console.log('perf results:', suite);
-  console.log(table(results));
+  console.log(table(resultsWithDiff));
 };
