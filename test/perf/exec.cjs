@@ -9,9 +9,9 @@ module.exports = function exec(suite, tests, interations) {
 
   const results = [];
 
-  for (let i = 0; i < tests.length; i++) {
+  for (let i = 0; i < tests.length * 2; i++) {
 
-    const [ name, test ] = tests[i];
+    const [ name, test ] = tests[i % tests.length];
 
     const start = now();
 
@@ -23,7 +23,9 @@ module.exports = function exec(suite, tests, interations) {
 
     const t = now() - start;
 
-    results.push([ name, t ]);
+    if (i >= tests.length) {
+      results.push([ name, t ]);
+    }
   }
 
 
