@@ -1,3 +1,7 @@
+import assert from 'node:assert';
+
+import { Parser } from 'saxen';
+
 import { test } from './helper.js';
 
 // // default ns:
@@ -1641,6 +1645,111 @@ describe('elements', function() {
       [ 'attention', '<! element foo=\'FOO >' ],
       [ 'error', 'unexpected end of file' ]
     ],
+  });
+
+
+  // nested prefix shadowing, restored after close
+  test({
+    xml: (
+      '<root xmlns:a="http://www.w3.org/2005/Atom">' +
+        '<a:x xmlns:a="http://purl.org/rss/1.0/">' +
+          '<a:y />' +
+        '</a:x>' +
+        '<a:z />' +
+      '</root>'
+    ),
+    ns: true,
+    expect: [
+      [ 'openTag', 'root' ],
+      [ 'openTag', 'rss:x' ],
+      [ 'openTag', 'rss:y' ],
+      [ 'closeTag', 'rss:y' ],
+      [ 'closeTag', 'rss:x' ],
+      [ 'openTag', 'atom:z' ],
+      [ 'closeTag', 'atom:z' ],
+      [ 'closeTag', 'root' ],
+    ],
+  });
+
+  // repeated tag name across shadowed scope boundary
+  test({
+    xml: (
+      '<root xmlns:a="http://www.w3.org/2005/Atom">' +
+        '<a:x xmlns:a="http://purl.org/rss/1.0/">' +
+          '<a:y />' +
+        '</a:x>' +
+        '<a:y />' +
+      '</root>'
+    ),
+    ns: true,
+    expect: [
+      [ 'openTag', 'root' ],
+      [ 'openTag', 'rss:x' ],
+      [ 'openTag', 'rss:y' ],
+      [ 'closeTag', 'rss:y' ],
+      [ 'closeTag', 'rss:x' ],
+      [ 'openTag', 'atom:y' ],
+      [ 'closeTag', 'atom:y' ],
+      [ 'closeTag', 'root' ],
+    ],
+  });
+
+  // self-closed element declarations, restored after close
+  test({
+    xml: (
+      '<root xmlns:a="http://www.w3.org/2005/Atom">' +
+        '<a:x xmlns:b="urn:unknown" />' +
+        '<b:y />' +
+      '</root>'
+    ),
+    ns: true,
+    expect: [
+      [ 'openTag', 'root' ],
+      [ 'openTag', 'atom:x' ],
+      [ 'closeTag', 'atom:x' ],
+      [ 'error', 'missing namespace on <b:y>' ],
+    ],
+  });
+
+
+  describe('namespace declaration scoping', function() {
+
+    // verify deeply nested declarations scale linearly
+    // cf. https://github.com/nikku/saxen/security/advisories/GHSA-6w8c-5m3c-g2m8
+    it('should handle deeply nested namespace declarations', function() {
+
+      // given
+      var depth = 3000;
+
+      var open = '', close = '';
+      for (var i = 0; i < depth; i++) {
+        open += '<p' + i + ':e xmlns:p' + i + '="urn:' + i + '">';
+        close = '</p' + i + ':e>' + close;
+      }
+
+      var xml = '<root xmlns="urn:root">' + open + close + '</root>';
+
+      var parser = new Parser({ proxy: true });
+
+      parser.ns({});
+
+      var count = 0;
+      var lastName;
+
+      parser.on('openTag', function(el) {
+        count++;
+        lastName = el.name;
+      });
+
+      // when
+      var err = parser.parse(xml);
+
+      // then
+      assert.ifError(err);
+      assert.equal(count, depth + 1);
+      assert.equal(lastName, 'p' + (depth - 1) + ':e');
+    });
+
   });
 
 });
