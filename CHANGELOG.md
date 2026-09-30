@@ -6,6 +6,10 @@ All notable changes to [saxen](https://github.com/nikku/saxen) are documented he
 
 ___Note:__ Yet to be released changes appear here._
 
+* `FIX`: parse nested namespace declarations linearly ([GHSA-6w8c-5m3c-g2m8](https://github.com/nikku/saxen/security/advisories/GHSA-6w8c-5m3c-g2m8))
+
+__Note:__ In proxy mode, `el.ns` is now a live view of the namespaces in scope and changes as the parser advances. Clone it if you retain it.
+
 ## 8.1.2
 
 * `FIX`: correct skipping of `>` in body tag ([#22](https://github.com/nikku/saxen/pull/22))

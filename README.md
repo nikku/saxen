@@ -121,6 +121,17 @@ parser.on('openTag', function(el) {
 });
 ```
 
+The same applies to `el.ns`: it is a live view of the namespaces in scope and changes as the parser advances. Clone it, too, if you would like to retain it:
+
+```javascript
+parser.on('openTag', function(el) {
+  var copy = Object.assign({}, el, {
+    ns: Object.assign({}, el.ns)
+  });
+  // copy, including namespaces, ready to keep around
+});
+```
+
 
 ## Non-Features
 
