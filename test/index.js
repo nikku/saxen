@@ -14,6 +14,8 @@ describe('document parsing', function() {
 
   require('./decode');
 
+  require('./namespaces');
+
 });
 
 
