@@ -23,7 +23,7 @@ describe('decode', function() {
 
       assert.strictEqual(decodeEntities, decode);
 
-      assert.equal(decodeEntities(attrs.encoded), '&\'><"&Quot;"\'&{İ&raquo;&constructor;&#NaN;');
+      assert.equal(decodeEntities(attrs.encoded), '&\'><"&Quot;"\'&{İ&raquo;&constructor;');
     });
 
     var specialChars = [
@@ -39,8 +39,7 @@ describe('decode', function() {
       '&#0123;',
       '&#x0130;',
       '&raquo;',
-      '&constructor;',
-      '&#NaN;'
+      '&constructor;'
     ];
 
     // when
@@ -48,6 +47,11 @@ describe('decode', function() {
 
     // then
     assert.ok(counter === 1, 'parsed one node');
+  });
+
+  it('should decode legal character references including astral characters', function() {
+    assert.equal(decode('&#9;&#10;&#13;&#32;&#xD7FF;&#xE000;&#xFFFD;&#x10000;&#1114111;&amp;#0;'),
+      '\t\n\r \uD7FF\uE000\uFFFD\u{10000}\u{10FFFF}&#0;');
   });
 
 });

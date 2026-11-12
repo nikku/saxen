@@ -6,6 +6,9 @@ All notable changes to [saxen](https://github.com/nikku/saxen) are documented he
 
 ___Note:__ Yet to be released changes appear here._
 
+* `FEAT`: treat invalid character references as `error`
+* `FIX`: correct decoding of character references above `U+FFFF` ([#36](https://github.com/nikku/saxen/issues/36))
+
 ## 11.2.0
 
 * `FEAT`: handle illegal `xmlns:xml` namespace re-definition ([#32](https://github.com/nikku/saxen/pull/32), [#5](https://github.com/nikku/saxen/issues/5))

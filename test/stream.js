@@ -281,6 +281,40 @@ describe('stream', function() {
     });
 
 
+    it('should validate split character references before emitting events', function() {
+      var valid = collect([ '<root a="&#x1', 'F600;">&#12', '8512;</root>' ]);
+      assert.equal(valid.error, undefined);
+      assert.deepEqual(valid.events, [
+        [ 'openTag', 'root', { a: '&#x1F600;' } ],
+        [ 'text', '\u{1F600}' ],
+        [ 'closeTag', 'root' ]
+      ]);
+
+      var invalidText = collect([ '<root>&#x', 'D800;</root><later/>' ]);
+      assert.equal(invalidText.error.message, 'invalid character reference');
+      assert.deepEqual(invalidText.events, [ [ 'openTag', 'root', {} ] ]);
+
+      var invalidAttr = collect([ '<root a="&#', '0;"/><later/>' ]);
+      assert.equal(invalidAttr.error.message, 'invalid character reference');
+      assert.deepEqual(invalidAttr.events, []);
+    });
+
+
+    it('should stop after reporting an invalid reference across writes', function() {
+      var parser = new Parser();
+      var events = [];
+      var errors = [];
+      parser.on('openTag', function(name) { events.push(name); });
+      parser.on('error', function(err) { errors.push(err); });
+
+      parser.write('<root>&#0;</root>').write('<later/>');
+
+      assert.strictEqual(parser.end(), errors[0]);
+      assert.equal(errors.length, 1);
+      assert.deepEqual(events, [ 'root' ]);
+    });
+
+
     it('should split a CDATA section', function() {
 
       // when
