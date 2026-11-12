@@ -640,6 +640,67 @@ describe('elements', function() {
   });
 
   test({
+    xml: '<r a="&#x1F600;">&#128512;&amp;#0;</r>',
+    expect: [
+      [ 'openTag', 'r', { a: '&#x1F600;' } ],
+      [ 'text', '&#128512;&amp;#0;' ],
+      [ 'closeTag', 'r' ],
+    ],
+  });
+
+  test({
+    xml: '<r xmlns="http://www.w3.org/2005/&#65;tom"/>',
+    ns: true,
+    expect: [
+      [ 'openTag', 'atom:r', { xmlns: 'http://www.w3.org/2005/&#65;tom' } ],
+      [ 'closeTag', 'atom:r' ],
+    ],
+  });
+
+  test({
+    xml: '<r><![CDATA[&#0;]]><!-- &#0; --></r>',
+    expect: [
+      [ 'openTag', 'r' ],
+      [ 'cdata', '&#0;' ],
+      [ 'comment', ' &#0; ' ],
+      [ 'closeTag', 'r' ],
+    ],
+  });
+
+  [
+    '&#0;', '&#8;', '&#11;', '&#31;', '&#xD800;', '&#xDFFF;',
+    '&#xFFFE;', '&#xFFFF;', '&#1114112;', '&#x110000;',
+    '&#X1f600;', '&#NaN;', '&#;', '&#x;', '&#65', '&#'
+  ].forEach(function(ref) {
+    [ false, true ].forEach(function(ns) {
+      test({
+        xml: '<r>' + ref + '</r>',
+        ns: ns,
+        expect: [
+          [ 'openTag', 'r' ],
+          [ 'error', 'invalid character reference' ],
+        ],
+      });
+
+      test({
+        xml: '<r a="' + ref + '"/>',
+        ns: ns,
+        expect: [
+          [ 'error', 'invalid character reference' ],
+        ],
+      });
+
+      test({
+        xml: '<r xmlns="' + ref + '"/>',
+        ns: ns,
+        expect: [
+          [ 'error', 'invalid character reference' ],
+        ],
+      });
+    });
+  });
+
+  test({
     xml: '<html><head><script>\'<div>foo</div></\'</script></head></html>',
     expect: [
       [ 'openTag', 'html' ],
@@ -1643,6 +1704,14 @@ describe('elements', function() {
     expect: [
       [ 'openTag', 'doc', {}, false ],
       [ 'attention', '<! element foo=\'FOO >' ],
+      [ 'error', 'unexpected end of file' ]
+    ],
+  });
+
+  test({
+    xml: '<doc>&#0;',
+    expect: [
+      [ 'openTag', 'doc', {}, false ],
       [ 'error', 'unexpected end of file' ]
     ],
   });

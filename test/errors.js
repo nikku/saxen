@@ -7,6 +7,48 @@ import assert from 'node:assert';
 
 describe('errors', function() {
 
+  describe('character references', function() {
+
+    it('should report an invalid reference in text without a text listener', function() {
+      expectInvalidReference('<root>before &#0;</root>');
+    });
+
+
+    it('should report an invalid reference in an attribute without an openTag listener', function() {
+      expectInvalidReference('<root a="before &#0;"/>');
+    });
+
+
+    it('should report an invalid reference in a namespace declaration without an openTag listener', function() {
+      expectInvalidReference('<root xmlns="before &#0;"/>');
+    });
+
+
+    it('should throw an invalid reference error without an error listener', function() {
+      assert.throws(function() {
+        new Parser().parse('<root>&#0;</root>');
+      }, /invalid character reference/);
+    });
+
+
+    function expectInvalidReference(xml) {
+      var parser = new Parser();
+      var errors = [];
+
+      parser.on('error', function(err, getContext) {
+        errors.push([ err, getContext() ]);
+      });
+
+      var result = parser.parse(xml);
+
+      assert.equal(errors.length, 1);
+      assert.strictEqual(result, errors[0][0]);
+      assert.equal(result.message, 'invalid character reference');
+      assert.equal(errors[0][1].column, xml.indexOf('&#0;'));
+    }
+
+  });
+
   describe('error handler', function() {
 
     it('should NOT pass to #onError', function() {
