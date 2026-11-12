@@ -6,8 +6,10 @@ All notable changes to [saxen](https://github.com/nikku/saxen) are documented he
 
 ___Note:__ Yet to be released changes appear here._
 
-* `FEAT`: treat invalid character references as `error`
-* `FIX`: correct decoding of character references above `U+FFFF` ([#36](https://github.com/nikku/saxen/issues/36))
+## 12.0.0
+
+* `FEAT`: treat invalid character references as `error` ([#38](https://github.com/nikku/saxen/pull/38))
+* `FIX`: correct decoding of character references above `U+FFFF` ([#36](https://github.com/nikku/saxen/issues/36), [#38](https://github.com/nikku/saxen/pull/38))
 
 ## 11.2.0
 
