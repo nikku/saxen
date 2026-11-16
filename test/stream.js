@@ -511,6 +511,28 @@ describe('stream', function() {
       assert.deepEqual(perChar.events, whole.events);
     });
 
+
+    it('should split non-ASCII names, including surrogate pairs', function() {
+
+      // given
+      var xml = '<prénom façade="1"><𐌰𐌱 𐌲="2"/></prénom>';
+
+      // when
+      var whole = collect([ xml ]);
+      var perCodeUnit = collect(xml.split(''));
+
+      // then
+      assert.equal(whole.error, undefined);
+      assert.equal(perCodeUnit.error, undefined);
+      assert.deepEqual(whole.events, [
+        [ 'openTag', 'prénom', { 'façade': '1' } ],
+        [ 'openTag', '𐌰𐌱', { '𐌲': '2' } ],
+        [ 'closeTag', '𐌰𐌱' ],
+        [ 'closeTag', 'prénom' ]
+      ]);
+      assert.deepEqual(perCodeUnit.events, whole.events);
+    });
+
   });
 
 

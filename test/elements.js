@@ -208,6 +208,101 @@ describe('elements', function() {
     ],
   });
 
+  // non-ASCII nodeName
+  test({
+    xml: '<prénom>Anne</prénom>',
+    expect: [
+      [ 'openTag', 'prénom', {}, false ],
+      [ 'text', 'Anne' ],
+      [ 'closeTag', 'prénom', false ],
+    ],
+  });
+
+  // non-ASCII nodeName / first char
+  test({
+    xml: '<été/>',
+    expect: [
+      [ 'openTag', 'été', {}, true ],
+      [ 'closeTag', 'été', true ],
+    ],
+  });
+
+  // non-ASCII nodeName / attributes
+  test({
+    xml: '<名前 属性="値"></名前>',
+    expect: [
+      [ 'openTag', '名前', { '属性': '値' }, false ],
+      [ 'closeTag', '名前', false ],
+    ],
+  });
+
+  // non-ASCII nodeName / combining char and middle dot
+  test({
+    xml: '<e\u0301l·a/>',
+    expect: [
+      [ 'openTag', 'e\u0301l·a', {}, true ],
+      [ 'closeTag', 'e\u0301l·a', true ],
+    ],
+  });
+
+  // non-ASCII nodeName / outside the BMP
+  test({
+    xml: '<𐌰𐌱/>',
+    expect: [
+      [ 'openTag', '𐌰𐌱', {}, true ],
+      [ 'closeTag', '𐌰𐌱', true ],
+    ],
+  });
+
+  // non-ASCII nodeName / illegal first char
+  test({
+    xml: '<☂/>',
+    expect: [
+      [ 'error', 'illegal first char nodeName' ],
+    ],
+  });
+
+  test({
+    xml: '<·a/>',
+    expect: [
+      [ 'error', 'illegal first char nodeName' ],
+    ],
+  });
+
+  test({
+    xml: '<\u0301a/>',
+    expect: [
+      [ 'error', 'illegal first char nodeName' ],
+    ],
+  });
+
+  // non-ASCII nodeName / illegal char
+  test({
+    xml: '<a☂/>',
+    expect: [
+      [ 'error', 'invalid nodeName' ],
+    ],
+  });
+
+  test({
+    xml: '<a×b/>',
+    expect: [
+      [ 'error', 'invalid nodeName' ],
+    ],
+  });
+
+  // non-ASCII nodeName / namespace prefix and local name
+  test({
+    xml: '<é:nœud xmlns:é="http://e"><é:enfant/></é:nœud>',
+    ns: true,
+    expect: [
+      [ 'openTag', 'é:nœud', { 'xmlns:é': 'http://e' }, false ],
+      [ 'openTag', 'é:enfant', {}, true ],
+      [ 'closeTag', 'é:enfant', true ],
+      [ 'closeTag', 'é:nœud', false ],
+    ],
+  });
+
   test({
     xml: '<a><b></c></b></a>',
     expect: [
@@ -523,6 +618,35 @@ describe('elements', function() {
   // attributes / warnings / illegal attribute name char
   test({
     xml: '<root attr1☂="first" attr2="second"/>',
+    expect: [
+      [ 'warn', 'illegal attribute name char' ],
+      [ 'openTag', 'root', { attr2: 'second' }, true ],
+      [ 'closeTag', 'root', true ],
+    ],
+  });
+
+  // attributes / non-ASCII attribute name
+  test({
+    xml: '<root été="1" façade="2" 𐌰="3" b="4"/>',
+    expect: [
+      [ 'openTag', 'root', { 'été': '1', 'façade': '2', '𐌰': '3', b: '4' }, true ],
+      [ 'closeTag', 'root', true ],
+    ],
+  });
+
+  // attributes / warnings / non-ASCII illegal first char attribute name
+  test({
+    xml: '<root ·attr1="first" attr2="second"/>',
+    expect: [
+      [ 'warn', 'illegal first char attribute name' ],
+      [ 'openTag', 'root', { attr2: 'second' }, true ],
+      [ 'closeTag', 'root', true ],
+    ],
+  });
+
+  // attributes / warnings / non-ASCII illegal attribute name char
+  test({
+    xml: '<root a×b="first" attr2="second"/>',
     expect: [
       [ 'warn', 'illegal attribute name char' ],
       [ 'openTag', 'root', { attr2: 'second' }, true ],
