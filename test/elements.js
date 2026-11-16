@@ -530,6 +530,35 @@ describe('elements', function() {
     ],
   });
 
+  // non-ASCII names (https://www.w3.org/TR/xml/#NT-NameStartChar)
+  // are intentionally not supported (for now)
+
+  // non-ASCII names / element name / first char
+  test({
+    xml: '<über/>',
+    expect: [
+      [ 'error', 'illegal first char nodeName' ],
+    ],
+  });
+
+  // non-ASCII names / element name / later char
+  test({
+    xml: '<prénom>Anne</prénom>',
+    expect: [
+      [ 'error', 'invalid nodeName' ],
+    ],
+  });
+
+  // non-ASCII names / attribute name
+  test({
+    xml: '<person prénom="Anne" id="1"/>',
+    expect: [
+      [ 'warn', 'illegal attribute name char' ],
+      [ 'openTag', 'person', { id: '1' }, true ],
+      [ 'closeTag', 'person', true ],
+    ],
+  });
+
   test({
     xml: '<root xmlns:color_1-.0="http://color" />',
     expect: [
