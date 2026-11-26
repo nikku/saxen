@@ -45,6 +45,9 @@ function collect(chunks, options) {
   parser.on('attention', function(value) {
     events.push([ 'attention', value ]);
   });
+  parser.on('warn', function(warning) {
+    events.push([ 'warn', warning.message ]);
+  });
   parser.on('error', function(err) {
     error = err;
   });
@@ -56,6 +59,35 @@ function collect(chunks, options) {
   error = parser.end() || error;
 
   return { events: events, error: error };
+}
+
+
+/**
+ * Collect parse events for the given document fed as a whole,
+ * at every two-way split and character by character.
+ *
+ * @param {string} xml
+ *
+ * @return {Array<{ chunks: string[], result: Object }>}
+ */
+function collectChunked(xml) {
+  var chunkings = [ [ xml ], xml.split('') ];
+
+  for (var i = 1; i < xml.length; i++) {
+    chunkings.push([ xml.substring(0, i), xml.substring(i) ]);
+  }
+
+  return chunkings.map(function(chunks) {
+    var result = collect(chunks);
+
+    return {
+      chunks: chunks,
+      result: {
+        events: result.events,
+        error: result.error && result.error.message
+      }
+    };
+  });
 }
 
 
@@ -509,6 +541,75 @@ describe('stream', function() {
       assert.equal(whole.error, undefined);
       assert.equal(perChar.error, undefined);
       assert.deepEqual(perChar.events, whole.events);
+    });
+
+
+    it('should split an attribute value containing ">"', function() {
+
+      // when
+      var result = collect([ '<r><a v="x>', 'y"></a></r>' ]);
+
+      // then
+      assert.equal(result.error, undefined);
+      assert.deepEqual(result.events, [
+        [ 'openTag', 'r', {} ],
+        [ 'openTag', 'a', { v: 'x>y' } ],
+        [ 'closeTag', 'a' ],
+        [ 'closeTag', 'r' ]
+      ]);
+    });
+
+
+    it('should not create elements from markup in a split attribute value', function() {
+
+      // when
+      var result = collect([ "<r><a v='x>", "<b/>y'/></r>" ]);
+
+      // then
+      assert.equal(result.error, undefined);
+      assert.deepEqual(result.events, [
+        [ 'openTag', 'r', {} ],
+        [ 'openTag', 'a', { v: 'x><b/>y' } ],
+        [ 'closeTag', 'a' ],
+        [ 'closeTag', 'r' ]
+      ]);
+    });
+
+
+    describe('should produce the same result for every chunking', function() {
+
+      var documents = [
+        '<r><a v="x>y"></a></r>',
+        "<r><a v='x>y'></a></r>",
+        '<r><a v="x>" w=\'>y\'/>t</r>',
+        '<r><a v="x><b/>y"/></r>',
+        "<r><a v='x>\"<b/>y'/></r>",
+        '<r><!-- a > b --><![CDATA[ c > d ]]><?pi e > f?><a v="g>h"/></r>',
+        '<!DOCTYPE r><r a="1>2">x</r>',
+        '<r><a v="unclosed></a></r>'
+      ];
+
+      documents.forEach(function(xml) {
+
+        it(xml, function() {
+
+          // when
+          var results = collectChunked(xml);
+
+          // then
+          var expected = results[0].result;
+
+          results.slice(1).forEach(function(entry) {
+            assert.deepEqual(
+              entry.result,
+              expected,
+              'chunks ' + JSON.stringify(entry.chunks)
+            );
+          });
+        });
+
+      });
+
     });
 
   });
