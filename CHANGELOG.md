@@ -6,6 +6,8 @@ All notable changes to [saxen](https://github.com/nikku/saxen) are documented he
 
 ___Note:__ Yet to be released changes appear here._
 
+## 12.0.1
+
 * `FIX`: do not end tag on `>` inside an attribute value split across streamed chunks ([GHSA-9phx-3fcw-32vf](https://github.com/nikku/saxen/security/advisories/GHSA-9phx-3fcw-32vf))
 
 ## 12.0.0
